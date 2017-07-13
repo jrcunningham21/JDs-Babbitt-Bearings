@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "FinalSignOff";
+}
+
+<script>
+    function showSignOff() {
+        $("#confirmDeleteModal").modal();
+    }
+
+</script>
+
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+
+<div class="container-fluid form-container">
+    <link rel="stylesheet" href="site.css">
+
+    <div class="row">
+        @Html.Partial("SignOff")
+        @Html.Partial("PartHeader")
+    </div>
+
+    <!-- This is the floaty bit on the left --->
+    <div class="container-fluid form-container col-md-3" id="partStepBar">
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/IncomingInspection" class="partStepLink">Incoming Inspection</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph"></span>
+        </div>
+
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/MaterialPreparation" class="partStepLink">Material Preparation</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph"></span>
+        </div>
+
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/ManufacturingProcess" class="partStepLink">Manufacturing Process</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph"></span>
+        </div>
+
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/FinishBoreProcess" class="partStepLink">Finish Bore Process</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph"></span>
+        </div>
+
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/FinalInspection" class="partStepLink">Final Inspection</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph"></span>
+        </div>
+
+        <div class="partStep completedStep row">
+            <div class="col-md-7"><a href="/MockSlingerRing/Delivery" class="partStepLink">Delivery</a></div>
+            <span class="glyphicon glyphicon-ok col-md-2 partStepGlyph completeStepGlyph" style="margin-top:0px"></span>
+        </div>
+
+        <div class="partStep activePartStep row">
+            <div class="col-md-7 currentStep">Sign off</div>
+            <span class="glyphicon glyphicon-arrow-right col-md-2 partStepGlyph activeStepGlyph" style="margin-top:0px"></span>
+        </div>
+
+    </div>
+
+    <!-- main form -->
+    <div class="container-fluid form-container col-md-9" style="">
+        <form>
+
+            <div class="row">
+                <h1 class="col-md-6">Job# 5913 - Slinger Ring</h1>
+                <h3 class="col-md-1" style="text-align:right">
+                    <button class="btn" type="button" onclick="showPartDetails()" style="width:55px; margin-top:-10px; background-color:transparent">
+                        <span class="glyphicon glyphicon-info-sign  activeStepGlyph"></span>
+                        <span class="glyphicon glyphicon-chevron-down  activeStepGlyph"></span>
+                    </button>
+                </h3>
+            </div>
+
+            <!-- Final sign off-->
+            <div class="row" style="margin-top:20px; margin-left:10px; margin-bottom:10px">
+                @Html.CheckBox("Hold for customer approval")
+                I certify that this job has been completed to specifications and is ready to be billed.
+            </div>
+            <div class="row" >
+                <div class="key-style col-md-2 ">
+                    <label>Inspector:</label>
+                </div>
+
+                <div class="dropdown col-md-4">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href="#">FLORES, ALEX </a></li>
+                        <li><a href="#">SHOWDY, SLIM</a></li>
+                        <li><a href="#">GIGGS, RYAN</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn" type="button" onclick="showSignOff()">Sign Off</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger" type="button" id="failJobBtn">Fail Job</button>
+                </div>
+
+            </div>
+
+            <!-- non-conformance report -->
+            <div class="row" id="nonConformanceReport">
+                <div class="container-fluid form-container" style="margin-left:30px;margin-top:50px">
+
+                    <div class="row">
+                        <label class=" col-md-5">Non-conformance report:</label>
+                    </div>
+                    <div class="row" style="margin-left:20px">
+                        Please enter notes and send back for rework.
+                    </div>
+
+                    <div class="row">
+                        <textarea type="text" class="form-control col-md-3" id="scope" placeholder="Inspection notes" style="height:100px; margin-left:10px"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <label class="key-style col-md-4">Return to step:</label>
+
+                        <div class="dropdown col-md-4">
+                            <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                                2 - Material Preparation
+                                <span class="caret" style="float:right; margin-top:7px;"></span>
+                            </button>
+                            <ul class="dropdown-menu" style="width:100%;">
+                                <li><a href="#">1 - Incoming Inspection </a></li>
+                                <li><a href="#">2 - Material Preparation</a></li>
+                                <li><a href="#">3 - Manufacturing Process</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- save / cancel buttons-->
+            <div class="row" style="margin-top:20px">
+                <div class="col-md-2 col-md-offset-8">
+                    <button type="submit" class="btn btn-success" style="width:100%" id="saveBtn">Save</button>
+                </div>
+                <div class="col-md-2">
+                    <button id="cancelBtn" type="submit" class="btn btn-danger" style="width:100%">Cancel</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#nonConformanceReport").hide();
+
+        $("#cancelBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+
+        $("#saveBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+
+        $("#failJobBtn").click(function (e) {
+            e.preventDefault();
+            $("#nonConformanceReport").show();
+        });
+
+
+    });
+
+</script>

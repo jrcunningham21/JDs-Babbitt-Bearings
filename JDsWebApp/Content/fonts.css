@@ -1,0 +1,36 @@
+﻿
+@font-face{
+  font-family: Open Sans;
+  src: url('/Content/Fonts/OpenSans-Regular-webfont.eot');
+  src: url('/Content/Fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/Content/Fonts/OpenSans-Regular-webfont.woff') format('woff'),
+       url('/Content/Fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
+       url('/Content/Fonts/OpenSans-Regular-webfont.svg#OpenSans') format('svg');
+}
+
+@font-face{
+  font-family: Serpentine;
+  src: url('/Content/Fonts/Serpentine-Bold Oblique.ttf');
+  src: url('/Content/Fonts/Serpentine-bold-oblique.eot');
+  src: url('/Content/Fonts/Serpentine-bold-oblique.eot?#iefix') format('embedded-opentype'),
+       url('/Content/Fonts/Serpentine-bold-oblique.woff') format('woff'),
+       url('/Content/Fonts/Serpentine-bold-oblique.ttf') format('truetype');       
+}
+
+@font-face{
+  font-family: FontAwesome;
+  src: url('/Content/Fonts/fontawesome-webfont.eot');
+  src: url('/Content/Fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/Content/Fonts/fontawesome-webfont.woff') format('woff'),
+       url('/Content/Fonts/fontawesome-webfont.ttf') format('truetype'),
+       url('/Content/Fonts/fontawesome-webfont.svg#FontAwesome') format('svg');
+}
+
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url('../Content/fonts/glyphicons-halflings-regular.eot');
+    src: url('../Content/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), 
+         url('../Content/fonts/glyphicons-halflings-regular.woff') format('woff'), 
+         url('../Content/fonts/glyphicons-halflings-regular.ttf') format('truetype'), 
+         url('../Content/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}

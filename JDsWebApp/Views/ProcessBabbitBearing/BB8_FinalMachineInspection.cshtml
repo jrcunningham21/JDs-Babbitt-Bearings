@@ -1,0 +1,1018 @@
+﻿@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB8_FinalMachineInspectionViewModel
+
+@{
+    ViewBag.Title = "BB8_FinalMachineInspection";
+    List<SelectListItem> problemResolutionOptions = new List<SelectListItem>();
+    problemResolutionOptions.Add(new SelectListItem() { Text = "N/A", Value = "" });
+    problemResolutionOptions.Add(new SelectListItem() { Text = "Spray", Value = "Spray"});
+    problemResolutionOptions.Add(new SelectListItem() { Text = "Insulate for Size", Value = "Insulate for Size" });
+    problemResolutionOptions.Add(new SelectListItem() { Text = "Leave Alone", Value = "Leave Alone" });
+}
+
+<style>
+    .fixedWidthActionButton {
+        width: 165px;
+        margin-right: 10px;
+    }
+</style>
+<div class="row">
+    <h4>Final Machine Inspection</h4>
+</div>
+
+<div class="modal fade" id="verifyCustomerSizesModal" role="dialog">
+    <div class="modal-dialog  modal-lg">
+        <h4 class="modal-header"> Compare Sizes </h4>
+        <div id="verifyCustomerSizeContentDiv">
+            content goes here
+        </div>
+    </div>
+</div>
+
+<input id="IsThisPartInsulated" type="hidden"/>
+
+<form id="process_bb8_form">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+
+
+    <div class="row padd-top">
+        <div class="col-sm-11 panel panel-primary">
+            <div class="panel-body">
+                <div class="row padd-top">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(m => m.IsSplitLinesVerified)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.CheckBoxFor(m => m.IsSplitLinesVerified, new {id = "splitLines", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No"})
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(m => m.IsDowelChecksGood)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.CheckBoxFor(m => m.IsDowelChecksGood, new {id = "isDowelChecksGood", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(m => m.IsBondVerified)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.CheckBoxFor(m => m.IsBondVerified, new {id = "isBondVerified", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.LabelFor(m => m.IsClean)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.CheckBoxFor(m => m.IsClean, new {id = "isClean", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No"})
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row padd-top">
+                        <div class="col-sm-12">
+                            @Html.ValidationMessage("InspectionValues", new { id = "InspectionValuesValidationMessage" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (Model.IsInsulated.ToString() != "True")
+    {
+        <div class="row padd-top" id="odSizesRow">
+            <div class="col-sm-5 panel panel-primary">
+                <div class="panel-body">
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-sm-12">
+                            <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureL.svg" class="center-block">Your browser does not support SVG</object>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            @Html.LabelFor(m => m.OD1Measurements)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <div class="input-group">
+                                <input id="BB8_OD1MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                                <input id="BB8_OD1MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                                <input id="BB8_OD1MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                                <span class="input-group-btn multi">
+                                    <a class='btn btn-primary' onclick="AddMeasurement('BB8_OD1Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10 @(!@Model.OD1Measurements.Any() ? "collapse" : "")">
+                            <div id="grid_OD1Measurements">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padd-top">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            @Html.ValidationMessage("ODMeasurements", new { id = "ODMeasurementsValidationMessage" })
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <span class="field-validation-valid" id="BB8_OD1MeasurementsMessage"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-sm-offset-1 col-sm-5 panel panel-primary">
+                <div class="panel-body">
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-sm-12">
+                            <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureR.svg" class="center-block">Your browser does not support SVG</object>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            @Html.LabelFor(m => m.OD2Measurements)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <div class="input-group">
+                                <input id="BB8_OD2MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="A" />
+                                <input id="BB8_OD2MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="B" />
+                                <input id="BB8_OD2MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                                <span class="input-group-btn multi">
+                                    <a class='btn btn-primary' onclick="AddMeasurement('BB8_OD2Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10 @(!Model.OD2Measurements.Any() ? "collapse" : "")">
+                            <div id="grid_OD2Measurements">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <span class="field-validation-valid" id="BB8_OD2MeasurementsMessage"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }    
+    <div class="row padd-top">
+        <div class="col-sm-11 panel panel-primary">
+            <div class="panel-body">
+                <div class="row padd-top">
+                    <div class="col-md-11" style="margin-left: -14px;">
+                        <a class="btn btn-primary fixedWidthActionButton" id="verifyCustomerSizesBtn">Verify Customer Sizes</a>
+                        <a class="btn btn-danger fixedWidthActionButton" onclick="OnNeedApprovalClick()">Need Appoval</a>
+                        <a class="btn btn-danger fixedWidthActionButton" onclick="OnNeedCustomerODClick()">Need Customer OD</a>
+                        <a class="btn btn-danger fixedWidthActionButton" onclick="OnNoCustomerSizesClick()">No Customer Sizes</a>
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(x => x.ProblemResolution, new {style = "margin-left:-14px;" })
+                        @Html.DropDownListFor(x => x.ProblemResolution, problemResolutionOptions, new { @class="form-control", style = "margin-left:-14px;"})
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="row padd-bottom" id="SizedApprovedGroup">
+                        <div class="col-sm-6">
+                            @Html.SignOffHelper(m => m.SizedApprovedBy, "BB8_SizedApprovedBy")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="row padd-bottom" id="ReadyForFinalMachineByGroup">
+                        <div class="col-sm-6">
+                            @Html.SignOffHelper(m => m.ReadyForFinalMachineBy, "BB8_ReadyForFinalMachineBy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Action("PartTestView", "ProcessBabbitBearing", new { id = @Model.PartId })
+    
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+    <div class="extraSpaceAtBtmDiv"></div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB8_SizedApprovedByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.SizedApprovedBy, "BB8_SizedApprovedBy1")
+                    </div>
+                </div>
+                <div class="row padd-bottom" id="BB8_ReadyForFinalMachineByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.ReadyForFinalMachineBy, "BB8_ReadyForFinalMachineBy1")
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        $(function () {
+            $("#grid_OD1Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.OD1Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_OD1Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>"
+                }]
+            });
+
+            $("#grid_OD2Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.OD2Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_OD2Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>"
+                }]
+            });
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB8_SizedApprovedBy").val()
+                    && $("#BB8_ReadyForFinalMachineBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB8_FinalMachineInspectionEntry');
+
+            $('#process_BB8_FinalMachineInspectionEntry').css('font-size', 12);
+
+
+            $("#saveBtn").click(function () {
+                var isValid = 1;
+
+                if("@Model.IsInsulated" != "True")
+                {
+                    // If the user clicks Save and there are OD values that have been
+                    // entered, but not saved... Save them
+                    if ($("#BB8_OD1MeasurementsA").val() != ""
+                        || $("#BB8_OD1MeasurementsB").val() != ""
+                        || $("#BB8_OD1MeasurementsC").val() != "")
+                    {
+                        if(!AddMeasurement('BB8_OD1Measurements'))
+                        {
+                            isValid = 0;
+                        }
+                    }
+                    if ($("#BB8_OD2MeasurementsA").val() != ""
+                        || $("#BB8_OD2MeasurementsB").val() != ""
+                        || $("#BB8_OD2MeasurementsC").val() != "")
+                    {
+                        if(!AddMeasurement('BB8_OD2Measurements'))
+                        {
+                            isValid = 0;
+                        }
+                    }
+                }
+
+                if(isValid == 1)
+                {
+                    Save();
+                }
+                else
+                {
+                    bootbox.alert("Error: Measurements are not completely filled out", function () {});
+                }
+
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+
+            $("#verifyCustomerSizesBtn").click(function () {
+
+                var values;
+
+                if("@Model.IsInsulated" != "True")
+                {
+                    if ($("#BB8_OD1MeasurementsA").val() != ""
+                           || $("#BB8_OD1MeasurementsB").val() != ""
+                           || $("#BB8_OD1MeasurementsC").val() != "")
+                    {
+                        if(!AddMeasurement('BB8_OD1Measurements'))
+                        {
+                            isValid = 0;
+                        }
+                    }
+                    if ($("#BB8_OD2MeasurementsA").val() != ""
+                        || $("#BB8_OD2MeasurementsB").val() != ""
+                        || $("#BB8_OD2MeasurementsC").val() != "")
+                    {
+                        if(!AddMeasurement('BB8_OD2Measurements'))
+                        {
+                            isValid = 0;
+                        }
+                    }
+                    // Pull the data from OD1 and OD2
+                    var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+                    var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+
+                    values = {
+                        "PartID" : '@Model.PartId',
+                        "VerifyIncomingOD1Sizes" : gridDataOD1,
+                        "VerifyIncomingOD2Sizes" : gridDataOD2,
+                    };
+
+                }
+
+                if("@Model.IsInsulated" == "True")
+                {
+                    var values = {
+                        "PartID" : '@Model.PartId',
+                    };
+                }
+
+                $.ajax({
+                    url: '/ProcessBabbitBearing/VerifyCustomerSizes/',
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(values),
+                    success: function (data) {
+                        // BUT: If we've entered OD data on THIS page, we need to replace the OD Data in the modal with
+                        // the OD data entered on this page
+                        $("#verifyCustomerSizeContentDiv").html(data);
+                        $("#verifyCustomerSizesModal").modal('show');
+                    },
+                    error: function (response, error) {
+                        bootbox.alert(error, function () {});
+                    }
+                });
+            });
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB8_SizedApprovedBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB8_SizedApprovedByGroup").show();
+                $('#BB8_SizedApprovedBy1SO').addClass("btn-danger");
+                $('#BB8_SizedApprovedBySO').addClass("btn-danger");
+            } else {
+                $("#BB8_SizedApprovedByGroup").hide();
+                $('#BB8_SizedApprovedBy1').removeClass("btn-danger");
+                $('#BB8_SizedApprovedBy').removeClass("btn-danger");
+            }
+
+            if ($('#BB8_ReadyForFinalMachineBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB8_ReadyForFinalMachineByGroup").show();
+                $('#BB8_ReadyForFinalMachineBy1SO').addClass("btn-danger");
+                $('#BB8_ReadyForFinalMachineBySO').addClass("btn-danger");
+            } else {
+                $("#BB8_ReadyForFinalMachineByGroup").hide();
+                $('#BB8_ReadyForFinalMachineBy1').removeClass("btn-danger");
+                $('#BB8_ReadyForFinalMachineBy').removeClass("btn-danger");
+            }
+
+            // Check the toggle buttons at the top
+            if(!$("#splitLines").is(":checked") || !$("#isClean").is(":checked") || !$("#isDowelChecksGood").is(":checked") || !$("#isBondVerified").is(":checked")){
+                toggleValidationMessage("InspectionValuesValidationMessage", "All of the buttons need to be toggled before proceeding");
+                $(".toggle-off").addClass("btn-danger");
+                return false;
+            } else {
+                toggleValidationMessage("InspectionValuesValidationMessage");
+                $(".toggle-off").removeClass("btn-danger");
+            }
+
+            //Check that at least one of the OD 'ABC' measurements has an entry
+            if("@Model.IsInsulated" != "True") {
+                if ($("#grid_OD1Measurements").data("kendoGrid").dataSource.total() == 0 && $("#grid_OD2Measurements").data("kendoGrid").dataSource.total() == 0) {
+                    toggleValidationMessage("ODMeasurementsValidationMessage", "At least one OD measurement must be entered before proceeeding");
+                    return false;
+                }
+                else {
+                    toggleValidationMessage("ODMeasurementsValidationMessage");
+                }
+            } else {
+                toggleValidationMessage("ODMeasurementsValidationMessage");
+            }
+
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save() {
+            if(!IsStepValid()) {
+                return;
+            }
+
+            // Check to see if we have at least some customer sizes: bore and one OD measurement
+            CheckForMinimumCustomerSizes(@Model.PartId, finishSave);
+
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            if("@Model.IsInsulated" != "True")
+            {
+                // Apply grid data to model
+                var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+                var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+            }
+
+            var jsondata =
+            {
+                "Version": '@Html.Raw(Json.Encode(Model.Version))',
+                "JobId": '@Html.Raw(Json.Encode(Model.JobId))',
+                "PartId": '@Html.Raw(Json.Encode(Model.PartId))',
+                "ProcessId": '@Html.Raw(Json.Encode(Model.ProcessId))',
+                "StepId": '@Html.Raw(Json.Encode(Model.StepId))',
+                "IsUTRequired": '@Html.Raw(Json.Encode(Model.IsUTRequired))',
+                "IsPTRequired": '@Html.Raw(Json.Encode(Model.IsPTRequired))',
+                "IsDisplayUT": '@Html.Raw(Json.Encode(Model.IsDisplayUT))',
+                "IsDisplayPT": '@Html.Raw(Json.Encode(Model.IsDisplayPT))',
+                "IsCompleted": $("#IsCompleted").val(),
+
+                "IsSplitLinesVerified": $("#splitLines").val(),
+                "IsDowelChecksGood": $("#isDowelChecksGood").val(),
+                "IsBondVerified": $("#isBondVerified").val(),
+                "IsClean": $("#isClean").val(),
+                "OD1Measurements": gridDataOD1,
+                "OD2Measurements": gridDataOD2,
+                "SizedApprovedBy": $("#BB8_SizedApprovedBy").val(),
+                "ReadyForFinalMachineBy": $("#BB8_ReadyForFinalMachineBy").val(),
+                "IsFlaggedForCustomerApproval": 'False',    // TODO: Need to figure this one out
+                "ProblemResolution": $("#ProblemResolution").val(),
+                "IsOnlySave": isOnlySave
+            }
+
+            var postdata =  JSON.stringify(jsondata);
+
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB8_FinalMachineInspection',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: postdata,
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB9_FinishBoreProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+
+            return true;
+        }
+
+        function finishSave(customerSizesEntered, isOnlySave) {
+            if (customerSizesEntered=='False'){
+                bootbox.alert("no good", function () {});
+                return false;
+            }
+            //$("#IsCompleted").val(true);
+            markStepAsCompleted(); //completed?
+            return SaveToServer(isOnlySave);
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB8_FinalMachineInspection?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnNeedApprovalClick()
+        {
+
+            bootbox.confirm("Are you sure you want to block this part?", function(result){
+                if(result === false)
+                {
+                    return;
+                }
+                else
+                {
+                    var isValid = 1;
+
+                    if("@Model.IsInsulated" != "True")
+                    {
+
+                        // If the user clicks Save and there are OD values that have been
+                        // entered, but not saved... Save them
+                        if ($("#BB8_OD1MeasurementsA").val() != ""
+                            || $("#BB8_OD1MeasurementsB").val() != ""
+                            || $("#BB8_OD1MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD1Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                        if ($("#BB8_OD2MeasurementsA").val() != ""
+                            || $("#BB8_OD2MeasurementsB").val() != ""
+                            || $("#BB8_OD2MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD2Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                    }
+
+                    if(isValid == 1)
+                    {
+                        if("@Model.IsInsulated" != "True")
+                        {
+                            // Apply grid data to model
+                            var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+                            var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+                        }
+
+                        var jsondata =
+                        {
+                            "Version": '@Html.Raw(Json.Encode(Model.Version))',
+                            "JobId": '@Html.Raw(Json.Encode(Model.JobId))',
+                            "PartId": '@Html.Raw(Json.Encode(Model.PartId))',
+                            "ProcessId": '@Html.Raw(Json.Encode(Model.ProcessId))',
+                            "StepId": '@Html.Raw(Json.Encode(Model.StepId))',
+                            "IsUTRequired": '@Html.Raw(Json.Encode(Model.IsUTRequired))',
+                            "IsPTRequired": '@Html.Raw(Json.Encode(Model.IsPTRequired))',
+                            "IsDisplayUT": '@Html.Raw(Json.Encode(Model.IsDisplayUT))',
+                            "IsDisplayPT": '@Html.Raw(Json.Encode(Model.IsDisplayPT))',
+                            "IsCompleted": $("#IsCompleted").val(),
+
+                            "IsSplitLinesVerified": $("#splitLines").val(),
+                            "IsDowelChecksGood": $("#isDowelChecksGood").val(),
+                            "IsBondVerified": $("#isBondVerified").val(),
+                            "IsClean": $("#isClean").val(),
+                            "OD1Measurements": gridDataOD1,
+                            "OD2Measurements": gridDataOD2,
+                            "SizedApprovedBy": $("#BB8_SizedApprovedBy").val(),
+                            "ReadyForFinalMachineBy": $("#BB8_ReadyForFinalMachineBy").val(),
+                            "IsFlaggedForCustomerApproval": 'False',    // TODO: Need to figure this one out
+                            "ProblemResolution": $("#ProblemResolution").val(),
+                        }
+
+                        var postdata =  JSON.stringify(jsondata);
+
+                        $.ajax({
+                            url: '/ProcessBabbitBearing/Save_BB8_FinalMachineInspection',
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            data: postdata,
+                            success: function (data) {
+                                flagForCustomerApproval("JD#" + @Model.JobId + " needs customer approval", '@Model.PartId');
+                            },
+                            error: function (response, error) {
+                                bootbox.alert(error, function () {});
+                            }
+                        });
+
+                    }
+                    else
+                    {
+                        bootbox.alert("Error: Measurements are not completely filled out", function () {});
+                    }
+                }
+            });
+        }
+
+        function OnNeedCustomerODClick()
+        {
+
+            bootbox.confirm("Are you sure you want to block this part?", function(result){
+                if(result === false)
+                {
+                    return;
+                }
+                else
+                {
+                    var isValid = 1;
+
+                    if("@Model.IsInsulated" != "True")
+                    {
+
+                        // If the user clicks Save and there are OD values that have been
+                        // entered, but not saved... Save them
+                        if ($("#BB8_OD1MeasurementsA").val() != ""
+                            || $("#BB8_OD1MeasurementsB").val() != ""
+                            || $("#BB8_OD1MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD1Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                        if ($("#BB8_OD2MeasurementsA").val() != ""
+                            || $("#BB8_OD2MeasurementsB").val() != ""
+                            || $("#BB8_OD2MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD2Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                    }
+
+                    if(isValid == 1)
+                    {
+                        if("@Model.IsInsulated" != "True")
+                        {
+                            // Apply grid data to model
+                            var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+                            var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+                        }
+
+                        var jsondata =
+                        {
+                            "Version": '@Html.Raw(Json.Encode(Model.Version))',
+                            "JobId": '@Html.Raw(Json.Encode(Model.JobId))',
+                            "PartId": '@Html.Raw(Json.Encode(Model.PartId))',
+                            "ProcessId": '@Html.Raw(Json.Encode(Model.ProcessId))',
+                            "StepId": '@Html.Raw(Json.Encode(Model.StepId))',
+                            "IsUTRequired": '@Html.Raw(Json.Encode(Model.IsUTRequired))',
+                            "IsPTRequired": '@Html.Raw(Json.Encode(Model.IsPTRequired))',
+                            "IsDisplayUT": '@Html.Raw(Json.Encode(Model.IsDisplayUT))',
+                            "IsDisplayPT": '@Html.Raw(Json.Encode(Model.IsDisplayPT))',
+                            "IsCompleted": $("#IsCompleted").val(),
+
+                            "IsSplitLinesVerified": $("#splitLines").val(),
+                            "IsDowelChecksGood": $("#isDowelChecksGood").val(),
+                            "IsBondVerified": $("#isBondVerified").val(),
+                            "IsClean": $("#isClean").val(),
+                            "OD1Measurements": gridDataOD1,
+                            "OD2Measurements": gridDataOD2,
+                            "SizedApprovedBy": $("#BB8_SizedApprovedBy").val(),
+                            "ReadyForFinalMachineBy": $("#BB8_ReadyForFinalMachineBy").val(),
+                            "IsFlaggedForCustomerApproval": 'False',    // TODO: Need to figure this one out
+                            "ProblemResolution": $("#ProblemResolution").val(),
+                        }
+
+                        var postdata =  JSON.stringify(jsondata);
+
+                        $.ajax({
+                            url: '/ProcessBabbitBearing/Save_BB8_FinalMachineInspection',
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            data: postdata,
+                            success: function (data) {
+                                flagForCustomerApproval("JD#" + @Model.JobId + " needs customer OD", '@Model.PartId');
+                            },
+                            error: function (response, error) {
+                                bootbox.alert(error, function () {});
+                            }
+                        });
+
+                    }
+                    else
+                    {
+                        bootbox.alert("Error: Measurements are not completely filled out", function () {});
+                    }
+                }
+            });
+        }
+
+        function OnNoCustomerSizesClick()
+        {
+            bootbox.confirm("Are you sure you want to block this part?", function(result){
+                if(result === false)
+                {
+                    return;
+                }
+                else
+                {
+                    var isValid = 1;
+
+                    if("@Model.IsInsulated" != "True")
+                    {
+
+                        // If the user clicks Save and there are OD values that have been
+                        // entered, but not saved... Save them
+                        if ($("#BB8_OD1MeasurementsA").val() != ""
+                            || $("#BB8_OD1MeasurementsB").val() != ""
+                            || $("#BB8_OD1MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD1Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                        if ($("#BB8_OD2MeasurementsA").val() != ""
+                            || $("#BB8_OD2MeasurementsB").val() != ""
+                            || $("#BB8_OD2MeasurementsC").val() != "")
+                        {
+                            if(!AddMeasurement('BB8_OD2Measurements'))
+                            {
+                                isValid = 0;
+                            }
+                        }
+                    }
+
+                    if(isValid == 1)
+                    {
+                        if("@Model.IsInsulated" != "True")
+                        {
+                            // Apply grid data to model
+                            var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+                            var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+                        }
+
+                        var jsondata =
+                        {
+                            "Version": '@Html.Raw(Json.Encode(Model.Version))',
+                            "JobId": '@Html.Raw(Json.Encode(Model.JobId))',
+                            "PartId": '@Html.Raw(Json.Encode(Model.PartId))',
+                            "ProcessId": '@Html.Raw(Json.Encode(Model.ProcessId))',
+                            "StepId": '@Html.Raw(Json.Encode(Model.StepId))',
+                            "IsUTRequired": '@Html.Raw(Json.Encode(Model.IsUTRequired))',
+                            "IsPTRequired": '@Html.Raw(Json.Encode(Model.IsPTRequired))',
+                            "IsDisplayUT": '@Html.Raw(Json.Encode(Model.IsDisplayUT))',
+                            "IsDisplayPT": '@Html.Raw(Json.Encode(Model.IsDisplayPT))',
+                            "IsCompleted":  $("#IsCompleted").val(),
+
+                            "IsSplitLinesVerified": $("#splitLines").val(),
+                            "IsDowelChecksGood": $("#isDowelChecksGood").val(),
+                            "IsBondVerified": $("#isBondVerified").val(),
+                            "IsClean": $("#isClean").val(),
+                            "OD1Measurements": gridDataOD1,
+                            "OD2Measurements": gridDataOD2,
+                            "SizedApprovedBy": $("#BB8_SizedApprovedBy").val(),
+                            "ReadyForFinalMachineBy": $("#BB8_ReadyForFinalMachineBy").val(),
+                            "IsFlaggedForCustomerApproval": 'False',    // TODO: Need to figure this one out
+                            "ProblemResolution": $("#ProblemResolution").val(),
+                        }
+
+                        var postdata =  JSON.stringify(jsondata);
+
+                        $.ajax({
+                            url: '/ProcessBabbitBearing/Save_BB8_FinalMachineInspection',
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            data: postdata,
+                            success: function (data) {
+                                flagForCustomerApproval("JD#" + @Model.JobId + " has no customer sizes", '@Model.PartId');
+                            },
+                            error: function (response, error) {
+                                bootbox.alert(error, function () {});
+                            }
+                        });
+
+                    }
+                    else
+                    {
+                        bootbox.alert("Error: Measurements are not completely filled out", function () {});
+                    }
+                }
+            });
+        }
+
+
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB8_SizedApprovedBy':
+                case 'BB8_SizedApprovedBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Sizes Approved By");
+                    break;
+                case 'BB8_ReadyForFinalMachineBy':
+                case 'BB8_ReadyForFinalMachineBy1':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Ready for Final Machine By");
+                    skillname = "Start/Edit Jobs";
+                    break;
+
+                case 'PTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: PT Approved By");
+                    skillname = "Management";
+                    break;
+
+                case 'UTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: UT Approved By");
+                    skillname = "Management";
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for all Final Machine Inspection");
+
+            if ($('#BB8_SizedApprovedBy').val().trim() == "") {
+                ids = ids + "BB8_SizedApprovedBy";
+                count = count + 1;
+            }
+
+            if ($('#BB8_ReadyForFinalMachineBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB8_ReadyForFinalMachineBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+    </script>
+}
+

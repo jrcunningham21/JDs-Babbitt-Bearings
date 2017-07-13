@@ -1,0 +1,90 @@
+﻿@model JDsDataModel.ViewModels.ContactViewModel
+
+<div id="contactdetailsdiv">
+    <div class="row-bottom-smaller">
+        <div class="col-md-6" id="contactsDetailsLeftContainer">
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", id = "contactfirstname", placeholder = Html.DisplayNameFor(x => x.FirstName) })
+                    @Html.ValidationMessageFor(m => m.FirstName)
+                </div>
+            </div>
+
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", id = "contactlastname", placeholder = Html.DisplayNameFor(x => x.LastName) })
+                    @Html.ValidationMessageFor(m => m.LastName)
+                </div>
+
+            </div>
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "contactemail", placeholder = Html.DisplayNameFor(x => x.Email) })
+                    @Html.ValidationMessageFor(m => m.Email)
+                    @Html.ValidationMessage("Email")
+
+                </div>
+            </div>
+
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.WorkPhone, new { @class = "form-control", id = "contactworkphone", type = "tel", placeholder = Html.DisplayNameFor(x => x.WorkPhone)})
+                    @Html.ValidationMessageFor(m => m.WorkPhone)
+                </div>
+            </div>
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.Fax, new { @class = "form-control", id = "contactfax", type = "tel", placeholder = Html.DisplayNameFor(x => x.Fax)})
+                    @Html.ValidationMessageFor(m => m.Fax)
+                </div>
+            </div>
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextBoxFor(m => m.CellPhone, new { @class = "form-control", height = 20, id = "contactcellphone", type = "tel", placeholder = Html.DisplayNameFor(x => x.CellPhone), style = "float:left" }) 
+                    @Html.ValidationMessageFor(m => m.CellPhone)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="contactsDetailsRightContainer">
+            <div class="row padd-top">
+                <div class="col-md-12">
+                    @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", @style = "height: 254px;", id = "contactnotes", placeholder = Html.DisplayNameFor(x => x.Notes) })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.HiddenFor(m => m.ContactId, new { id = "contact_contactid" })
+    @Html.HiddenFor(m => m.CustomerId, new { id = "contact_customerid" })
+ </div>
+
+
+<script>
+    var form = $("#jobDetailsForm")
+                            .removeData("validator")
+                            .removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse(form);
+
+    $("input[type=number]").on("keydown", function(e)
+    {
+        if ((33 <= e.keyCode && e.keyCode <=  40) ||
+            (45 <= e.keyCode && e.keyCode <=  46) ||
+            (48 <= e.keyCode && e.keyCode <=  57) ||
+            (96 <= e.keyCode && e.keyCode <= 105) ||
+            ( 8 == e.keyCode))
+            return true;
+
+        return false;
+    });
+
+    //formats phone# input and restricts invalid input
+    $(function () {
+        mask("#contactcellphone");
+        mask("#contactworkphone");
+        mask("#contactfax");
+
+        turnOffAutofill("#contactdetailsdiv");
+    });
+
+</script>

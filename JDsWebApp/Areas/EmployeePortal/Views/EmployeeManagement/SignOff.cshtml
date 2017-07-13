@@ -1,0 +1,103 @@
+﻿@model JDsDataModel.ViewModels.SignOffViewModel
+
+
+<div class="signoff keypad">
+    <form id="signOffForm">
+        <div class="row">
+            <div class="jd-left-6">
+                @Html.PasswordFor(x => x.Pin, new { @class = "jd-sign-off-input", placeholder = Html.DisplayNameFor(x => x.Pin), @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="row">
+            <div id="keypad">
+                <input type="button" class="pinButton" value="7" onclick="appendKey('7'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="8" onclick="appendKey('8'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="9" onclick="appendKey('9'); return false;" readonly="readonly" /><br />
+                <input type="button" class="pinButton" value="4" onclick="appendKey('4'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="5" onclick="appendKey('5'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="6" onclick="appendKey('6'); return false;" readonly="readonly" /><br />
+                <input type="button" class="pinButton" value="1" onclick="appendKey('1'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="2" onclick="appendKey('2'); return false;" readonly="readonly" />
+                <input type="button" class="pinButton" value="3" onclick="appendKey('3'); return false;" readonly="readonly" /><br />
+                <input type="button" class="pinButton" value="0" onclick="appendKey('0'); return false;" style="width: 165px" readonly="readonly" />
+                <input type="button" class="pinButton" value="&larr;" onclick="backspaceKey(); return false;" readonly="readonly" />
+            </div>
+            @Html.HiddenFor(x => x.SkillName)
+            @Html.HiddenFor(x => x.SignOffId)
+        </div>
+
+        <div class="row" align="center">
+            @Html.ValidationMessage("SignOffError")
+        </div>
+    </form>
+
+</div>
+
+<div class="modal-footer">
+    <div class="jd-table-row">
+        <button type="button" class="jd-button-large-gray" id="signOffCancelBtn">Cancel</button>
+    </div>
+</div>
+
+@section scripts
+{
+
+    <script>
+    $(function() {
+        $('#signOffCancelBtn').click(function () {
+            $("#signOffModal").modal('hide');
+        });
+    });
+
+    function appendKey(p) {
+        var pin = $("#Pin").val() + p
+        $("#Pin").val(pin);
+
+        var pinLength = $("#Pin").val().length
+        if (pinLength >= 4) {
+            disableKeyPad();
+            $.ajax({
+                url: '@Url.Action("SignOff", "EmployeeManagement")',
+                type: 'POST',
+                data: $("#signOffForm").serialize(),
+                success: function (data) {
+                    if (data.result === true) {
+                        SignOffSenderAction(data.signOffId);
+                    } else {
+                        enableKeyPad();
+                        $('#signOffContentDiv').html(data);
+                        $('#signOffContentDiv').fadeIn('fast');
+                        $('#signOffModal').modal('show');
+                    }
+                },
+                error: function (e) {
+                    $("span[data-valmsg-for='SignOffError']")
+                        .removeClass("field-validation-valid")
+                        .addClass("field-validation-error")
+                        .show()
+                        .html("Error has occured.");
+                    enableKeyPad();
+                }
+            });
+        }
+    }
+
+    function backspaceKey() {
+        var old = $("#Pin").val();
+        document.getElementById('Pin').value = old.slice(0, -1);
+    }
+
+    function disableKeyPad() {
+        $("input[class='pinButton']").each(function () {
+            $(this).attr("disabled", "disabled")
+        })
+    }
+
+    function enableKeyPad() {
+        $("input[class='pinButton']").each(function () {
+            $(this).removeAttr("disabled")
+        })
+    }
+
+    </script>
+}

@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Set your employee data here</h2>
+
+<div>Name:</div>
+<div>@HttpContext.Current.Request.Cookies["EmployeeName"].Value</div>
+
+@section scripts
+{
+    <script>
+        $('#employMgmtEntry').addClass('aside-entry-active');
+    </script>
+}

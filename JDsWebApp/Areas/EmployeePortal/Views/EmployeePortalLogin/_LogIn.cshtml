@@ -1,0 +1,66 @@
+﻿@model JDsWebApp.Areas.EmployeePortal.Models.EmployeePortalLogin.EmployeeLoginViewModel
+
+<div id="logindiv">
+    <h2>ENTER YOUR JD'S PIN BELOW</h2>
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="content-wrapper">
+                @using (Html.BeginForm("LogIn", "EmployeePortalLogin", FormMethod.Post, new { }))
+                {
+                    @Html.PasswordFor(m => m.Pin, new {@id = "pin", @class="jd-input", autocomplete = "off", placeholder =Html.DisplayNameFor(x => x.Pin), style="width: 100px;height:48px"})
+                    <input type="submit" id="login" class="pinButton" style="width: 125px;height:55px" name="Login" value="LOGIN" readonly="readonly"/>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="keypad" style="margin-top: 10px;">
+                <input type="button" class="pinButton" value="7" onclick="appendKey('7'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="8" onclick="appendKey('8'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="9" onclick="appendKey('9'); return false;" readonly="readonly"/><br/>
+                <input type="button" class="pinButton" value="4" onclick="appendKey('4'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="5" onclick="appendKey('5'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="6" onclick="appendKey('6'); return false;" readonly="readonly"/><br/>
+                <input type="button" class="pinButton" value="1" onclick="appendKey('1'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="2" onclick="appendKey('2'); return false;" readonly="readonly"/>
+                <input type="button" class="pinButton" value="3" onclick="appendKey('3'); return false;" readonly="readonly"/><br/>
+                <input type="button" class="pinButton" value="0" onclick="appendKey('0'); return false;" style="width: 165px" readonly="readonly"/>
+                <input type="button" class="pinButton" value="&larr;" onclick="backspaceKey(); return false;" readonly="readonly"/>
+            </div>
+        </div>
+
+        <div class="row" align="center">
+            @Html.ValidationSummary()
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var uri =  window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api/SignOff/';
+
+    function appendKey(p) {
+
+        var pin = document.getElementById("pin").value + p;
+        document.getElementById("pin").value = pin;
+
+        //$.getJSON(uri + pin)
+        //    .done(function (data) {
+
+        //        if (data.IsValidPIN) {
+        //            $("#LogIn").submit();
+        //        }
+        //    });
+    }
+
+    function backspaceKey() {
+        var old = document.getElementById('pin').value;
+        document.getElementById('pin').value = old.slice(0, -1);
+    }
+
+    $(function () {
+        $("#pin").focus();
+    });
+
+
+</script>

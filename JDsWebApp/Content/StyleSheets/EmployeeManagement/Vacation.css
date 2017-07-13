@@ -1,0 +1,61 @@
+﻿.k-overlay {
+    z-index: 6 !important;
+}
+
+.modal-backdrop {
+    z-index: 6;
+}
+
+.k-window {
+    z-index: 7 !important;
+}
+
+.k-event {
+    background-color: #DFE3EF;
+    border-color: #B4BDD7;
+    color: black;
+}
+
+.k-header {
+    background-color: #DFE3EF;
+    border-color: #B4BDD7;
+}
+
+    .k-header > .k-link {
+        color: black;
+    }
+
+.k-link:link {
+    color: black;
+}
+
+.k-icon, k-i-calendar {
+    color: black;
+}
+
+.k-event-template {
+    font-size: 10px;
+}
+
+.k-window-title:before 
+{
+    content: "Vacation ";
+}
+
+.invisibleRadioDiv{
+    visibility: collapse;
+}
+
+.hoursLeft{
+    margin-top:5px;
+}
+
+.halfDay{
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.k-window-titlebar .k-header {
+    margin-top:0;
+    padding-bottom:30px;
+}

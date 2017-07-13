@@ -1,0 +1,250 @@
+﻿@using JDsWebApp.Helpers
+@model JDsWebApp.Areas.EmployeePortal.Models.EmployeeManagement.EmployeeViewModel
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && HttpContext.Current.Request.Cookies["EmployeeRole"].Value == "Manager")
+{
+    <div id="employeedetailsdiv">
+        
+        @using (Ajax.BeginForm("SaveEmployee", "EmployeeManagement", null,
+            new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "employeedetailsdiv",
+                InsertionMode = InsertionMode.Replace,
+                OnBegin = "OnSaveEmployeeBegin",
+                OnSuccess = "OnSaveEmployeeSuccess",
+                AllowCache = false,
+            },
+            new {id = "editEmployeeForm"}))
+        {
+            <input type="hidden" id="_employeepartialview" value="employeedetails"/>
+            <div class="row padd-top padd-bottom pull-left">
+                <div class="col-md-4">
+                    @Html.AntiForgeryToken()
+                    @if (Model.EmployeeId == 0)
+                    {
+                        <div class="row padd-top padd-bottom">
+                            <div class="col-md-12">
+                                <h5>New Employee:</h5>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row padd-top padd-bottom">
+                            <div class="col-md-12">
+                                <h5>Employee:</h5>
+                            </div>
+                        </div>
+                    }
+
+                    @Html.HiddenFor(m => m.EmployeeId)
+                    @Html.HiddenFor(m => m.AddressId)
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", height = 20, id = "name", placeholder = Html.DisplayNameFor(x => x.Name)})
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.AddressLine1, new {@class = "form-control", id = "address1", placeholder = Html.DisplayNameFor(x => x.AddressLine1)})
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.AddressLine2, new {@class = "form-control", id = "address2", placeholder = Html.DisplayNameFor(x => x.AddressLine2)})
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.City, new {@class = "form-control", id = "city", placeholder = Html.DisplayNameFor(x => x.City)})
+
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(x => x.State, SelectListItemHelper.GetUsStatesList(), new {@class = "form-control", id = "state"})
+                            @Html.HiddenFor(m => m.Country)
+
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Zip, new {@class = "form-control", id = "city", placeholder = Html.DisplayNameFor(x => x.Zip)})
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Phone, new {@class = "form-control", id = "phone", type = "tel", placeholder = Html.DisplayNameFor(x => x.Phone)})
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom ">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Email, new {@class = "form-control", id = "email", type = "email", placeholder = Html.DisplayNameFor(x => x.Email)})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            <h5>Hire Date:</h5>
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            <input id="hiredate" name="HireDate" style="width:125px">
+                        </div>
+
+                    </div>
+
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            <h5>Emergency Contact:</h5>
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.EmergencyContact, new {@class = "form-control", id = "emergencycontact", placeholder = Html.DisplayNameFor(x => x.EmergencyContact)})
+                        </div>
+                    </div>
+
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.EmergencyPhone, new {@class = "form-control", id = "emergencyphone", placeholder = Html.DisplayNameFor(x => x.EmergencyPhone)})
+
+
+                        </div>
+                    </div>
+
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Notes, new {@class = "form-control", id = "notes", placeholder = Html.DisplayNameFor(x => x.Notes)})
+                        </div>
+                    </div>
+
+
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            <h5 style="float: left;">PIN:</h5>
+                            @*<h5 style="float: left;width: 40%">Files:</h5>*@
+                        </div>
+                    </div>
+
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-6">
+                            @Html.PasswordFor(m => m.PIN, new {@class = "form-control", value = Model.PIN, id = "pin", autocomplete = "off", placeholder = Html.DisplayNameFor(x => x.PIN)})
+                        </div>
+                        <div class="col-md-6">
+                            @*Not populated for security reasons, BUT since this is viewed by manager only....*@
+                            @if (Model.EmployeeId != 0)
+                            {
+                                <a class="btn btn-primary" onclick="LoadSelectedEmployeeFiles()" style="width: 100px;"><span aria-hidden="true"></span>Upload Files</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary disabled" style="width: 100px;"><span aria-hidden="true"></span>Upload Files</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-12">
+                            <h5>Vacation Used / Earned:</h5>
+                        </div>
+                    </div>
+                    <div class="row padd-top padd-bottom">
+                        <div class="col-md-4 pull-left">
+                            @Html.TextBoxFor(m => m.VacationHoursUsed, new {@class = "form-control", disabled = "disabled", id = "vacHoursUsed", placeholder = Html.DisplayNameFor(x => x.VacationHoursUsed)})
+                        </div>
+                        <div class="col-md-4 pull-left">
+                            @Html.TextBoxFor(m => m.VacationHoursEarned, new {@class = "form-control", disabled = "disabled", id = "vacHoursEarned", placeholder = Html.DisplayNameFor(x => x.VacationHoursEarned)})
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row padd-top padd-bottom pull-left">
+                <div class="col-md-12">
+
+                    <input id="employeesaveBtn" class="btn btn-primary" type="submit" value="Save" readonly="readonly" style="width: 120px;"/>
+                    <input id="employeecancelBtn" class="btn btn-danger" onclick="LoadSelectedEmployee()" value="Cancel" style="width: 120px;"/>
+
+                </div>
+            </div>
+            <div class="row pull-left">
+                <h5>@Html.ValidationSummary()</h5>
+            </div>
+
+        }
+    </div>
+}
+
+<script>
+    
+    //formats phone# input and restricts invalid input
+    $(function() {
+        mask("#phone");
+        mask("#emergencyphone");
+
+        //strip the JQuery mask before submission
+        $("#editEmployeeForm").submit(function(e) {
+            var phone = $("#editEmployeeForm").find("#phone");
+            var emphone = $("#editEmployeeForm").find("#emergencyphone");
+
+            var newphone = phone.val().replace(/\D/g, "");
+            var newemphone = emphone.val().replace(/\D/g, "");
+
+            phone.val(newphone);
+            emphone.val(newemphone);
+        });
+
+        turnOffAutofill("#editEmployeeForm");
+
+        $("#hiredate").kendoDatePicker({
+        }).data("kendoDatePicker").value(@Html.Raw(Json.Encode(Model.HireDate)));
+    });
+
+    //ViewData.phone
+    var isValid = '@Html.Raw(Json.Encode(ViewData.ModelState.IsValid))';
+    var modelId = '@Html.Raw(Json.Encode(Model.EmployeeId))';
+
+    function OnSaveEmployeeBegin() {
+        document.getElementById("employeesaveBtn").disabled = true;
+    }
+
+    function OnSaveEmployeeSuccess(response) {
+        if (isValid != 'true') {
+            $('#statuslabel').text("Save Failed");
+        } else {
+            // re-load the employee name drop-down
+            console.log(response);
+            LoadEmployeeDropDownList();
+            $("#employeelist").data("kendoDropDownList").dataSource.one("change", LoadSelectedEmployee);
+            notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");
+        }
+
+        document.getElementById("employeesaveBtn").disabled = false;
+    }
+
+    function LoadEmployeeFiles(name, employeeId) {
+        $.get('/EmployeePortal/EmployeeUpload/EmployeeFilesMgmt/?name=' + name + '&id=' + employeeId, function (data) {
+            $('#employeecontentdiv').html(data);
+            $('#employeecontentdiv').fadeIn('fast');
+        });
+    }
+
+    function LoadSelectedEmployeeFiles() {
+        var name = $('#employeelist').text();
+        var employeeId = $('#employeelist').val();
+
+        if (modelId === 0) {
+            // TODO confirmation box - workflow for saving new employee information before viewing files
+            $("#editEmployeeForm").submit();
+        }
+
+        LoadEmployeeFiles(name, employeeId);
+    }
+</script>

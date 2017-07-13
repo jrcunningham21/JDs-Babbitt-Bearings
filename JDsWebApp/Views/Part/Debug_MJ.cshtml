@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewBag.Title = "Debug_MJ";
+}
+
+
+<style>
+    #draggable {
+        cursor: move;
+        position: absolute;
+        top: 260px;
+        left: 50%;
+        margin-left: -28px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: #03a9f4;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+    }
+
+    .painted {
+        background-color: #03a9f4;
+        color: #fff;
+    }
+
+    #draggable.hollow {
+        cursor: default;
+        background: #ececec;
+    }
+
+    #droptarget {
+        height: 200px;
+        width: 200px;
+        font-size: 14px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 200px;
+        margin: 0 auto;
+        cursor: default;
+        border: 1px solid #999;
+    }
+
+    .demo-section {
+        height: 300px;
+        position: relative;
+    }
+
+    .day-header {
+        background: green;
+        display:block;
+        min-height:115px;
+        min-width:850px;
+        border: 2px solid darkgreen;
+        margin: 0px;
+    }
+    
+
+    .day-header-label {
+        font-weight:bold;
+        text-align:left;
+        width:25px;
+        margin-top:5px;
+        margin-left:5px;
+        display:inline;
+        vertical-align:top;
+    }
+</style>
+
+
+<h2>This page only exists as a placeholder to test the part info pop-up</h2>
+
+<button  class="btn btn-primary" id="showBtn" >Show part info popup</button>
+
+
+@{Html.RenderPartial("PartInfoPopUpModal");}
+
+<div style="height:50px"> </div>
+
+<button class="btn btn-default" id="prevWeekBtn" style="display:block">Previous week</button>
+<div style="width:100%;">
+    <div class="day-header" id="monday"><label    id="monLabel" class="day-header-label">Mon    </label></div>
+    <div class="day-header" id="tuesday" ><label  id="tueLabel" class="day-header-label">Tue  </label></div>
+    <div class="day-header" id="wednesday"><label id="wedLabel" class="day-header-label">Wed </label></div>
+    <div class="day-header" id="thursday"><label  id="thuLabel" class="day-header-label">Thu  </label></div>
+    <div class="day-header" id="friday"><label    id="friLabel" class="day-header-label">Fri    </label></div>
+    <div class="day-header" id="saturday"><label  id="satLabel" class="day-header-label">Sat  </label></div>
+    <div class="day-header" id="sunday"><label    id="sunLabel" class="day-header-label">Sun    </label></div>
+</div>
+<button class="btn btn-default" id="nextWeekBtn" style="display:block">Next week</button>
+
+
+@*<div class="">
+    <div id="droptarget" class="">Drag the small circle here.</div>
+    <div id="draggable"></div>
+</div>*@
+
+<div id="job509" class="bigboard-job-inprogress job" style="width:200px; display:inline-block;margin:3px;">
+    <div style="font-weight: 600;" class="searchable"><span style="text-decoration: underline;" >JD#: 509 Jones Group, Customer Job: #0019</span></div>
+    <div>Contact: 01 First 01 Contact 111-111-1111</div>
+
+    <div class="03042016"> </div>
+</div>
+
+
+
+
+<script>
+
+    var elementBeingDragged;
+    var dropTarget;
+    var currentDate;
+
+    $(function () {
+
+        $("#prevWeekBtn").click(function () {
+            currentDate = addDays(currentDate, -7);
+            loadWeek(currentDate);
+        });
+
+        $("#nextWeekBtn").click(function () {
+            currentDate = addDays(currentDate, +7);
+            loadWeek(currentDate);
+        });
+
+        $("#showBtn").click(function () {
+            var partId = 347;     // hard code a part ID for this test
+            showPartPopup(partId, 0);
+        });
+
+        $("#job509").kendoDraggable({
+            hint: function () {
+                return $("#job509").clone();
+            },
+            dragstart: draggableOnDragStart,
+            dragend: draggableOnDragEnd
+        });
+
+
+        $(".day-header").kendoDropTarget({
+            dragenter: droptargetOnDragEnter,
+            dragleave: droptargetOnDragLeave,
+            drop: droptargetOnDrop
+        });
+
+        $("#prevWeekBtn").kendoDropTarget({
+            dragenter: droptargetLoadPrevPage,
+        });
+
+        $("#nextWeekBtn").kendoDropTarget({
+            dragenter: droptargetLoadNextPage,
+        });
+
+        currentDate = new Date();
+        loadWeek(currentDate);
+    });
+
+    function getMonday( date ) {
+        var day = date.getDay() || 7;  
+        if( day !== 1 ) 
+            date.setHours(-24 * (day - 1)); 
+        return date;
+    }
+
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    function calcWeekDates(date) {
+
+        var lastMonday = getMonday(date).setHours(12,0,0);
+        
+        var dMon = addDays(lastMonday, 0);
+        var dTue = addDays(lastMonday, 1);
+        var dWed = addDays(lastMonday, 2);
+        var dThu = addDays(lastMonday, 3);
+        var dFri = addDays(lastMonday, 4);
+        var dSat = addDays(lastMonday, 5);
+        var dSun = addDays(lastMonday, 6);
+
+        $("#monLabel").text("Mon " + (dMon.getMonth() + 1) + "-" + dMon.getDate() + "-" + dMon.getFullYear());
+        $("#tueLabel").text("Tue " + (dTue.getMonth() + 1) + "-" + dTue.getDate() + "-" + dTue.getFullYear());
+        $("#wedLabel").text("Wed " + (dWed.getMonth() + 1) + "-" + dWed.getDate() + "-" + dWed.getFullYear());
+        $("#thuLabel").text("Thu " + (dThu.getMonth() + 1) + "-" + dThu.getDate() + "-" + dThu.getFullYear());
+        $("#friLabel").text("Fri " + (dFri.getMonth() + 1) + "-" + dFri.getDate() + "-" + dFri.getFullYear());
+        $("#satLabel").text("Sat " + (dSat.getMonth() + 1) + "-" + dSat.getDate() + "-" + dSat.getFullYear());
+        $("#sunLabel").text("Sun " + (dSun.getMonth() + 1) + "-" + dSun.getDate() + "-" + dSun.getFullYear());
+
+    }
+
+    // Load the dates and vals from the db
+    function loadWeek(d) {
+        calcWeekDates(currentDate);
+
+        // Load the jobs for this week
+
+    }
+
+    function draggableOnDragStart(e) {
+
+        elementBeingDragged = e.toElement;
+        console.log("started dragging:");
+        console.log(e.currentTarget[0]);
+    }
+
+    function droptargetOnDragEnter(e) {
+        console.log('entering');
+        console.log(e.dropTarget[0]);
+        console.log("with:");
+        console.log(e.draggable.currentTarget[0])
+    }
+
+    function droptargetLoadPrevPage(e) {
+        currentDate = addDays(currentDate, -7);
+        loadWeek(currentDate);
+    }
+
+
+    function droptargetLoadNextPage(e) {
+        currentDate = addDays(currentDate, +7);
+        loadWeek(currentDate);
+    }
+
+
+    function droptargetOnDragLeave(e) {
+        console.log('leaving');
+        console.log(e.dropTarget[0]);
+        console.log("with:");
+        console.log(e.draggable.currentTarget[0])
+    }
+
+    function droptargetOnDrop(e) {
+
+        console.log('dropping onto');
+        console.log(e.dropTarget[0]);
+        console.log("with:");
+        console.log(e.draggable.currentTarget[0])
+
+        dropTarget = e.dropTarget[0];
+    }
+
+    function draggableOnDragEnd(e) {
+
+        console.log('on drag end with');
+        console.log(e.currentTarget[0])
+
+        //
+        $(e.currentTarget[0]).detach();
+        $(e.currentTarget[0]).appendTo(dropTarget);
+
+    }
+
+
+</script>

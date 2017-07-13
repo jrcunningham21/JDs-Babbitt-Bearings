@@ -1,0 +1,751 @@
+﻿@using JDsWebApp.Areas.EmployeePortal.Models.EmployeeTimesheets
+@model TimesheetViewModel
+
+<script>
+    function testDate(index) {
+        var gridData = $("#timesheetentriesgrid").data("kendoGrid").dataSource.data();
+        var date = gridData[index].Day;
+        var targetTime = new Date(date);
+        var timeZoneFromDB = 6.00; //time zone value from database. NOTE: This is hard-coded to central daylight time :(
+        //get the timezone offset from local time in minutes
+        var tzDifference = timeZoneFromDB * 60 + targetTime.getTimezoneOffset();
+        //convert the offset to milliseconds, add to targetTime, and make a new Date
+        var offsetTime = new Date(targetTime.getTime() + tzDifference * 60 * 1000);
+
+        return offsetTime;
+    }
+
+    function getStringFromDate(date, index) {
+        // so date will be in format of hh:mm:tt or it will be null
+
+        if (date == null || !date.trim()) return '';
+
+        return date.split(':')[index];
+    }
+</script>
+
+
+@using (Ajax.BeginForm("SaveTimesheet", "EmployeeTimesheets", null,
+                                                    new AjaxOptions
+                                                    {
+                                                        HttpMethod = "POST",
+                                                        UpdateTargetId = "timesheetentriesdiv",
+                                                        InsertionMode = InsertionMode.Replace,
+                                                        OnBegin = "OnSaveTimesheetBegin",
+                                                        OnComplete = "OnSaveTimesheetComplete"
+                                                    },
+                                                    new { id = "timesheetForm" }))
+{
+    <div id="timesheetentriesdiv" class="row" style="margin-top: 15px">
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.EmployeeId)
+            @Html.HiddenFor(model => model.StartPayPeriod)
+            <div>
+                <div id="timesheetentriesgrid"></div>
+            </div>
+
+            <div class="row">
+                <div style="margin: 20px">
+                    <div style="width:145px; display:inline-block;">
+                        @Html.LabelFor(m => m.TotalHours, new { @style = "width: 60%;" })
+                    </div>
+                    <div style="display:inline-block; margin-left:-50px;" id="totalTimeDiv">
+                        @Html.DisplayFor(m => m.TotalHours, new { @style = "width: 39%;" })
+                    </div>
+                    <br />
+                    <div style="width:145px; display:inline-block;">
+                        @Html.LabelFor(m => m.TotalStraight, new { @style = "width: 60%" })
+                    </div>
+                    <div style="display:inline-block; margin-left:-50px;" id="straightTimeDiv">
+                        @Html.DisplayFor(m => m.TotalStraight, new { @style = "width: 39%;" })
+                    </div>
+                    <br />
+                    <div style="width:145px; display:inline-block">
+                        @Html.LabelFor(m => m.TotalOvertime, new { @style = "width: 60%" })
+                    </div>
+                    <div style="display:inline-block; margin-left:-50px;" id="overTimeDiv">
+                        @Html.DisplayFor(m => m.TotalOvertime, new { @style = "width: 39%;" })
+                    </div>
+                    <br />
+                    <div style="width:145px; display:inline-block">
+                        @Html.LabelFor(m => m.TotalDoubleTime, new { @style = "width: 60%" })
+                    </div>
+                    <div style="display:inline-block; margin-left:-50px;" id="doubleTimeDiv">
+                        @Html.DisplayFor(m => m.TotalDoubleTime, new { @style = "width: 39%;" })
+                    </div>
+                </div>
+                </div>
+            </div>
+
+}
+<script>
+    var isValid = '@Html.Raw(Json.Encode(ViewData.ModelState.IsValid))';
+    
+    $(document).ready(function () {
+        $("#timesheetentriesgrid").kendoGrid({
+            dataSource: {
+                data: @Html.Raw(Json.Encode(Model.TimesheetEntries)),
+                pageSize: 50,
+                schema: {
+                    model: {
+                        id: "Index",
+                        fields: {
+                            Index: {
+                                editable: false,
+                                type: "number"
+                            },
+                            TimesheetEntryId: {
+                                editable: false,
+                                type: "number"
+                            },
+                            VacationId: {
+                                editable: false,
+                                type: "number"
+                            }, 
+                            Day: {
+                                editable: false,
+                                type: "date"
+                            },
+                            IsVacationSignedOff: {
+                                editable: false,
+                                type: "boolean"
+                            },
+                            WorkedHours: {
+                                editable: false,
+                                type: "string"
+                            },
+                            VacationHours: {
+                                editable: false,
+                                type: "string"
+                            }
+                        }
+                    }
+                }
+            },
+            sortable: true,
+            scrollable: false,
+            dataBound: dataBound,
+            columns: [{
+                field: "Index",
+                hidden: true
+            }, {
+                field: "TimesheetEntryId",
+                title: "Timesheet Entry:",
+                template: "<input type='text' id='TimesheetEntryId#=Index#' name='TimesheetEntryId#=Index#' value='#=TimesheetEntryId#' />",
+                hidden: true
+            }, {
+                field: "VacationId",
+                title: "Vacation Entry:",
+                template: "<input type='text' id='VacationId#=Index#' name='VacationId#=Index#' value='#=VacationId#' />",
+                hidden: true
+            }, {
+                field: "Day",
+                width: 150,
+                template: "#=kendo.toString(testDate(Index), 'dddd MM/dd/yyyy')#",
+                attributes: {
+                    "class": "templateCell",
+                    style: "text-align: right",
+                    Day: "Day#=Index#",
+                    id: "Day#=Index#"
+                }
+            }, {
+                field: "StartTime",
+                title: "Start:",
+                width: 170,
+                template: "<span><select class='start-time-counter' id='StartTime#=Index#h' name='StartTime#=Index#h' onchange='onDateChange(this)' value='#=getStringFromDate(StartTime,0)#'><option value='-1'></option>  <option value='12'>12</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option>  </select>:<select id='StartTime#=Index#m' name='StartTime#=Index#m' onchange='onDateChange(this)' value='#=getStringFromDate(StartTime,1)#'><option value='-1'></option><option value='00'>00</option><option value='05'>05</option><option value='10'>10</option><option value='15'>15</option><option value='20'>20</option><option value='25'>25</option><option value='30'>30</option><option value='35'>35</option><option value='40'>40</option><option value='45'>45</option><option value='50'>50</option><option value='55'>55</option></select>   <select  id='StartTimeAmPm#=Index#' name='StartTimeAmPm#=Index#' onchange='onDateChange(this)' value='#=getStringFromDate(StartTime,2)#'> <option value='-1'></option> <option value='AM'>AM</option> <option value='PM'>PM</option> </select> </span>"
+            }, {
+                field: "EndTime",
+                title: "End:",
+                width: 170,
+                template: "<span><select id='EndTime#=Index#h' name='EndTime#=Index#h' onchange='onDateChange(this)' value='#=getStringFromDate(EndTime,0)#'> <option value='-1'></option>  <option value='12'>12</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option>  </select>:<select id='EndTime#=Index#m' name='EndTime#=Index#m' onchange='onDateChange(this)' value='#=getStringFromDate(EndTime,1)#'><option value='-1'></option><option value='00'>00</option><option value='05'>05</option><option value='10'>10</option><option value='15'>15</option><option value='20'>20</option><option value='25'>25</option><option value='30'>30</option><option value='35'>35</option><option value='40'>40</option><option value='45'>45</option><option value='50'>50</option><option value='55'>55</option></select> <select   id='EndTimeAmPm#=Index#' name='EndTimeAmPm#=Index#' onchange='onDateChange(this)' value='#=getStringFromDate(EndTime,2)#'> <option value='-1'></option> <option value='AM'>AM</option> <option value='PM'>PM</option></select> </span>"
+            }, {
+                field: "IsSkipMeal",
+                title: "Skip Meal:",
+                width: 100,
+                template: "<input type='checkbox' id='IsSkipMeal#=Index#' onchange='onSkipMealClick(this)' name='IsSkipMeal#=Index#' # if(IsSkipMeal == true) {#checked#}# style='margin-left:30px' />"
+            }, {
+                field: "IsVacationSignedOff",
+                title: "Signed Off:",
+                attributes: {
+                    name: "IsVacationSignedOff#=Index#"
+                },
+                hidden: true
+            }, {
+                field: "WorkedHours",
+                title: "Worked:",
+                width: 50,
+                attributes: {
+                    name: "WorkedHours#=Index#",
+                    id: "WorkedHours#=Index#"
+                }
+            }, {
+                field: "VacationHours",
+                title: "Vacation:",
+                attributes: {
+                    name: "VacationHours#=Index#"
+                }
+            }]
+        });
+    });
+
+
+    function updateTimeTotals() {
+        calculateNewTotals();
+    }
+
+    function onSkipMealClick(self) {
+        var id = $(self).attr('id');
+        var theNum = id.replace(/\D/g, '');
+
+        var startHour = $("#StartTime" + theNum + "h" + " option:selected").val();
+        startHour = parseInt(startHour);
+        var startMin = $("#StartTime" + theNum + "m" + " option:selected").val();
+        startMin = parseInt(startMin);
+        var startAmPm = $("#StartTimeAmPm" + theNum + " option:selected").val();
+        var isStartPm = startAmPm === "PM";
+
+        var endHour = $("#EndTime" + theNum + "h" + " option:selected").val();
+        endHour = parseInt(endHour);
+        var endMin = $("#EndTime" + theNum + "m" + " option:selected").val();
+        endMin = parseInt(endMin);
+        var endAmPm = $("#EndTimeAmPm" + theNum + " option:selected").val();
+        var isEndPm = endAmPm === "PM";
+
+        var startHourMod = isStartPm == true ? 12 : 0;
+        var endHourMod = isEndPm == true ? 12 : 0;
+        
+        // Midnight is a special case
+        if (startHour == 12 && isStartPm == false) startHourMod = -12;
+        if (endHour == 12 && isEndPm == false) endHourMod = -12;
+
+        // Noon is a special case
+        if (startHour == 12 && isStartPm == true) startHourMod = 0;
+        if (endHour == 12 && isEndPm == true) endHourMod = 0;
+
+        startHour += startHourMod;
+        endHour += endHourMod;
+
+        var skipMealBoxChecked = $("#IsSkipMeal" + theNum).prop('checked');
+
+
+        // Gets the time difference between Start and End
+        var workedHour = Math.abs((endHour + (endMin / 60)) - (startHour + (startMin / 60)));
+        // If something is unset in the row, set num hours worked to 0
+        if (startHour == -1 || startMin == -1 || startAmPm == -1 || endHour == -1 || endMin == -1 || endAmPm == -1)
+            workedHour = 0;
+        var workedTime = workedHour;
+
+        var isRowTimeSet = startHour != -1 && startMin != -1 && endHour != -1 && endMin != -1;
+
+        if (!skipMealBoxChecked && isRowTimeSet) {
+            workedTime = workedTime - .5;
+        }
+
+        // Format hours to display 2 decimal places X.XX
+        var workedTimeAsStr = workedTime.toFixed(2);
+    
+        if (isRowTimeSet) {
+            $("#WorkedHours" + theNum).text(workedTimeAsStr);
+        }
+        else {
+            $("#WorkedHours" + theNum).text('');
+        }
+
+        updateTimeTotals();
+    }
+
+    function validateAllRows() {
+
+        var anyErrorsFound = false;
+        for (i = 0; i < 16; i++) {
+
+            // make sure this is a valid ID
+            var exists = !!document.getElementById('StartTime'+i+'h');
+            if (!exists) continue;
+
+            var startHour = $("#StartTime" + i + "h" + " option:selected").val();
+            startHour = parseInt(startHour);
+            var startMin = $("#StartTime" + i + "m" + " option:selected").val();
+            startMin = parseInt(startMin);
+            var startAmPm = $("#StartTimeAmPm" + i + " option:selected").val();
+            var isStartPm = startAmPm === "PM";
+
+            var endHour = $("#EndTime" + i + "h" + " option:selected").val();
+            endHour = parseInt(endHour);
+            var endMin = $("#EndTime" + i + "m" + " option:selected").val();
+            endMin = parseInt(endMin);
+            var endAmPm = $("#EndTimeAmPm" + i + " option:selected").val();
+            var isEndPm = endAmPm === "PM";
+
+            var startHourMod = isStartPm == true ? 12 : 0;
+            var endHourMod = isEndPm == true ? 12 : 0;
+
+            // Midnight is a special case
+            if (startHour == 12 && isStartPm == false) startHourMod = -12;
+            if (endHour == 12 && isEndPm == false) endHourMod = -12;
+
+            // Noon is a special case
+            if (startHour == 12 && isStartPm == true) startHourMod = 0;
+            if (endHour == 12 && isEndPm == true) endHourMod = 0;
+            
+            startHour += startHourMod;
+            endHour += endHourMod;
+            
+            var newWorkedHour = Math.abs((endHour + (endMin / 60)) - (startHour + (startMin / 60)));
+            // If something is unset in the row, set num hours worked to 0
+            if (startHour == -1 || startMin == -1 || startAmPm == -1 || endHour == -1 || endMin == -1 || endAmPm == -1)
+                newWorkedHour = 0;
+            var newWorkedTime = newWorkedHour;
+
+            var skipMealBoxChecked = $("#IsSkipMeal" + i).prop('checked');
+
+            var isRowTimeSet = startHour != -1 && startMin != -1 && endHour != -1 && endMin != -1;
+            if (!skipMealBoxChecked && isRowTimeSet) {
+                newWorkedTime -= .5;
+            }
+
+            // Format hours to display 2 decimal places X.XX
+            newWorkedTime = newWorkedTime.toFixed(2);
+
+            var workedHours = $("#WorkedHours" + i);
+            workedHours.text(newWorkedTime);
+
+
+            var tableRow = $('#StartTime' + i + 'h').closest('tr');
+
+            // TIME SHEET VALIDATION:
+            // makes sure that start time is less than end time,
+            // validates null entries (need to have all null value for a row or none)
+            // changes background color red and disables save button if error occurs
+            // and changes it back when an entry is determined valid
+
+            // New requirement: it's OK to save incomplete data, but you have to have completed all parts of the either start or end
+            if ((startHour != -1 && startMin == -1) || (startHour == -1 && startMin != -1) || (startAmPm == -1 && (startHour != -1 || startMin != -1))) {
+                // if either are set, both need to be set
+                tableRow.addClass('jd-error-row');
+                anyErrorsFound = true;
+                $("#WorkedHours" + i).text('Error'); 
+            }
+
+            if ((endHour != -1 && endMin == -1) || (endHour == -1 && endMin != -1) || (endAmPm == -1 && (endHour != -1 || endMin != -1))) {
+                if (endAmPm == -1) {
+                    // if either are set, both need to be set
+                    tableRow.addClass('jd-error-row');
+                    anyErrorsFound = true;
+                    $("#WorkedHours" + i).text('Error');
+                }
+            }
+
+            if (startHour > endHour && startHour != -1 && startMin != -1 && endHour != -1 && endMin != -1) {
+                // Error
+                //tableRow.css('background-color', '#ffaaaa');
+                tableRow.addClass('jd-error-row');
+                anyErrorsFound = true;
+                $("#WorkedHours" + i).text('Error');
+            }
+
+            if (startHour == endHour && startHour != -1 && startMin != -1 && endHour != -1 && endMin != -1) {
+                //Check minutes
+                if (startMin >= endMin) {
+                    //Error
+                    tableRow.css('background-color', '#ffaaaa');
+                    anyErrorsFound = true;
+                    $("#WorkedHours" + i).text('Error');
+                }
+                else {
+                    // Valid
+                    //tableRow.css('background-color', 'transparent');
+                    tableRow.removeClass('jd-error-row');
+                }
+            }
+            if (startHour < endHour && startHour != -1 && startMin != -1 && endHour != -1 && endMin != -1) {
+                // Valid time
+                //tableRow.css('background-color', 'transparent');
+                tableRow.removeClass('jd-error-row');
+            }
+
+            if (newWorkedTime < 0) {
+                tableRow.css('background-color', '#ffaaaa');
+                tableRow.addClass('jd-error-row');
+                anyErrorsFound = true;
+            }
+
+        }
+
+        if (anyErrorsFound) {
+            document.getElementById("timesheetsaveBtn").disabled = true;
+        }
+        else {
+            document.getElementById("timesheetsaveBtn").disabled = false;
+        }
+
+
+    }
+
+    function onDateChange(self) {
+        var id = $(self).attr('id');
+        var theNum = id.replace(/\D/g, '');
+        updateTimeTotals();
+
+    }
+
+    function OnSaveClicked() {
+
+        OnSaveTimesheetBegin();
+
+        var gridData = $("#timesheetentriesgrid").data("kendoGrid").dataSource.data();
+        for (var i = 0; i < gridData.length; i++) {
+
+            var year = gridData[i].Day.getFullYear();
+            var month = gridData[i].Day.getMonth();
+            var day = gridData[i].Day.getDate();
+
+            var timeval = $("#StartTime" + i + "h" + " option:selected").val();
+
+            if (timeval != -1) {
+                //gridData[i].StartTime = new Date(year, month, day, $("#StartTime" + i + "h" + " option:selected").text(), $("#StartTime" + i + "m" + " option:selected").text(), 0, 0);
+                //gridData[i].EndTime = new Date(year, month, day, $("#EndTime" + i + "h" + " option:selected").text(), $("#EndTime" + i + "m" + " option:selected").text(), 0, 0);
+
+                gridData[i].StartTime = $("#StartTime" + i + "h" + " option:selected").text() + ":" + $("#StartTime" + i + "m" + " option:selected").text() + ":" + $("#StartTimeAmPm" + i  + " option:selected").text();
+                gridData[i].EndTime = $("#EndTime" + i + "h" + " option:selected").text() + ":" + $("#EndTime" + i + "m" + " option:selected").text() + ":" + $("#EndTimeAmPm" + i + " option:selected").text();
+                gridData[i].IsSkipMeal = document.getElementById("IsSkipMeal" + i).checked;
+
+            }
+            else {
+                gridData[i].StartTime = "";
+                gridData[i].EndTime = "";
+                gridData[i].IsSkipMeal = false;
+            }
+        }
+
+        var employeeId = '@Html.Raw(Json.Encode(Model.EmployeeId))';
+
+        var startpp = $("#payPeriodDatePicker option:selected").text();
+        var year = $("#payPeriodYearPicker option:selected").text()
+
+        var jsonData =
+        {
+            "EmployeeId": employeeId,
+            "StartPayPeriod": startpp,
+            "Year": year,
+            "TimesheetEntries": gridData
+        }
+
+        var timesheetData = JSON.stringify(jsonData);
+
+        $.ajax({
+            url: '/EmployeePortal/EmployeeTimesheets/SaveTimesheet',
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: timesheetData,
+            success: function (data) {
+                $('#timesheetdiv').html(data);
+                if (isValid != 'true') {
+                    $('#statuslabel').text("Save Failed").fadeOut(3000);
+                } else {
+                    notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");
+                }
+                OnSaveTimesheetComplete();
+            },
+            error: function (response, error) {
+                bootbox.alert(error, function () {});
+                OnSaveTimesheetComplete();
+            }
+        });
+    }
+    
+    //to tell if a select element has selection
+    function hasSelection(id){
+        if ($(id + " option:selected").val() != -1)
+            return true;
+        else return false;
+    }
+
+    function calculateNewTotals() {
+        $('#statuslabel').removeAttr("style");
+        $('#statuslabel').text("");
+        var gridData = $("#timesheetentriesgrid").data("kendoGrid").dataSource.data();
+
+        for (var i = 0; i < gridData.length; i++) {
+
+            var year = gridData[i].Day.getFullYear();
+            var month = gridData[i].Day.getMonth();
+            var day = gridData[i].Day.getDate();
+
+            if (hasSelection("#StartTime" + i + "h") || hasSelection("#StartTime" + i + "m") || hasSelection("#StartTimeAmPm" + i))
+                gridData[i].StartTime = $("#StartTime" + i + "h" + " option:selected").text() + ":" + $("#StartTime" + i + "m" + " option:selected").text() + ":" + $("#StartTimeAmPm" + i + " option:selected").text();
+            else 
+                gridData[i].StartTime = "";
+
+            if (hasSelection("#EndTime"   + i + "h") || "#EndTime" + i + "m" || "#EndTimeAmPm" + i)
+                gridData[i].EndTime =   $("#EndTime"   + i + "h" + " option:selected").text() + ":" + $("#EndTime" + i + "m" + " option:selected").text() + ":" +  $("#EndTimeAmPm" + i + " option:selected").text();
+            else 
+                gridData[i].EndTime = "";
+
+            gridData[i].IsSkipMeal = document.getElementById("IsSkipMeal" + i).checked;
+        }
+
+        var employeeId = '@Html.Raw(Json.Encode(Model.EmployeeId))';
+
+        var startpp = $("#payPeriodDatePicker").val();
+        var year = $("#payPeriodYearPicker").val();
+
+        var jsonData =
+        {
+            "EmployeeId": employeeId,
+            "StartPayPeriod": startpp,
+            "Year": year,
+            "TimesheetEntries": gridData
+        }
+
+        var timesheetData = JSON.stringify(jsonData);
+
+        $.ajax({
+            url: '/EmployeePortal/EmployeeTimesheets/CalcTimesheetTotals',
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: timesheetData,
+            success: function (data) {
+                $('#timesheetsdiv').html(data);
+                validateAllRows();
+            },
+            error: function (response, error) {
+                bootbox.alert(error, function () {});
+            }
+        });
+    }
+
+    function OnSaveTimesheetBegin() {
+        document.getElementById("timesheetsaveBtn").disabled = true;
+        // Perform any client side validation
+    }
+
+    function OnSaveTimesheetComplete() {
+        document.getElementById("timesheetsaveBtn").disabled = false;
+        // Perform any client side validation
+    }
+
+    function getHolidays() {
+        var holidays = [
+        "1/1/2014",
+        "5/26/2014",
+        "7/4/2014",
+        "9/1/2014",
+        "11/27/2014",
+        "12/25/2014",
+        "1/1/2015",
+        "5/25/2015",
+        "7/3/2015",
+        "9/7/2015",
+        "11/26/2015",
+        "12/25/2015",
+        "1/1/2016",
+        "5/30/2016",
+        "7/4/2016",
+        "9/5/2016",
+        "11/24/2016",
+        "12/26/2016",
+        "1/2/2017",
+        "5/29/2017",
+        "7/4/2017",
+        "9/4/2017",
+        "11/23/2017",
+        "12/25/2017",
+        "1/1/2018",
+        "5/28/2018",
+        "7/4/2018",
+        "9/3/2018",
+        "11/22/2018",
+        "12/25/2018",
+        "1/1/2019",
+        "5/27/2019",
+        "7/4/2019",
+        "9/2/2019",
+        "11/28/2019",
+        "12/25/2019",
+        "1/1/2020",
+        "5/25/2020",
+        "7/3/2020",
+        "9/7/2020",
+        "11/26/2020",
+        "12/25/2020",
+        "1/1/2021",
+        "5/31/2021",
+        "7/5/2021",
+        "9/6/2021",
+        "11/25/2021",
+        "12/24/2021",
+        "12/31/2021",
+        "5/30/2022",
+        "7/4/2022",
+        "9/5/2022",
+        "11/24/2022",
+        "12/26/2022",
+        "1/2/2023",
+        "5/29/2023",
+        "7/4/2023",
+        "9/4/2023",
+        "11/23/2023",
+        "12/25/2023",
+        "1/1/2024",
+        "5/27/2024",
+        "7/4/2024",
+        "9/2/2024",
+        "11/28/2024",
+        "12/25/2024",
+        "1/1/2025",
+        "5/26/2025",
+        "7/4/2025",
+        "9/1/2025",
+        "11/27/2025",
+        "12/25/2025",
+        "1/1/2026",
+        "5/25/2026",
+        "7/3/2026",
+        "9/7/2026",
+        "11/26/2026",
+        "12/25/2026",
+        "1/1/2027",
+        "5/31/2027",
+        "7/5/2027",
+        "9/6/2027",
+        "11/25/2027",
+        "12/24/2027",
+        "12/31/2027",
+        "5/29/2028",
+        "7/4/2028",
+        "9/4/2028",
+        "11/23/2028",
+        "12/25/2028",
+        "1/1/2029",
+        "5/28/2029",
+        "7/4/2029",
+        "9/3/2029",
+        "11/22/2029",
+        "12/25/2029",
+        "1/1/2030",
+        "5/27/2030",
+        "7/4/2030",
+        "9/2/2030",
+        "11/28/2030",
+        "12/25/2030",
+        "1/1/2031",
+        "5/26/2031",
+        "7/4/2031",
+        "9/1/2031",
+        "11/27/2031",
+        "12/25/2031",
+        "1/1/2032",
+        "5/31/2032",
+        "7/5/2032",
+        "9/6/2032",
+        "11/25/2032",
+        "12/24/2032",
+        "12/31/2032",
+        "5/30/2033",
+        "7/4/2033",
+        "9/5/2033",
+        "11/24/2033",
+        "12/26/2033",
+        "1/2/2034",
+        "5/29/2034",
+        "7/4/2034",
+        "9/4/2034",
+        "11/23/2034",
+        "12/25/2034",
+        "1/1/2035",
+        "5/28/2035",
+        "7/4/2035",
+        "9/3/2035",
+        "11/22/2035",
+        "12/25/2035",
+        "1/1/2036",
+        "5/26/2036",
+        "7/4/2036",
+        "9/1/2036",
+        "11/27/2036",
+        "12/25/2036",
+        "1/1/2037",
+        "5/25/2037",
+        "7/3/2037",
+        "9/7/2037",
+        "11/26/2037",
+        "12/25/2037",
+        "1/1/2038",
+        "5/31/2038",
+        "7/5/2038",
+        "9/6/2038",
+        "11/25/2038",
+        "12/24/2038",
+        "12/31/2038",
+        "5/30/2039",
+        "7/4/2039",
+        "9/5/2039",
+        "11/24/2039",
+        "12/26/2039",
+        "1/2/2040",
+        "5/28/2040",
+        "7/4/2040",
+        "9/3/2040",
+        "11/22/2040",
+        "12/25/2040",
+        "1/1/2041",
+        "5/27/2041",
+        "7/4/2041",
+        "9/2/2041",
+        "11/28/2041",
+        "12/25/2041",
+        "1/1/2042",
+        "5/26/2042",
+        "7/4/2042",
+        "9/1/2042",
+        "11/27/2042",
+        "12/25/2042",
+        "1/1/2043",
+        "5/25/2043",
+        "7/3/2043",
+        "9/7/2043",
+        "11/26/2043",
+        "12/25/2043",
+        "1/1/2044",
+        "5/30/2044",
+        "7/4/2044",
+        "9/5/2044",
+        "11/24/2044",
+        "12/26/2044",
+        "1/2/2045",
+        "5/29/2045",
+        "7/4/2045",
+        "9/4/2045",
+        "11/23/2045",
+        "12/25/2045",
+        "1/1/2046",
+        "5/28/2046",
+        "7/4/2046",
+        "9/3/2046",
+        "11/22/2046",
+        "12/25/2046",
+        "1/1/2047",
+        "5/27/2047",
+        "7/4/2047",
+        "9/2/2047",
+        "11/28/2047",
+        "12/25/2047",
+        "1/1/2048",
+        "5/25/2048",
+        "7/3/2048",
+        "9/7/2048",
+        "11/26/2048",
+        "12/25/2048",
+        "1/1/2049",
+        "5/31/2049",
+        "7/5/2049",
+        "9/6/2049",
+        "11/25/2049",
+        "12/24/2049"
+        ];
+
+        return holidays;
+    }
+</script>

@@ -1,0 +1,70 @@
+﻿@using JDsWebApp.Areas.EmployeePortal.Models.Billing
+
+@{
+    ViewBag.Title = "Billing Report";
+}
+
+<div id="billingreportcontent" class="wrapper" style="width: 100%">
+    <div>
+        <h3 style="margin-left: 0">Billing Report</h3>
+    </div>
+
+    <div>
+        <div id="billingjobsgrid"></div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $('#billingReport').addClass('aside-entry-active');
+        
+        $("#billingjobsgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadJobsForBilling", "Billing")"
+                },
+                pageSize: 10
+            },
+            pageable: true,
+            scrollable: false,
+            columns: [{
+                field: "JobId",
+                title: "Job ID"
+            }, {
+                field: "CustomerNameAndJobNumber",
+                title: "Customer Name and Job Number"
+            }, {
+                field: "ShippedDate",
+                title: "Shipped Date"
+            }, {
+                field: "BilledDate",
+                title: "Billed Date",
+                width: 150,
+                template: "#if (BilledDate == null || BilledDate == '') {# <button class='btn btn-primary' onclick='markJobAsBilled(#=JobId#)'>Mark as billed</button> #} else {# #= BilledDate # # }#"
+            }]
+        })
+
+        function markJobAsBilled(jobId) {
+
+            $.ajax({
+                url: '@Url.Action("MarkJobAsBilled", "Billing")',
+                type: 'POST',
+                data: {
+                    jobId: jobId
+                },
+                success: function (data) {
+                    // refresh the grid
+                    $('#billingjobsgrid').data('kendoGrid').dataSource.read();
+                    $('#billingjobsgrid').data('kendoGrid').refresh();
+                },
+                error: function (e) {
+                    bootbox.alert("Error AJAX Marking Job as billed", function () {
+                    });
+                }
+            });
+
+        }
+    </script>
+}

@@ -1,0 +1,241 @@
+﻿@using JDsDataModel
+@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB13_FinalSignOffViewModel
+
+@{
+    ViewBag.Title = "BB13_FinalSignOffViewModel";
+}
+
+<div class="row">
+    <h4>Final Sign Off</h4>
+</div>
+
+<form id="process_bb13_form">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-10">
+            I certify that this part has been completed to specifications and is ready to be billed.
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-8 text-center">
+            @Html.SignOffHelper(m => m.InspectedBy, "BB13_InspectedBy")
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-bottom padd-top" id="BB11_FinalInspectionByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.InspectedBy, "BB13_InspectedBy1")
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        $(function () {
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB13_InspectedBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB13_FinalSignOffEntry');
+            $('#process_BB13_FinalSignOffEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                Save();
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+            // Perform signoff validation and dialog...
+            if ($('#BB13_InspectedBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB13_InspectedByGroup").show();
+                $('#BB13_InspectedBy1SO').addClass("btn-danger");
+                $('#BB13_InspectedBySO').addClass("btn-danger");
+            } else {
+                $("#BB13_InspectedByGroup").hide();
+                $('#BB13_InspectedBy1SO').removeClass("btn-danger");
+                $('#BB13_InspectedBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save() {
+            if (!IsStepValid()) {
+                return false;
+            }
+            
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            if (isOnlySave) {
+                $("#IsOnlySave").val(true);
+            }
+
+            // Apply grid data to model
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB13_FinalSignOff',
+                type: 'POST',
+                data: $("#process_bb13_form").serialize(),
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/"; // back to the big board
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB13_FinalSignOff?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB13_InspectedBy':
+                case 'BB13_InspectedBy1':
+                    skillname = "Final Inspection";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Final Inspection By");
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for all Final Signoff");
+
+            if ($('#BB13_InspectedBy').val().trim() == "") {
+                ids = ids + "BB13_InspectedBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+    </script>
+}

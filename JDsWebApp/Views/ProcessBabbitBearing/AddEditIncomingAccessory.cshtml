@@ -1,0 +1,211 @@
+﻿@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.IncomingInspectionAccessoryViewModel
+
+<style>
+    div#NameMultiSelect-list {
+        position: relative;
+    }
+    
+    /*
+        *************Style for AutoComplete**************
+        Temporary-ish, please do not delete. Davis and I made this
+        If this css messes something up please let me know
+        and I (John Cunningham) will put it somewhere more appropriate
+        NOTE THAT THIS IS NOW DUPLICATED IN 2 PLACES
+
+    */
+    .k-list li {
+        position: relative;
+        margin: 2px;
+        border-radius: 5px;
+    }
+
+    .k-state-focused {
+        box-shadow: none;
+    }
+
+    button.dd-header-btn {
+        display: inline-block;
+        width: 96%;
+        font-size: 12px;
+        margin: 5px 1%;
+        border: none;
+        background-color: #3992CF;
+        color: #fff;
+        padding: 5px 0;
+        border-radius: 5px;
+    }
+
+    button.delete-button {
+        border: none;
+        background-color: initial;
+        font-size: 12px !important;
+        position: absolute;
+        right: 0;
+    }
+
+    .k-state-hover {
+        background-color: #3992CF !important;
+        color: #fff !important;
+        background-image: none !important;
+    }
+
+    .k-state-selected {
+        background-color: #7AC946 !important;
+        border: none !important;
+        background-image: none !important;
+    }
+
+    li.k-button {
+        background-image: none !important;
+        border: none !important;
+        background-color: #7AC946;
+        color: #fff;
+        position: relative;
+        margin: 3px;
+    }
+
+
+</style>
+
+<div class="table" style="padding:15px; padding-left: 50px;">
+    <div class="row padd-top">
+        <div class="col-sm-8">
+            @Html.LabelFor(m => m.Name):
+        </div>
+    </div>
+
+    <div class="row padd-bottom">
+        <div class="col-sm-10">
+            <select id="NameMultiSelect" multiple="multiple"/>
+            @Html.HiddenFor(m => m.Name)
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-8">
+            @Html.LabelFor(m => m.Quantity):
+        </div>
+    </div>
+
+    <div class="row padd-bottom">
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.Quantity, new { id = "IncomingAccessoryQuantity", @type = "number", @class = "form-control", placeholder = Html.DisplayNameFor(x => x.Quantity) })
+            @Html.ValidationMessageFor(m => m.Quantity)
+        </div>
+    </div>
+
+
+    <div>
+
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-11">
+            <input class="btn btn-primary" value="Save" id="saveAddEditIncomingAccessoryPopupBtn" style="width: 120px">
+            <button type="button" class="btn btn-danger" id="cancelAddEditIncomingAccessoryPopupBtn" style="width: 120px; margin-left: 10px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {       
+        $('#saveAddEditIncomingAccessoryPopupBtn').click(function (e) {
+            e.preventDefault();
+
+            // Get and convert Name values
+            var NameSelectedValues = ConvertValueArrayToTextArray($("#NameMultiSelect").val(), $("#NameMultiSelect"));
+            var NameString = NameSelectedValues.join();
+
+
+            if (!isNaN($("#IncomingAccessoryQuantity").val()) && $("#IncomingAccessoryQuantity").val() !== "") {
+                var values = {
+                    "Name": NameString,
+                    "PartId": '@Model.PartId',
+                    "Quantity": $("#IncomingAccessoryQuantity").val(),
+                    "IncomingInspectionAccessoryId": '@Model.IncomingInspectionAccessoryId',
+                };
+                $.ajax({
+                    url: "/ProcessBabbitBearing/SaveIncomingAccessory",
+                    type: "POST",
+                    data: values,
+                    success: function (data) {
+                        $("#incomingAccessoryPopupModal").modal('hide');
+
+                        $("#partAccessoriesGrid").data("kendoGrid").dataSource.read();
+                    },
+                    error: function (err) {
+                        bootbox.alert('Error saving accessory ', function () { });
+                    }
+                });
+            } else {
+                var target = $('span[data-valmsg-for="Quantity"]');
+                target.html("Not a valid number");
+                target.removeClass("field-validation-valid");
+                target.addClass("field-validation-error");
+            }
+
+        });
+
+        $('#cancelAddEditIncomingAccessoryPopupBtn').click(function (e) {
+            e.preventDefault();
+            $("#incomingAccessoryPopupModal").modal('hide');
+        });
+        
+        //Get the data for the multiselect and intializes it with the data.
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/AutoComplete/GetAutoCompleteValuesByControlId/' + 101,
+            dataType: 'json',
+            success: function (data) {
+                var nameMS = $("#NameMultiSelect");
+
+                if (data.length > 0) {
+                    data.forEach(function(item) {
+                        nameMS.append("<option value='" + item.AutoCompleteID + "'>" + item.Value + "</option>")
+                    });
+                } else {
+                    nameMS.append("<option value='none' disabled>None</option>");
+                }
+
+                nameMS.multiselect({
+                    enableHTML: true,
+                    enableFiltering: true,
+                    filterPlaceholder: "Add Part/Accessory Name",
+                    buttonClass: 'form-control',
+                    numberDisplayed: 10,
+                    optionLabel: function (element) {
+                        if (element.value === 'none')
+                            return $(element).html();
+                        else
+                            return $(element).html() +
+                                "<span class='glyphicon glyphicon-remove pull-right' style='top:2px;' onclick='DeleteLineItem(event,101)'></span>";
+                    },
+                    onChange: function (option, checked, select) {
+                        if ($("#NameMultiSelect").val() == null || $("#NameMultiSelect").val() == "") {
+                            $("#saveAddEditIncomingAccessoryPopupBtn").prop("disabled", "disabled");
+                        } else {
+                            $("#saveAddEditIncomingAccessoryPopupBtn").removeAttr("disabled");
+                        }
+                    }
+                });
+
+                //Initalizes the multiselect with the values
+                var intialNameMSValuesString = "@Model.Name";
+
+                var initalNameMSArray = ConvertTextArrayToValueArray(intialNameMSValuesString.split(","), nameMS);
+
+                nameMS.multiselect("select", initalNameMSArray);
+
+                BindMultiSelectAddButton(nameMS, 101);
+                
+                if ($("#NameMultiSelect").val() == null || $("#NameMultiSelect").val() == "") {
+                    $("#saveAddEditIncomingAccessoryPopupBtn").prop("disabled", "disabled");
+                } else {
+                    $("#saveAddEditIncomingAccessoryPopupBtn").removeAttr("disabled");
+                }
+            }
+        });
+
+    });
+
+</script>

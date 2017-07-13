@@ -1,0 +1,2658 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="JDsBabbittBearingDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Activity">
+          <Key>
+            <PropertyRef Name="ActivityId" />
+          </Key>
+          <Property Name="ActivityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="AddressId" />
+          </Key>
+          <Property Name="AddressId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AddressLine1" Type="nvarchar" MaxLength="40" />
+          <Property Name="AddressLine2" Type="nvarchar" MaxLength="40" />
+          <Property Name="City" Type="nvarchar" MaxLength="40" />
+          <Property Name="State" Type="nvarchar" MaxLength="40" />
+          <Property Name="Zip" Type="nvarchar" MaxLength="40" />
+          <Property Name="Country" Type="nvarchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="AutoComplete">
+          <Key>
+            <PropertyRef Name="AutoCompleteId" />
+          </Key>
+          <Property Name="AutoCompleteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ControlId" Type="int" Nullable="false" />
+          <Property Name="Value" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AutoCompleteEntry">
+          <Key>
+            <PropertyRef Name="AutoCompleteEntryId" />
+          </Key>
+          <Property Name="AutoCompleteEntryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AssociatedTextField" Type="uniqueidentifier" />
+          <Property Name="Entry" Type="nvarchar" MaxLength="512" />
+          <Property Name="IsDeleteable" Type="bit" />
+        </EntityType>
+        <EntityType Name="Certificate">
+          <Key>
+            <PropertyRef Name="CertificateId" />
+          </Key>
+          <Property Name="CertificateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CertificateDate" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CertificateExpires" Type="nvarchar" MaxLength="50" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="512" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="80" />
+          <Property Name="Name" Type="varchar" MaxLength="40" />
+          <Property Name="CertificateFileId" Type="int" />
+        </EntityType>
+        <EntityType Name="CertificateFile">
+          <Key>
+            <PropertyRef Name="CertificateFileId" />
+          </Key>
+          <Property Name="CertificateFileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
+          <Property Name="Filename" Type="nvarchar" MaxLength="100" />
+          <Property Name="FileURL" Type="nvarchar" MaxLength="512" />
+          <Property Name="OriginalFilename" Type="nvarchar" MaxLength="100" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="512" />
+        </EntityType>
+        <EntityType Name="ChangeLogEntry">
+          <Key>
+            <PropertyRef Name="ChangeLogEntryId" />
+          </Key>
+          <Property Name="ChangeLogEntryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JobId" Type="int" />
+          <Property Name="ChangeTime" Type="datetime2" Precision="7" />
+          <Property Name="Message" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="ContactId" />
+          </Key>
+          <Property Name="ContactId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="40" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="40" />
+          <Property Name="Email" Type="nvarchar" MaxLength="200" />
+          <Property Name="WorkPhone" Type="nvarchar" MaxLength="40" />
+          <Property Name="CellPhone" Type="nvarchar" MaxLength="40" />
+          <Property Name="Fax" Type="nvarchar" MaxLength="40" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="2000" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PrimaryContactId" Type="int" />
+          <Property Name="BillingAddressId" Type="int" />
+          <Property Name="ShippingAddressId" Type="int" />
+          <Property Name="CompanyName" Type="nvarchar" MaxLength="40" />
+          <Property Name="Code" Type="nvarchar" MaxLength="40" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="4000" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="DeliveryInfo">
+          <Key>
+            <PropertyRef Name="DeliveryInfoId" />
+          </Key>
+          <Property Name="DeliveryInfoId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShippedVia" Type="nvarchar" MaxLength="40" />
+          <Property Name="DateShipped" Type="datetime2" Precision="7" />
+          <Property Name="DateRequired" Type="datetime2" Precision="7" />
+          <Property Name="TrackingNumber" Type="nvarchar" MaxLength="80" />
+          <Property Name="PackedBySignOffId" Type="int" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AddressId" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="40" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="40" />
+          <Property Name="HireDate" Type="datetime2" Precision="7" />
+          <Property Name="PIN" Type="nvarchar" MaxLength="4" Nullable="false" />
+          <Property Name="EmergencyContact" Type="nvarchar" MaxLength="200" />
+          <Property Name="EmergencyPhone" Type="nvarchar" MaxLength="40" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="1024" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="EmployeeFile">
+          <Key>
+            <PropertyRef Name="EmployeeFileId" />
+          </Key>
+          <Property Name="EmployeeFileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
+          <Property Name="Filename" Type="nvarchar" MaxLength="100" />
+          <Property Name="FileURL" Type="nvarchar" MaxLength="512" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="512" />
+        </EntityType>
+        <EntityType Name="EmployeeSkill">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+            <PropertyRef Name="SkillId" />
+          </Key>
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+          <Property Name="SkillId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IncomingInspectionAccessory">
+          <Key>
+            <PropertyRef Name="IncomingInspectionAccessoryId" />
+          </Key>
+          <Property Name="IncomingInspectionAccessoryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="80" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="IsInstalled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="JobId" />
+          </Key>
+          <Property Name="JobId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreatedByEmployeeId" Type="int" />
+          <Property Name="CustomerContactId" Type="int" />
+          <Property Name="JobStatusId" Type="int" />
+          <Property Name="CustomerJobNumber" Type="nvarchar" MaxLength="40" />
+          <Property Name="PurchaseOrderNumber" Type="nvarchar" MaxLength="40" />
+          <Property Name="ReceivedDate" Type="datetime2" Precision="7" />
+          <Property Name="RequiredDate" Type="datetime2" Precision="7" />
+          <Property Name="ShipByDate" Type="datetime2" Precision="7" />
+          <Property Name="ShippedDate" Type="datetime2" Precision="7" />
+          <Property Name="BilledDate" Type="datetime2" Precision="7" />
+          <Property Name="OvertimeRequired" Type="bit" />
+          <Property Name="HoldForCustomerApproval" Type="bit" />
+          <Property Name="JobNotes" Type="nvarchar" MaxLength="40" />
+          <Property Name="LastUpdated" Type="datetime2" Precision="7" />
+          <Property Name="QuoteOnly" Type="bit" />
+          <Property Name="AllPartsRequireUT" Type="bit" />
+          <Property Name="AllPartsRequirePT" Type="bit" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="JobStatus">
+          <Key>
+            <PropertyRef Name="JobStatusId" />
+          </Key>
+          <Property Name="JobStatusId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="MeasurementList">
+          <Key>
+            <PropertyRef Name="MeasurementListId" />
+          </Key>
+          <Property Name="MeasurementListId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Part">
+          <Key>
+            <PropertyRef Name="PartId" />
+          </Key>
+          <Property Name="PartId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JobId" Type="int" />
+          <Property Name="PartTypeId" Type="int" />
+          <Property Name="PartStatusId" Type="int" />
+          <Property Name="PartContactId" Type="int" />
+          <Property Name="WorkScope" Type="nvarchar" MaxLength="2048" />
+          <Property Name="RequiredDate" Type="datetime2" Precision="7" />
+          <Property Name="ShipByDate" Type="datetime2" Precision="7" />
+          <Property Name="ShippedDate" Type="datetime2" Precision="7" />
+          <Property Name="NonConformanceReportNotes" Type="nvarchar" MaxLength="2048" />
+          <Property Name="RequiresPT" Type="bit" />
+          <Property Name="RequiresUT" Type="bit" />
+          <Property Name="PartProcessId" Type="int" />
+          <Property Name="ItemCode" Type="varchar(max)" />
+          <Property Name="IdentifyingInfo" Type="varchar(max)" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PartDiameterMeasurement">
+          <Key>
+            <PropertyRef Name="PartDiameterMeasurementId" />
+          </Key>
+          <Property Name="PartDiameterMeasurementId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MeasurementListId" Type="int" />
+          <Property Name="MeasuredDate" Type="datetime2" Precision="7" />
+          <Property Name="A" Type="decimal" Precision="10" Scale="5" />
+          <Property Name="B" Type="decimal" Precision="10" Scale="5" />
+          <Property Name="C" Type="decimal" Precision="10" Scale="5" />
+          <Property Name="ODComment" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="PartFile">
+          <Key>
+            <PropertyRef Name="PartFileId" />
+          </Key>
+          <Property Name="PartFileId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="UpdatedByEmployeeId" Type="int" />
+          <Property Name="FileUrl" Type="nvarchar(max)" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+          <Property Name="CreatedDate" Type="datetime2" Precision="7" />
+          <Property Name="LastUpdated" Type="datetime2" Precision="7" />
+          <Property Name="FileName" Type="nvarchar(max)" />
+          <Property Name="IsFinalPrint" Type="bit" />
+        </EntityType>
+        <EntityType Name="PartPhoto">
+          <Key>
+            <PropertyRef Name="PartPhotoId" />
+          </Key>
+          <Property Name="PartPhotoId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="PhotoTakenByEmployeeId" Type="int" />
+          <Property Name="PhotoTypeId" Type="int" />
+          <Property Name="PhotoUrl" Type="nvarchar(max)" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+          <Property Name="DateTaken" Type="datetime2" Precision="7" />
+        </EntityType>
+        <EntityType Name="PartProcess">
+          <Key>
+            <PropertyRef Name="PartProcessID" />
+          </Key>
+          <Property Name="PartProcessID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="PartStatus">
+          <Key>
+            <PropertyRef Name="PartStatusId" />
+          </Key>
+          <Property Name="PartStatusId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="PartTest">
+          <Key>
+            <PropertyRef Name="PartTestId" />
+          </Key>
+          <Property Name="PartTestId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartId" Type="int" Nullable="false" />
+          <Property Name="UTComplete" Type="bit" />
+          <Property Name="PTComplete" Type="bit" />
+          <Property Name="UTCertPartFileId" Type="int" />
+          <Property Name="PTCertPartFileId" Type="int" />
+          <Property Name="UTSignoffEmpName" Type="nvarchar(max)" />
+          <Property Name="PTSignoffEmpName" Type="nvarchar(max)" />
+          <Property Name="UTPassed" Type="bit" />
+          <Property Name="PTPassed" Type="bit" />
+          <Property Name="TestNotes" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="PartType">
+          <Key>
+            <PropertyRef Name="PartTypeId" />
+          </Key>
+          <Property Name="PartTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PhotoType">
+          <Key>
+            <PropertyRef Name="PhotoTypeId" />
+          </Key>
+          <Property Name="PhotoTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="Process">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="ProcessId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProcessTypeId" Type="int" Nullable="false" />
+          <Property Name="PartId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProcessType">
+          <Key>
+            <PropertyRef Name="ProcessTypeId" />
+          </Key>
+          <Property Name="ProcessTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SignOff">
+          <Key>
+            <PropertyRef Name="SignOffId" />
+          </Key>
+          <Property Name="SignOffId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RequiredSkillId" Type="int" />
+          <Property Name="EmployeeId" Type="int" />
+          <Property Name="SignOffDate" Type="datetime2" Precision="7" />
+        </EntityType>
+        <EntityType Name="Sizes">
+          <Key>
+            <PropertyRef Name="SizesId" />
+          </Key>
+          <Property Name="SizesId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="Shaft" Type="nvarchar" MaxLength="128" />
+          <Property Name="Clearance" Type="nvarchar" MaxLength="128" />
+          <Property Name="BoreSize" Type="nvarchar" MaxLength="128" />
+          <Property Name="BoreSizeHorizontal" Type="nvarchar" MaxLength="128" />
+          <Property Name="ShimSize" Type="nvarchar" MaxLength="128" />
+          <Property Name="Tolerance" Type="nvarchar" MaxLength="128" />
+          <Property Name="SealSize" Type="nvarchar" MaxLength="128" />
+          <Property Name="SpecialNotes" Type="varchar(max)" />
+          <Property Name="CustomerSuppliedMeasurementsListId" Type="int" />
+        </EntityType>
+        <EntityType Name="Skill">
+          <Key>
+            <PropertyRef Name="SkillId" />
+          </Key>
+          <Property Name="SkillId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Step">
+          <Key>
+            <PropertyRef Name="StepId" />
+          </Key>
+          <Property Name="StepId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StepNumber" Type="int" Nullable="false" />
+          <Property Name="ProcessId" Type="bigint" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Version" Type="nvarchar" MaxLength="100" />
+          <Property Name="DataType" Type="nvarchar" MaxLength="100" />
+          <Property Name="StringValue" Type="nvarchar(max)" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+          <Property Name="LastRequestedBy" Type="nvarchar" MaxLength="200" />
+          <Property Name="Requested" Type="datetime" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+          <Property Name="Updated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="StepActivity">
+          <Key>
+            <PropertyRef Name="StepActivityId" />
+          </Key>
+          <Property Name="StepActivityId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StepId" Type="bigint" Nullable="false" />
+          <Property Name="ActivityId" Type="int" Nullable="false" />
+          <Property Name="Employee" Type="nvarchar" MaxLength="100" />
+          <Property Name="Manager" Type="nvarchar" MaxLength="100" />
+          <Property Name="Created" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TimesheetEntry">
+          <Key>
+            <PropertyRef Name="TimesheetEntryId" />
+          </Key>
+          <Property Name="TimesheetEntryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" />
+          <Property Name="Day" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="NumHoursWorked" Type="decimal" Precision="6" Scale="3" Nullable="false" />
+          <Property Name="StartTime" Type="datetime2" Precision="7" />
+          <Property Name="EndTime" Type="datetime2" Precision="7" />
+          <Property Name="WorkedThroughMealtime" Type="bit" />
+          <Property Name="TotalHours" Type="decimal" Precision="6" Scale="3" />
+          <Property Name="StraightTime" Type="decimal" Precision="6" Scale="3" />
+          <Property Name="OverTime" Type="decimal" Precision="6" Scale="3" />
+          <Property Name="DoubleTime" Type="decimal" Precision="6" Scale="3" />
+        </EntityType>
+        <EntityType Name="Vacation">
+          <Key>
+            <PropertyRef Name="VacationId" />
+          </Key>
+          <Property Name="VacationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+          <Property Name="VacationSignOffId" Type="int" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="NumberOfVacationHoursUsed" Type="int" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Day" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsVacationTime" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="Address_Customer">
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="BillingAddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Address_Employee">
+          <End Role="Address" Type="Self.Address" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="AddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CertificateFile_Certificate">
+          <End Role="CertificateFile" Type="Self.CertificateFile" Multiplicity="0..1" />
+          <End Role="Certificate" Type="Self.Certificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CertificateFile">
+              <PropertyRef Name="CertificateFileId" />
+            </Principal>
+            <Dependent Role="Certificate">
+              <PropertyRef Name="CertificateFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Contact_Customer">
+          <End Role="Contact" Type="Self.Contact" Multiplicity="0..1" />
+          <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="PrimaryContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Contact_Job">
+          <End Role="Contact" Type="Self.Contact" Multiplicity="0..1" />
+          <End Role="Job" Type="Self.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="CustomerContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Contact_Part">
+          <End Role="Contact" Type="Self.Contact" Multiplicity="0..1" />
+          <End Role="Part" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Customer_Contact">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Contact" Type="Self.Contact" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="Contact">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_EmployeeSkill">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeeSkill" Type="Self.EmployeeSkill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="EmployeeSkill">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_Job">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="Job" Type="Self.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="CreatedByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_PartFile">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="PartFile" Type="Self.PartFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="PartFile">
+              <PropertyRef Name="UpdatedByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_PartPhoto">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="PartPhoto" Type="Self.PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PhotoTakenByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_SignOff">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="SignOff" Type="Self.SignOff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="SignOff">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_TimesheetEntry">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="0..1" />
+          <End Role="TimesheetEntry" Type="Self.TimesheetEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="TimesheetEntry">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_Vacation">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="Vacation" Type="Self.Vacation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Vacation">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeFile_Employee">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="EmployeeFile" Type="Self.EmployeeFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="EmployeeFile">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Process_Part">
+          <End Role="Part" Type="Self.Part" Multiplicity="1" />
+          <End Role="Process" Type="Self.Process" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="Process">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Process_ProcessType">
+          <End Role="ProcessType" Type="Self.ProcessType" Multiplicity="1" />
+          <End Role="Process" Type="Self.Process" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessType">
+              <PropertyRef Name="ProcessTypeId" />
+            </Principal>
+            <Dependent Role="Process">
+              <PropertyRef Name="ProcessTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Step_Process">
+          <End Role="Process" Type="Self.Process" Multiplicity="1" />
+          <End Role="Step" Type="Self.Step" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="Step">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StepActivity_Activity">
+          <End Role="Activity" Type="Self.Activity" Multiplicity="1" />
+          <End Role="StepActivity" Type="Self.StepActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Activity">
+              <PropertyRef Name="ActivityId" />
+            </Principal>
+            <Dependent Role="StepActivity">
+              <PropertyRef Name="ActivityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StepActivity_Step">
+          <End Role="Step" Type="Self.Step" Multiplicity="1" />
+          <End Role="StepActivity" Type="Self.StepActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Step">
+              <PropertyRef Name="StepId" />
+            </Principal>
+            <Dependent Role="StepActivity">
+              <PropertyRef Name="StepId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Job_ChangeLogEntry">
+          <End Role="Job" Type="Self.Job" Multiplicity="0..1" />
+          <End Role="ChangeLogEntry" Type="Self.ChangeLogEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="JobId" />
+            </Principal>
+            <Dependent Role="ChangeLogEntry">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Job_Part">
+          <End Role="Job" Type="Self.Job" Multiplicity="0..1" />
+          <End Role="Part" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="JobId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="JobStatus_Job">
+          <End Role="JobStatus" Type="Self.JobStatus" Multiplicity="0..1" />
+          <End Role="Job" Type="Self.Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobStatus">
+              <PropertyRef Name="JobStatusId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="JobStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MeasurementList_PartDiameterMeasurement">
+          <End Role="MeasurementList" Type="Self.MeasurementList" Multiplicity="0..1" />
+          <End Role="PartDiameterMeasurement" Type="Self.PartDiameterMeasurement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MeasurementList">
+              <PropertyRef Name="MeasurementListId" />
+            </Principal>
+            <Dependent Role="PartDiameterMeasurement">
+              <PropertyRef Name="MeasurementListId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Part_IncomingInspectionAccessory">
+          <End Role="Part" Type="Self.Part" Multiplicity="0..1" />
+          <End Role="IncomingInspectionAccessory" Type="Self.IncomingInspectionAccessory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="IncomingInspectionAccessory">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Part_PartFile">
+          <End Role="Part" Type="Self.Part" Multiplicity="0..1" />
+          <End Role="PartFile" Type="Self.PartFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartFile">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Part_PartPhoto">
+          <End Role="Part" Type="Self.Part" Multiplicity="0..1" />
+          <End Role="PartPhoto" Type="Self.PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartProcess_Part">
+          <End Role="PartProcess" Type="Self.PartProcess" Multiplicity="0..1" />
+          <End Role="Part" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartProcess">
+              <PropertyRef Name="PartProcessID" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartStatus_Part">
+          <End Role="PartStatus" Type="Self.PartStatus" Multiplicity="0..1" />
+          <End Role="Part" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartStatus">
+              <PropertyRef Name="PartStatusId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartTest_Part">
+          <End Role="Part" Type="Self.Part" Multiplicity="1" />
+          <End Role="PartTest" Type="Self.PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartTest_PartFile_PT">
+          <End Role="PartFile" Type="Self.PartFile" Multiplicity="0..1" />
+          <End Role="PartTest" Type="Self.PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartFile">
+              <PropertyRef Name="PartFileId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="PTCertPartFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartTest_PartFile_UT">
+          <End Role="PartFile" Type="Self.PartFile" Multiplicity="0..1" />
+          <End Role="PartTest" Type="Self.PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartFile">
+              <PropertyRef Name="PartFileId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="UTCertPartFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartType_Part">
+          <End Role="PartType" Type="Self.PartType" Multiplicity="0..1" />
+          <End Role="Part" Type="Self.Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartType">
+              <PropertyRef Name="PartTypeId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhotoType_PartPhoto">
+          <End Role="PhotoType" Type="Self.PhotoType" Multiplicity="0..1" />
+          <End Role="PartPhoto" Type="Self.PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PhotoType">
+              <PropertyRef Name="PhotoTypeId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PhotoTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SignOff_DeliveryInfo">
+          <End Role="SignOff" Type="Self.SignOff" Multiplicity="0..1" />
+          <End Role="DeliveryInfo" Type="Self.DeliveryInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignOff">
+              <PropertyRef Name="SignOffId" />
+            </Principal>
+            <Dependent Role="DeliveryInfo">
+              <PropertyRef Name="PackedBySignOffId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SignOff_Vacation">
+          <End Role="SignOff" Type="Self.SignOff" Multiplicity="0..1" />
+          <End Role="Vacation" Type="Self.Vacation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignOff">
+              <PropertyRef Name="SignOffId" />
+            </Principal>
+            <Dependent Role="Vacation">
+              <PropertyRef Name="VacationSignOffId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Skill_EmployeeSkill">
+          <End Role="Skill" Type="Self.Skill" Multiplicity="1" />
+          <End Role="EmployeeSkill" Type="Self.EmployeeSkill" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skill">
+              <PropertyRef Name="SkillId" />
+            </Principal>
+            <Dependent Role="EmployeeSkill">
+              <PropertyRef Name="SkillId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Skill_SignOff">
+          <End Role="Skill" Type="Self.Skill" Multiplicity="0..1" />
+          <End Role="SignOff" Type="Self.SignOff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skill">
+              <PropertyRef Name="SkillId" />
+            </Principal>
+            <Dependent Role="SignOff">
+              <PropertyRef Name="RequiredSkillId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="UpdateEmployeeSkill" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="empID" Type="int" Mode="In" />
+          <Parameter Name="skillID" Type="int" Mode="In" />
+          <Parameter Name="hasSkill" Type="bit" Mode="In" />
+        </Function>
+        <EntityContainer Name="JDsBabbittBearingDBModelStoreContainer">
+          <EntitySet Name="Activity" EntityType="Self.Activity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutoComplete" EntityType="Self.AutoComplete" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AutoCompleteEntry" EntityType="Self.AutoCompleteEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Certificate" EntityType="Self.Certificate" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CertificateFile" EntityType="Self.CertificateFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChangeLogEntry" EntityType="Self.ChangeLogEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DeliveryInfo" EntityType="Self.DeliveryInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeFile" EntityType="Self.EmployeeFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeSkill" EntityType="Self.EmployeeSkill" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IncomingInspectionAccessory" EntityType="Self.IncomingInspectionAccessory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Job" EntityType="Self.Job" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="JobStatus" EntityType="Self.JobStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MeasurementList" EntityType="Self.MeasurementList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Part" EntityType="Self.Part" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartDiameterMeasurement" EntityType="Self.PartDiameterMeasurement" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartFile" EntityType="Self.PartFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartPhoto" EntityType="Self.PartPhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartProcess" EntityType="Self.PartProcess" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartStatus" EntityType="Self.PartStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartTest" EntityType="Self.PartTest" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartType" EntityType="Self.PartType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PhotoType" EntityType="Self.PhotoType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Process" EntityType="Self.Process" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProcessType" EntityType="Self.ProcessType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SignOff" EntityType="Self.SignOff" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sizes" EntityType="Self.Sizes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Skill" EntityType="Self.Skill" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Step" EntityType="Self.Step" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StepActivity" EntityType="Self.StepActivity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TimesheetEntry" EntityType="Self.TimesheetEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vacation" EntityType="Self.Vacation" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="Address_Customer" Association="Self.Address_Customer">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Customer" EntitySet="Customer" />
+          </AssociationSet>
+          <AssociationSet Name="Address_Employee" Association="Self.Address_Employee">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="CertificateFile_Certificate" Association="Self.CertificateFile_Certificate">
+            <End Role="CertificateFile" EntitySet="CertificateFile" />
+            <End Role="Certificate" EntitySet="Certificate" />
+          </AssociationSet>
+          <AssociationSet Name="Contact_Customer" Association="Self.Contact_Customer">
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="Customer" EntitySet="Customer" />
+          </AssociationSet>
+          <AssociationSet Name="Contact_Job" Association="Self.Contact_Job">
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="Contact_Part" Association="Self.Contact_Part">
+            <End Role="Contact" EntitySet="Contact" />
+            <End Role="Part" EntitySet="Part" />
+          </AssociationSet>
+          <AssociationSet Name="Customer_Contact" Association="Self.Customer_Contact">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Contact" EntitySet="Contact" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_EmployeeSkill" Association="Self.Employee_EmployeeSkill">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="EmployeeSkill" EntitySet="EmployeeSkill" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_Job" Association="Self.Employee_Job">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_PartFile" Association="Self.Employee_PartFile">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="PartFile" EntitySet="PartFile" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_PartPhoto" Association="Self.Employee_PartPhoto">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="PartPhoto" EntitySet="PartPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_SignOff" Association="Self.Employee_SignOff">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="SignOff" EntitySet="SignOff" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_TimesheetEntry" Association="Self.Employee_TimesheetEntry">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="TimesheetEntry" EntitySet="TimesheetEntry" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_Vacation" Association="Self.Employee_Vacation">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="Vacation" EntitySet="Vacation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeFile_Employee" Association="Self.FK_EmployeeFile_Employee">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="EmployeeFile" EntitySet="EmployeeFile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Process_Part" Association="Self.FK_Process_Part">
+            <End Role="Part" EntitySet="Part" />
+            <End Role="Process" EntitySet="Process" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Process_ProcessType" Association="Self.FK_Process_ProcessType">
+            <End Role="ProcessType" EntitySet="ProcessType" />
+            <End Role="Process" EntitySet="Process" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Step_Process" Association="Self.FK_Step_Process">
+            <End Role="Process" EntitySet="Process" />
+            <End Role="Step" EntitySet="Step" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StepActivity_Activity" Association="Self.FK_StepActivity_Activity">
+            <End Role="Activity" EntitySet="Activity" />
+            <End Role="StepActivity" EntitySet="StepActivity" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StepActivity_Step" Association="Self.FK_StepActivity_Step">
+            <End Role="Step" EntitySet="Step" />
+            <End Role="StepActivity" EntitySet="StepActivity" />
+          </AssociationSet>
+          <AssociationSet Name="Job_ChangeLogEntry" Association="Self.Job_ChangeLogEntry">
+            <End Role="Job" EntitySet="Job" />
+            <End Role="ChangeLogEntry" EntitySet="ChangeLogEntry" />
+          </AssociationSet>
+          <AssociationSet Name="Job_Part" Association="Self.Job_Part">
+            <End Role="Job" EntitySet="Job" />
+            <End Role="Part" EntitySet="Part" />
+          </AssociationSet>
+          <AssociationSet Name="JobStatus_Job" Association="Self.JobStatus_Job">
+            <End Role="JobStatus" EntitySet="JobStatus" />
+            <End Role="Job" EntitySet="Job" />
+          </AssociationSet>
+          <AssociationSet Name="MeasurementList_PartDiameterMeasurement" Association="Self.MeasurementList_PartDiameterMeasurement">
+            <End Role="MeasurementList" EntitySet="MeasurementList" />
+            <End Role="PartDiameterMeasurement" EntitySet="PartDiameterMeasurement" />
+          </AssociationSet>
+          <AssociationSet Name="Part_IncomingInspectionAccessory" Association="Self.Part_IncomingInspectionAccessory">
+            <End Role="Part" EntitySet="Part" />
+            <End Role="IncomingInspectionAccessory" EntitySet="IncomingInspectionAccessory" />
+          </AssociationSet>
+          <AssociationSet Name="Part_PartFile" Association="Self.Part_PartFile">
+            <End Role="Part" EntitySet="Part" />
+            <End Role="PartFile" EntitySet="PartFile" />
+          </AssociationSet>
+          <AssociationSet Name="Part_PartPhoto" Association="Self.Part_PartPhoto">
+            <End Role="Part" EntitySet="Part" />
+            <End Role="PartPhoto" EntitySet="PartPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="PartProcess_Part" Association="Self.PartProcess_Part">
+            <End Role="PartProcess" EntitySet="PartProcess" />
+            <End Role="Part" EntitySet="Part" />
+          </AssociationSet>
+          <AssociationSet Name="PartStatus_Part" Association="Self.PartStatus_Part">
+            <End Role="PartStatus" EntitySet="PartStatus" />
+            <End Role="Part" EntitySet="Part" />
+          </AssociationSet>
+          <AssociationSet Name="PartTest_Part" Association="Self.PartTest_Part">
+            <End Role="Part" EntitySet="Part" />
+            <End Role="PartTest" EntitySet="PartTest" />
+          </AssociationSet>
+          <AssociationSet Name="PartTest_PartFile_PT" Association="Self.PartTest_PartFile_PT">
+            <End Role="PartFile" EntitySet="PartFile" />
+            <End Role="PartTest" EntitySet="PartTest" />
+          </AssociationSet>
+          <AssociationSet Name="PartTest_PartFile_UT" Association="Self.PartTest_PartFile_UT">
+            <End Role="PartFile" EntitySet="PartFile" />
+            <End Role="PartTest" EntitySet="PartTest" />
+          </AssociationSet>
+          <AssociationSet Name="PartType_Part" Association="Self.PartType_Part">
+            <End Role="PartType" EntitySet="PartType" />
+            <End Role="Part" EntitySet="Part" />
+          </AssociationSet>
+          <AssociationSet Name="PhotoType_PartPhoto" Association="Self.PhotoType_PartPhoto">
+            <End Role="PhotoType" EntitySet="PhotoType" />
+            <End Role="PartPhoto" EntitySet="PartPhoto" />
+          </AssociationSet>
+          <AssociationSet Name="SignOff_DeliveryInfo" Association="Self.SignOff_DeliveryInfo">
+            <End Role="SignOff" EntitySet="SignOff" />
+            <End Role="DeliveryInfo" EntitySet="DeliveryInfo" />
+          </AssociationSet>
+          <AssociationSet Name="SignOff_Vacation" Association="Self.SignOff_Vacation">
+            <End Role="SignOff" EntitySet="SignOff" />
+            <End Role="Vacation" EntitySet="Vacation" />
+          </AssociationSet>
+          <AssociationSet Name="Skill_EmployeeSkill" Association="Self.Skill_EmployeeSkill">
+            <End Role="Skill" EntitySet="Skill" />
+            <End Role="EmployeeSkill" EntitySet="EmployeeSkill" />
+          </AssociationSet>
+          <AssociationSet Name="Skill_SignOff" Association="Self.Skill_SignOff">
+            <End Role="Skill" EntitySet="Skill" />
+            <End Role="SignOff" EntitySet="SignOff" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="JDsBabbittBearingDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="JDsDBEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="UpdateEmployeeSkill">
+            <Parameter Name="empID" Mode="In" Type="Int32" />
+            <Parameter Name="skillID" Mode="In" Type="Int32" />
+            <Parameter Name="hasSkill" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="EmployeeHasSkill">
+            <Parameter Name="empID" Mode="In" Type="Int32" />
+            <Parameter Name="skillID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Activities" EntityType="JDsBabbittBearingDBModel.Activity" />
+          <EntitySet Name="Addresses" EntityType="JDsBabbittBearingDBModel.Address" />
+          <EntitySet Name="AutoCompletes" EntityType="JDsBabbittBearingDBModel.AutoComplete" />
+          <EntitySet Name="AutoCompleteEntries" EntityType="JDsBabbittBearingDBModel.AutoCompleteEntry" />
+          <EntitySet Name="CertificateFiles" EntityType="JDsBabbittBearingDBModel.CertificateFile" />
+          <EntitySet Name="Contacts" EntityType="JDsBabbittBearingDBModel.Contact" />
+          <EntitySet Name="Customers" EntityType="JDsBabbittBearingDBModel.Customer" />
+          <EntitySet Name="DeliveryInfoes" EntityType="JDsBabbittBearingDBModel.DeliveryInfo" />
+          <EntitySet Name="Employees" EntityType="JDsBabbittBearingDBModel.Employee" />
+          <EntitySet Name="EmployeeFiles" EntityType="JDsBabbittBearingDBModel.EmployeeFile" />
+          <EntitySet Name="Jobs" EntityType="JDsBabbittBearingDBModel.Job" />
+          <EntitySet Name="JobStatus" EntityType="JDsBabbittBearingDBModel.JobStatu" />
+          <EntitySet Name="MeasurementLists" EntityType="JDsBabbittBearingDBModel.MeasurementList" />
+          <EntitySet Name="PartProcesses" EntityType="JDsBabbittBearingDBModel.PartProcess" />
+          <EntitySet Name="PartStatus" EntityType="JDsBabbittBearingDBModel.PartStatu" />
+          <EntitySet Name="PartTypes" EntityType="JDsBabbittBearingDBModel.PartType" />
+          <EntitySet Name="PhotoTypes" EntityType="JDsBabbittBearingDBModel.PhotoType" />
+          <EntitySet Name="Processes" EntityType="JDsBabbittBearingDBModel.Process" />
+          <EntitySet Name="ProcessTypes" EntityType="JDsBabbittBearingDBModel.ProcessType" />
+          <EntitySet Name="SignOffs" EntityType="JDsBabbittBearingDBModel.SignOff" />
+          <EntitySet Name="Sizes" EntityType="JDsBabbittBearingDBModel.Size" />
+          <EntitySet Name="Skills" EntityType="JDsBabbittBearingDBModel.Skill" />
+          <EntitySet Name="Steps" EntityType="JDsBabbittBearingDBModel.Step" />
+          <EntitySet Name="StepActivities" EntityType="JDsBabbittBearingDBModel.StepActivity" />
+          <EntitySet Name="TimesheetEntries" EntityType="JDsBabbittBearingDBModel.TimesheetEntry" />
+          <EntitySet Name="Vacations" EntityType="JDsBabbittBearingDBModel.Vacation" />
+          <AssociationSet Name="FK_StepActivity_Activity" Association="JDsBabbittBearingDBModel.FK_StepActivity_Activity">
+            <End Role="Activity" EntitySet="Activities" />
+            <End Role="StepActivity" EntitySet="StepActivities" />
+          </AssociationSet>
+          <AssociationSet Name="Address_Customer" Association="JDsBabbittBearingDBModel.Address_Customer">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="Address_Employee" Association="JDsBabbittBearingDBModel.Address_Employee">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="Contact_Customer" Association="JDsBabbittBearingDBModel.Contact_Customer">
+            <End Role="Contact" EntitySet="Contacts" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="Contact_Job" Association="JDsBabbittBearingDBModel.Contact_Job">
+            <End Role="Contact" EntitySet="Contacts" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="Customer_Contact" Association="JDsBabbittBearingDBModel.Customer_Contact">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Contact" EntitySet="Contacts" />
+          </AssociationSet>
+          <AssociationSet Name="SignOff_DeliveryInfo" Association="JDsBabbittBearingDBModel.SignOff_DeliveryInfo">
+            <End Role="SignOff" EntitySet="SignOffs" />
+            <End Role="DeliveryInfo" EntitySet="DeliveryInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_Job" Association="JDsBabbittBearingDBModel.Employee_Job">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_SignOff" Association="JDsBabbittBearingDBModel.Employee_SignOff">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="SignOff" EntitySet="SignOffs" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_TimesheetEntry" Association="JDsBabbittBearingDBModel.Employee_TimesheetEntry">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="TimesheetEntry" EntitySet="TimesheetEntries" />
+          </AssociationSet>
+          <AssociationSet Name="Employee_Vacation" Association="JDsBabbittBearingDBModel.Employee_Vacation">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Vacation" EntitySet="Vacations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeFile_Employee" Association="JDsBabbittBearingDBModel.FK_EmployeeFile_Employee">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="EmployeeFile" EntitySet="EmployeeFiles" />
+          </AssociationSet>
+          <AssociationSet Name="JobStatus_Job" Association="JDsBabbittBearingDBModel.JobStatus_Job">
+            <End Role="JobStatu" EntitySet="JobStatus" />
+            <End Role="Job" EntitySet="Jobs" />
+          </AssociationSet>
+          <AssociationSet Name="Sizes_MeasurementList" Association="JDsBabbittBearingDBModel.Sizes_MeasurementList">
+            <End Role="MeasurementList" EntitySet="MeasurementLists" />
+            <End Role="Size" EntitySet="Sizes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Process_ProcessType" Association="JDsBabbittBearingDBModel.FK_Process_ProcessType">
+            <End Role="ProcessType" EntitySet="ProcessTypes" />
+            <End Role="Process" EntitySet="Processes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Step_Process" Association="JDsBabbittBearingDBModel.FK_Step_Process">
+            <End Role="Process" EntitySet="Processes" />
+            <End Role="Step" EntitySet="Steps" />
+          </AssociationSet>
+          <AssociationSet Name="SignOff_Vacation" Association="JDsBabbittBearingDBModel.SignOff_Vacation">
+            <End Role="SignOff" EntitySet="SignOffs" />
+            <End Role="Vacation" EntitySet="Vacations" />
+          </AssociationSet>
+          <AssociationSet Name="Skill_SignOff" Association="JDsBabbittBearingDBModel.Skill_SignOff">
+            <End Role="Skill" EntitySet="Skills" />
+            <End Role="SignOff" EntitySet="SignOffs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StepActivity_Step" Association="JDsBabbittBearingDBModel.FK_StepActivity_Step">
+            <End Role="Step" EntitySet="Steps" />
+            <End Role="StepActivity" EntitySet="StepActivities" />
+          </AssociationSet>
+          <AssociationSet Name="EmployeeSkill" Association="JDsBabbittBearingDBModel.EmployeeSkill">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Skill" EntitySet="Skills" />
+          </AssociationSet>
+          <EntitySet Name="Parts" EntityType="JDsBabbittBearingDBModel.Part" />
+          <AssociationSet Name="Contact_Part" Association="JDsBabbittBearingDBModel.Contact_Part">
+            <End Role="Contact" EntitySet="Contacts" />
+            <End Role="Part" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="Job_Part" Association="JDsBabbittBearingDBModel.Job_Part">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="Part" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Process_Part" Association="JDsBabbittBearingDBModel.FK_Process_Part">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="Process" EntitySet="Processes" />
+          </AssociationSet>
+          <AssociationSet Name="PartProcess_Part" Association="JDsBabbittBearingDBModel.PartProcess_Part">
+            <End Role="PartProcess" EntitySet="PartProcesses" />
+            <End Role="Part" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="PartStatus_Part" Association="JDsBabbittBearingDBModel.PartStatus_Part">
+            <End Role="PartStatu" EntitySet="PartStatus" />
+            <End Role="Part" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="PartType_Part" Association="JDsBabbittBearingDBModel.PartType_Part">
+            <End Role="PartType" EntitySet="PartTypes" />
+            <End Role="Part" EntitySet="Parts" />
+          </AssociationSet>
+          <AssociationSet Name="Sizes_Part" Association="JDsBabbittBearingDBModel.Sizes_Part">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="Size" EntitySet="Sizes" />
+          </AssociationSet>
+          <EntitySet Name="Certificates" EntityType="JDsBabbittBearingDBModel.Certificate" />
+          <AssociationSet Name="CertificateFile_Certificate" Association="JDsBabbittBearingDBModel.CertificateFile_Certificate">
+            <End Role="CertificateFile" EntitySet="CertificateFiles" />
+            <End Role="Certificate" EntitySet="Certificates" />
+          </AssociationSet>
+          <EntitySet Name="ChangeLogEntries" EntityType="JDsBabbittBearingDBModel.ChangeLogEntry" />
+          <AssociationSet Name="Job_ChangeLogEntry" Association="JDsBabbittBearingDBModel.Job_ChangeLogEntry">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="ChangeLogEntry" EntitySet="ChangeLogEntries" />
+          </AssociationSet>
+          <EntitySet Name="IncomingInspectionAccessories" EntityType="JDsBabbittBearingDBModel.IncomingInspectionAccessory" />
+          <AssociationSet Name="Part_IncomingInspectionAccessory" Association="JDsBabbittBearingDBModel.Part_IncomingInspectionAccessory">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="IncomingInspectionAccessory" EntitySet="IncomingInspectionAccessories" />
+          </AssociationSet>
+          <EntitySet Name="PartPhotoes" EntityType="JDsBabbittBearingDBModel.PartPhoto" />
+          <AssociationSet Name="Employee_PartPhoto" Association="JDsBabbittBearingDBModel.Employee_PartPhoto">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="PartPhoto" EntitySet="PartPhotoes" />
+          </AssociationSet>
+          <AssociationSet Name="Part_PartPhoto" Association="JDsBabbittBearingDBModel.Part_PartPhoto">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="PartPhoto" EntitySet="PartPhotoes" />
+          </AssociationSet>
+          <AssociationSet Name="PhotoType_PartPhoto" Association="JDsBabbittBearingDBModel.PhotoType_PartPhoto">
+            <End Role="PhotoType" EntitySet="PhotoTypes" />
+            <End Role="PartPhoto" EntitySet="PartPhotoes" />
+          </AssociationSet>
+          <EntitySet Name="PartFiles" EntityType="JDsBabbittBearingDBModel.PartFile" />
+          <AssociationSet Name="Employee_PartFile" Association="JDsBabbittBearingDBModel.Employee_PartFile">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="PartFile" EntitySet="PartFiles" />
+          </AssociationSet>
+          <AssociationSet Name="Part_PartFile" Association="JDsBabbittBearingDBModel.Part_PartFile">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="PartFile" EntitySet="PartFiles" />
+          </AssociationSet>
+          <EntitySet Name="PartTests" EntityType="JDsBabbittBearingDBModel.PartTest" />
+          <AssociationSet Name="PartTest_Part" Association="JDsBabbittBearingDBModel.PartTest_Part">
+            <End Role="Part" EntitySet="Parts" />
+            <End Role="PartTest" EntitySet="PartTests" />
+          </AssociationSet>
+          <AssociationSet Name="PartTest_PartFile_PT" Association="JDsBabbittBearingDBModel.PartTest_PartFile_PT">
+            <End Role="PartFile" EntitySet="PartFiles" />
+            <End Role="PartTest" EntitySet="PartTests" />
+          </AssociationSet>
+          <AssociationSet Name="PartTest_PartFile_UT" Association="JDsBabbittBearingDBModel.PartTest_PartFile_UT">
+            <End Role="PartFile" EntitySet="PartFiles" />
+            <End Role="PartTest" EntitySet="PartTests" />
+          </AssociationSet>
+          <EntitySet Name="PartDiameterMeasurements" EntityType="JDsBabbittBearingDBModel.PartDiameterMeasurement" />
+          <AssociationSet Name="MeasurementList_PartDiameterMeasurement" Association="JDsBabbittBearingDBModel.MeasurementList_PartDiameterMeasurement">
+            <End Role="MeasurementList" EntitySet="MeasurementLists" />
+            <End Role="PartDiameterMeasurement" EntitySet="PartDiameterMeasurements" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="Activity">
+          <Key>
+            <PropertyRef Name="ActivityId" />
+          </Key>
+          <Property Name="ActivityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="StepActivities" Relationship="JDsBabbittBearingDBModel.FK_StepActivity_Activity" FromRole="Activity" ToRole="StepActivity" />
+        </EntityType>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="AddressId" />
+          </Key>
+          <Property Name="AddressId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AddressLine1" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLine2" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Zip" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Customers" Relationship="JDsBabbittBearingDBModel.Address_Customer" FromRole="Address" ToRole="Customer" />
+          <NavigationProperty Name="Employees" Relationship="JDsBabbittBearingDBModel.Address_Employee" FromRole="Address" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="AutoComplete">
+          <Key>
+            <PropertyRef Name="AutoCompleteId" />
+          </Key>
+          <Property Name="AutoCompleteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ControlId" Type="Int32" Nullable="false" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AutoCompleteEntry">
+          <Key>
+            <PropertyRef Name="AutoCompleteEntryId" />
+          </Key>
+          <Property Name="AutoCompleteEntryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AssociatedTextField" Type="Guid" />
+          <Property Name="Entry" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleteable" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="CertificateFile">
+          <Key>
+            <PropertyRef Name="CertificateFileId" />
+          </Key>
+          <Property Name="CertificateFileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
+          <Property Name="Filename" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FileURL" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="OriginalFilename" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Certificates" Relationship="JDsBabbittBearingDBModel.CertificateFile_Certificate" FromRole="CertificateFile" ToRole="Certificate" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="ContactId" />
+          </Key>
+          <Property Name="ContactId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="WorkPhone" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="CellPhone" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Fax" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Customers" Relationship="JDsBabbittBearingDBModel.Contact_Customer" FromRole="Contact" ToRole="Customer" />
+          <NavigationProperty Name="Jobs" Relationship="JDsBabbittBearingDBModel.Contact_Job" FromRole="Contact" ToRole="Job" />
+          <NavigationProperty Name="Customer" Relationship="JDsBabbittBearingDBModel.Customer_Contact" FromRole="Contact" ToRole="Customer" />
+          <NavigationProperty Name="Parts" Relationship="JDsBabbittBearingDBModel.Contact_Part" FromRole="Contact" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PrimaryContactId" Type="Int32" />
+          <Property Name="BillingAddressId" Type="Int32" />
+          <Property Name="ShippingAddressId" Type="Int32" />
+          <Property Name="CompanyName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Address" Relationship="JDsBabbittBearingDBModel.Address_Customer" FromRole="Customer" ToRole="Address" />
+          <NavigationProperty Name="Contact" Relationship="JDsBabbittBearingDBModel.Contact_Customer" FromRole="Customer" ToRole="Contact" />
+          <NavigationProperty Name="Contacts" Relationship="JDsBabbittBearingDBModel.Customer_Contact" FromRole="Customer" ToRole="Contact" />
+        </EntityType>
+        <EntityType Name="DeliveryInfo">
+          <Key>
+            <PropertyRef Name="DeliveryInfoId" />
+          </Key>
+          <Property Name="DeliveryInfoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShippedVia" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="DateShipped" Type="DateTime" Precision="7" />
+          <Property Name="DateRequired" Type="DateTime" Precision="7" />
+          <Property Name="TrackingNumber" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="PackedBySignOffId" Type="Int32" />
+          <NavigationProperty Name="SignOff" Relationship="JDsBabbittBearingDBModel.SignOff_DeliveryInfo" FromRole="DeliveryInfo" ToRole="SignOff" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AddressId" Type="Int32" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="HireDate" Type="DateTime" Precision="7" />
+          <Property Name="PIN" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Name="EmergencyContact" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="EmergencyPhone" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Address" Relationship="JDsBabbittBearingDBModel.Address_Employee" FromRole="Employee" ToRole="Address" />
+          <NavigationProperty Name="Jobs" Relationship="JDsBabbittBearingDBModel.Employee_Job" FromRole="Employee" ToRole="Job" />
+          <NavigationProperty Name="SignOffs" Relationship="JDsBabbittBearingDBModel.Employee_SignOff" FromRole="Employee" ToRole="SignOff" />
+          <NavigationProperty Name="TimesheetEntries" Relationship="JDsBabbittBearingDBModel.Employee_TimesheetEntry" FromRole="Employee" ToRole="TimesheetEntry" />
+          <NavigationProperty Name="Vacations" Relationship="JDsBabbittBearingDBModel.Employee_Vacation" FromRole="Employee" ToRole="Vacation" />
+          <NavigationProperty Name="EmployeeFiles" Relationship="JDsBabbittBearingDBModel.FK_EmployeeFile_Employee" FromRole="Employee" ToRole="EmployeeFile" />
+          <NavigationProperty Name="Skills" Relationship="JDsBabbittBearingDBModel.EmployeeSkill" FromRole="Employee" ToRole="Skill" />
+          <NavigationProperty Name="PartPhotoes" Relationship="JDsBabbittBearingDBModel.Employee_PartPhoto" FromRole="Employee" ToRole="PartPhoto" />
+          <NavigationProperty Name="PartFiles" Relationship="JDsBabbittBearingDBModel.Employee_PartFile" FromRole="Employee" ToRole="PartFile" />
+        </EntityType>
+        <EntityType Name="EmployeeFile">
+          <Key>
+            <PropertyRef Name="EmployeeFileId" />
+          </Key>
+          <Property Name="EmployeeFileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
+          <Property Name="Filename" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FileURL" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.FK_EmployeeFile_Employee" FromRole="EmployeeFile" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="JobId" />
+          </Key>
+          <Property Name="JobId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreatedByEmployeeId" Type="Int32" />
+          <Property Name="CustomerContactId" Type="Int32" />
+          <Property Name="JobStatusId" Type="Int32" />
+          <Property Name="CustomerJobNumber" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="PurchaseOrderNumber" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="ReceivedDate" Type="DateTime" Precision="7" />
+          <Property Name="RequiredDate" Type="DateTime" Precision="7" />
+          <Property Name="ShipByDate" Type="DateTime" Precision="7" />
+          <Property Name="ShippedDate" Type="DateTime" Precision="7" />
+          <Property Name="BilledDate" Type="DateTime" Precision="7" />
+          <Property Name="OvertimeRequired" Type="Boolean" />
+          <Property Name="HoldForCustomerApproval" Type="Boolean" />
+          <Property Name="JobNotes" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="7" />
+          <Property Name="QuoteOnly" Type="Boolean" />
+          <Property Name="AllPartsRequireUT" Type="Boolean" />
+          <Property Name="AllPartsRequirePT" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Contact" Relationship="JDsBabbittBearingDBModel.Contact_Job" FromRole="Job" ToRole="Contact" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_Job" FromRole="Job" ToRole="Employee" />
+          <NavigationProperty Name="JobStatu" Relationship="JDsBabbittBearingDBModel.JobStatus_Job" FromRole="Job" ToRole="JobStatu" />
+          <NavigationProperty Name="Parts" Relationship="JDsBabbittBearingDBModel.Job_Part" FromRole="Job" ToRole="Part" />
+          <NavigationProperty Name="ChangeLogEntries" Relationship="JDsBabbittBearingDBModel.Job_ChangeLogEntry" FromRole="Job" ToRole="ChangeLogEntry" />
+        </EntityType>
+        <EntityType Name="JobStatu">
+          <Key>
+            <PropertyRef Name="JobStatusId" />
+          </Key>
+          <Property Name="JobStatusId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Jobs" Relationship="JDsBabbittBearingDBModel.JobStatus_Job" FromRole="JobStatu" ToRole="Job" />
+        </EntityType>
+        <EntityType Name="MeasurementList">
+          <Key>
+            <PropertyRef Name="MeasurementListId" />
+          </Key>
+          <Property Name="MeasurementListId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Sizes" Relationship="JDsBabbittBearingDBModel.Sizes_MeasurementList" FromRole="MeasurementList" ToRole="Size" />
+          <NavigationProperty Name="PartDiameterMeasurements" Relationship="JDsBabbittBearingDBModel.MeasurementList_PartDiameterMeasurement" FromRole="MeasurementList" ToRole="PartDiameterMeasurement" />
+        </EntityType>
+        <EntityType Name="PartProcess">
+          <Key>
+            <PropertyRef Name="PartProcessID" />
+          </Key>
+          <Property Name="PartProcessID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Parts" Relationship="JDsBabbittBearingDBModel.PartProcess_Part" FromRole="PartProcess" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="PartStatu">
+          <Key>
+            <PropertyRef Name="PartStatusId" />
+          </Key>
+          <Property Name="PartStatusId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Parts" Relationship="JDsBabbittBearingDBModel.PartStatus_Part" FromRole="PartStatu" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="PartType">
+          <Key>
+            <PropertyRef Name="PartTypeId" />
+          </Key>
+          <Property Name="PartTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Parts" Relationship="JDsBabbittBearingDBModel.PartType_Part" FromRole="PartType" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="PhotoType">
+          <Key>
+            <PropertyRef Name="PhotoTypeId" />
+          </Key>
+          <Property Name="PhotoTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PartPhotoes" Relationship="JDsBabbittBearingDBModel.PhotoType_PartPhoto" FromRole="PhotoType" ToRole="PartPhoto" />
+        </EntityType>
+        <EntityType Name="Process">
+          <Key>
+            <PropertyRef Name="ProcessId" />
+          </Key>
+          <Property Name="ProcessId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProcessTypeId" Type="Int32" Nullable="false" />
+          <Property Name="PartId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ProcessType" Relationship="JDsBabbittBearingDBModel.FK_Process_ProcessType" FromRole="Process" ToRole="ProcessType" />
+          <NavigationProperty Name="Steps" Relationship="JDsBabbittBearingDBModel.FK_Step_Process" FromRole="Process" ToRole="Step" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.FK_Process_Part" FromRole="Process" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="ProcessType">
+          <Key>
+            <PropertyRef Name="ProcessTypeId" />
+          </Key>
+          <Property Name="ProcessTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Processes" Relationship="JDsBabbittBearingDBModel.FK_Process_ProcessType" FromRole="ProcessType" ToRole="Process" />
+        </EntityType>
+        <EntityType Name="SignOff">
+          <Key>
+            <PropertyRef Name="SignOffId" />
+          </Key>
+          <Property Name="SignOffId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RequiredSkillId" Type="Int32" />
+          <Property Name="EmployeeId" Type="Int32" />
+          <Property Name="SignOffDate" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="DeliveryInfoes" Relationship="JDsBabbittBearingDBModel.SignOff_DeliveryInfo" FromRole="SignOff" ToRole="DeliveryInfo" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_SignOff" FromRole="SignOff" ToRole="Employee" />
+          <NavigationProperty Name="Vacations" Relationship="JDsBabbittBearingDBModel.SignOff_Vacation" FromRole="SignOff" ToRole="Vacation" />
+          <NavigationProperty Name="Skill" Relationship="JDsBabbittBearingDBModel.Skill_SignOff" FromRole="SignOff" ToRole="Skill" />
+        </EntityType>
+        <EntityType Name="Size">
+          <Key>
+            <PropertyRef Name="SizesId" />
+          </Key>
+          <Property Name="SizesId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="Shaft" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="Clearance" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="BoreSize" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="BoreSizeHorizontal" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="ShimSize" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="Tolerance" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="SealSize" Type="String" MaxLength="128" Unicode="true" FixedLength="false" />
+          <Property Name="SpecialNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerSuppliedMeasurementsListId" Type="Int32" />
+          <NavigationProperty Name="MeasurementList" Relationship="JDsBabbittBearingDBModel.Sizes_MeasurementList" FromRole="Size" ToRole="MeasurementList" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.Sizes_Part" FromRole="Size" ToRole="Part" />
+        </EntityType>
+        <EntityType Name="Skill">
+          <Key>
+            <PropertyRef Name="SkillId" />
+          </Key>
+          <Property Name="SkillId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SignOffs" Relationship="JDsBabbittBearingDBModel.Skill_SignOff" FromRole="Skill" ToRole="SignOff" />
+          <NavigationProperty Name="Employees" Relationship="JDsBabbittBearingDBModel.EmployeeSkill" FromRole="Skill" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Step">
+          <Key>
+            <PropertyRef Name="StepId" />
+          </Key>
+          <Property Name="StepId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StepNumber" Type="Int32" Nullable="false" />
+          <Property Name="ProcessId" Type="Int64" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Version" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DataType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="StringValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastRequestedBy" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Requested" Type="DateTime" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Updated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Process" Relationship="JDsBabbittBearingDBModel.FK_Step_Process" FromRole="Step" ToRole="Process" />
+          <NavigationProperty Name="StepActivities" Relationship="JDsBabbittBearingDBModel.FK_StepActivity_Step" FromRole="Step" ToRole="StepActivity" />
+        </EntityType>
+        <EntityType Name="StepActivity">
+          <Key>
+            <PropertyRef Name="StepActivityId" />
+          </Key>
+          <Property Name="StepActivityId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StepId" Type="Int64" Nullable="false" />
+          <Property Name="ActivityId" Type="Int32" Nullable="false" />
+          <Property Name="Employee" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Manager" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Activity" Relationship="JDsBabbittBearingDBModel.FK_StepActivity_Activity" FromRole="StepActivity" ToRole="Activity" />
+          <NavigationProperty Name="Step" Relationship="JDsBabbittBearingDBModel.FK_StepActivity_Step" FromRole="StepActivity" ToRole="Step" />
+        </EntityType>
+        <EntityType Name="TimesheetEntry">
+          <Key>
+            <PropertyRef Name="TimesheetEntryId" />
+          </Key>
+          <Property Name="TimesheetEntryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" />
+          <Property Name="Day" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="NumHoursWorked" Type="Decimal" Nullable="false" Precision="6" Scale="3" />
+          <Property Name="StartTime" Type="DateTime" Precision="7" />
+          <Property Name="EndTime" Type="DateTime" Precision="7" />
+          <Property Name="WorkedThroughMealtime" Type="Boolean" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_TimesheetEntry" FromRole="TimesheetEntry" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Vacation">
+          <Key>
+            <PropertyRef Name="VacationId" />
+          </Key>
+          <Property Name="VacationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="VacationSignOffId" Type="Int32" />
+          <Property Name="NumberOfVacationHoursUsed" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_Vacation" FromRole="Vacation" ToRole="Employee" />
+          <NavigationProperty Name="SignOff" Relationship="JDsBabbittBearingDBModel.SignOff_Vacation" FromRole="Vacation" ToRole="SignOff" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Day" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsVacationTime" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_StepActivity_Activity">
+          <End Type="JDsBabbittBearingDBModel.Activity" Role="Activity" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.StepActivity" Role="StepActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Activity">
+              <PropertyRef Name="ActivityId" />
+            </Principal>
+            <Dependent Role="StepActivity">
+              <PropertyRef Name="ActivityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Address_Customer">
+          <End Type="JDsBabbittBearingDBModel.Address" Role="Address" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Customer" Role="Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="BillingAddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Address_Employee">
+          <End Type="JDsBabbittBearingDBModel.Address" Role="Address" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressId" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="AddressId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Contact_Customer">
+          <End Type="JDsBabbittBearingDBModel.Contact" Role="Contact" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Customer" Role="Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="PrimaryContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Contact_Job">
+          <End Type="JDsBabbittBearingDBModel.Contact" Role="Contact" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="CustomerContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Customer_Contact">
+          <End Type="JDsBabbittBearingDBModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.Contact" Role="Contact" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="Contact">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SignOff_DeliveryInfo">
+          <End Type="JDsBabbittBearingDBModel.SignOff" Role="SignOff" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.DeliveryInfo" Role="DeliveryInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignOff">
+              <PropertyRef Name="SignOffId" />
+            </Principal>
+            <Dependent Role="DeliveryInfo">
+              <PropertyRef Name="PackedBySignOffId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_Job">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="CreatedByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_SignOff">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.SignOff" Role="SignOff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="SignOff">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_TimesheetEntry">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.TimesheetEntry" Role="TimesheetEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="TimesheetEntry">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Employee_Vacation">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.Vacation" Role="Vacation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Vacation">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeFile_Employee">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.EmployeeFile" Role="EmployeeFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="EmployeeFile">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="JobStatus_Job">
+          <End Type="JDsBabbittBearingDBModel.JobStatu" Role="JobStatu" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Job" Role="Job" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobStatu">
+              <PropertyRef Name="JobStatusId" />
+            </Principal>
+            <Dependent Role="Job">
+              <PropertyRef Name="JobStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Sizes_MeasurementList">
+          <End Type="JDsBabbittBearingDBModel.MeasurementList" Role="MeasurementList" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Size" Role="Size" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MeasurementList">
+              <PropertyRef Name="MeasurementListId" />
+            </Principal>
+            <Dependent Role="Size">
+              <PropertyRef Name="CustomerSuppliedMeasurementsListId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Process_ProcessType">
+          <End Type="JDsBabbittBearingDBModel.ProcessType" Role="ProcessType" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.Process" Role="Process" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProcessType">
+              <PropertyRef Name="ProcessTypeId" />
+            </Principal>
+            <Dependent Role="Process">
+              <PropertyRef Name="ProcessTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Step_Process">
+          <End Type="JDsBabbittBearingDBModel.Process" Role="Process" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.Step" Role="Step" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Process">
+              <PropertyRef Name="ProcessId" />
+            </Principal>
+            <Dependent Role="Step">
+              <PropertyRef Name="ProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SignOff_Vacation">
+          <End Type="JDsBabbittBearingDBModel.SignOff" Role="SignOff" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Vacation" Role="Vacation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SignOff">
+              <PropertyRef Name="SignOffId" />
+            </Principal>
+            <Dependent Role="Vacation">
+              <PropertyRef Name="VacationSignOffId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Skill_SignOff">
+          <End Type="JDsBabbittBearingDBModel.Skill" Role="Skill" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.SignOff" Role="SignOff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skill">
+              <PropertyRef Name="SkillId" />
+            </Principal>
+            <Dependent Role="SignOff">
+              <PropertyRef Name="RequiredSkillId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StepActivity_Step">
+          <End Type="JDsBabbittBearingDBModel.Step" Role="Step" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.StepActivity" Role="StepActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Step">
+              <PropertyRef Name="StepId" />
+            </Principal>
+            <Dependent Role="StepActivity">
+              <PropertyRef Name="StepId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="EmployeeSkill">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="*" />
+          <End Type="JDsBabbittBearingDBModel.Skill" Role="Skill" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Part">
+          <Key>
+            <PropertyRef Name="PartId" />
+          </Key>
+          <Property Name="PartId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JobId" Type="Int32" />
+          <Property Name="PartTypeId" Type="Int32" />
+          <Property Name="PartStatusId" Type="Int32" />
+          <Property Name="PartContactId" Type="Int32" />
+          <Property Name="WorkScope" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="RequiredDate" Type="DateTime" Precision="7" />
+          <Property Name="ShipByDate" Type="DateTime" Precision="7" />
+          <Property Name="ShippedDate" Type="DateTime" Precision="7" />
+          <Property Name="NonConformanceReportNotes" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="RequiresPT" Type="Boolean" />
+          <Property Name="RequiresUT" Type="Boolean" />
+          <Property Name="PartProcessId" Type="Int32" />
+          <Property Name="ItemCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IdentifyingInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Contact" Relationship="JDsBabbittBearingDBModel.Contact_Part" FromRole="Part" ToRole="Contact" />
+          <NavigationProperty Name="Job" Relationship="JDsBabbittBearingDBModel.Job_Part" FromRole="Part" ToRole="Job" />
+          <NavigationProperty Name="Processes" Relationship="JDsBabbittBearingDBModel.FK_Process_Part" FromRole="Part" ToRole="Process" />
+          <NavigationProperty Name="PartProcess" Relationship="JDsBabbittBearingDBModel.PartProcess_Part" FromRole="Part" ToRole="PartProcess" />
+          <NavigationProperty Name="PartStatu" Relationship="JDsBabbittBearingDBModel.PartStatus_Part" FromRole="Part" ToRole="PartStatu" />
+          <NavigationProperty Name="PartType" Relationship="JDsBabbittBearingDBModel.PartType_Part" FromRole="Part" ToRole="PartType" />
+          <NavigationProperty Name="Sizes" Relationship="JDsBabbittBearingDBModel.Sizes_Part" FromRole="Part" ToRole="Size" />
+          <NavigationProperty Name="IncomingInspectionAccessories" Relationship="JDsBabbittBearingDBModel.Part_IncomingInspectionAccessory" FromRole="Part" ToRole="IncomingInspectionAccessory" />
+          <NavigationProperty Name="PartPhotoes" Relationship="JDsBabbittBearingDBModel.Part_PartPhoto" FromRole="Part" ToRole="PartPhoto" />
+          <NavigationProperty Name="PartFiles" Relationship="JDsBabbittBearingDBModel.Part_PartFile" FromRole="Part" ToRole="PartFile" />
+          <NavigationProperty Name="PartTests" Relationship="JDsBabbittBearingDBModel.PartTest_Part" FromRole="Part" ToRole="PartTest" />
+        </EntityType>
+        <Association Name="Contact_Part">
+          <End Type="JDsBabbittBearingDBModel.Contact" Role="Contact" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact">
+              <PropertyRef Name="ContactId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartContactId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Job_Part">
+          <End Type="JDsBabbittBearingDBModel.Job" Role="Job" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="JobId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Process_Part">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.Process" Role="Process" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="Process">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartProcess_Part">
+          <End Type="JDsBabbittBearingDBModel.PartProcess" Role="PartProcess" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartProcess">
+              <PropertyRef Name="PartProcessID" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartProcessId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartStatus_Part">
+          <End Type="JDsBabbittBearingDBModel.PartStatu" Role="PartStatu" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartStatu">
+              <PropertyRef Name="PartStatusId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartType_Part">
+          <End Type="JDsBabbittBearingDBModel.PartType" Role="PartType" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartType">
+              <PropertyRef Name="PartTypeId" />
+            </Principal>
+            <Dependent Role="Part">
+              <PropertyRef Name="PartTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Sizes_Part">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Size" Role="Size" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="Size">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Certificate">
+          <Key>
+            <PropertyRef Name="CertificateId" />
+          </Key>
+          <Property Name="CertificateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CertificateDate" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CertificateExpires" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="CompanyName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="CertificateFileId" Type="Int32" />
+          <NavigationProperty Name="CertificateFile" Relationship="JDsBabbittBearingDBModel.CertificateFile_Certificate" FromRole="Certificate" ToRole="CertificateFile" />
+        </EntityType>
+        <Association Name="CertificateFile_Certificate">
+          <End Type="JDsBabbittBearingDBModel.CertificateFile" Role="CertificateFile" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.Certificate" Role="Certificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CertificateFile">
+              <PropertyRef Name="CertificateFileId" />
+            </Principal>
+            <Dependent Role="Certificate">
+              <PropertyRef Name="CertificateFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ChangeLogEntry">
+          <Key>
+            <PropertyRef Name="ChangeLogEntryId" />
+          </Key>
+          <Property Name="ChangeLogEntryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JobId" Type="Int32" />
+          <Property Name="ChangeTime" Type="DateTime" Precision="7" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Job" Relationship="JDsBabbittBearingDBModel.Job_ChangeLogEntry" FromRole="ChangeLogEntry" ToRole="Job" />
+        </EntityType>
+        <Association Name="Job_ChangeLogEntry">
+          <End Type="JDsBabbittBearingDBModel.Job" Role="Job" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.ChangeLogEntry" Role="ChangeLogEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="JobId" />
+            </Principal>
+            <Dependent Role="ChangeLogEntry">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="IncomingInspectionAccessory">
+          <Key>
+            <PropertyRef Name="IncomingInspectionAccessoryId" />
+          </Key>
+          <Property Name="IncomingInspectionAccessoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="IsInstalled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.Part_IncomingInspectionAccessory" FromRole="IncomingInspectionAccessory" ToRole="Part" />
+        </EntityType>
+        <Association Name="Part_IncomingInspectionAccessory">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.IncomingInspectionAccessory" Role="IncomingInspectionAccessory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="IncomingInspectionAccessory">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PartPhoto">
+          <Key>
+            <PropertyRef Name="PartPhotoId" />
+          </Key>
+          <Property Name="PartPhotoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="PhotoTakenByEmployeeId" Type="Int32" />
+          <Property Name="PhotoTypeId" Type="Int32" />
+          <Property Name="PhotoUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateTaken" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_PartPhoto" FromRole="PartPhoto" ToRole="Employee" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.Part_PartPhoto" FromRole="PartPhoto" ToRole="Part" />
+          <NavigationProperty Name="PhotoType" Relationship="JDsBabbittBearingDBModel.PhotoType_PartPhoto" FromRole="PartPhoto" ToRole="PhotoType" />
+        </EntityType>
+        <Association Name="Employee_PartPhoto">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartPhoto" Role="PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PhotoTakenByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Part_PartPhoto">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartPhoto" Role="PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhotoType_PartPhoto">
+          <End Type="JDsBabbittBearingDBModel.PhotoType" Role="PhotoType" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartPhoto" Role="PartPhoto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PhotoType">
+              <PropertyRef Name="PhotoTypeId" />
+            </Principal>
+            <Dependent Role="PartPhoto">
+              <PropertyRef Name="PhotoTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PartFile">
+          <Key>
+            <PropertyRef Name="PartFileId" />
+          </Key>
+          <Property Name="PartFileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="UpdatedByEmployeeId" Type="Int32" />
+          <Property Name="FileUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="7" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="7" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsFinalPrint" Type="Boolean" />
+          <NavigationProperty Name="Employee" Relationship="JDsBabbittBearingDBModel.Employee_PartFile" FromRole="PartFile" ToRole="Employee" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.Part_PartFile" FromRole="PartFile" ToRole="Part" />
+          <NavigationProperty Name="PartTests" Relationship="JDsBabbittBearingDBModel.PartTest_PartFile_PT" FromRole="PartFile" ToRole="PartTest" />
+          <NavigationProperty Name="PartTests1" Relationship="JDsBabbittBearingDBModel.PartTest_PartFile_UT" FromRole="PartFile" ToRole="PartTest" />
+          </EntityType>
+        <Association Name="Employee_PartFile">
+          <End Type="JDsBabbittBearingDBModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartFile" Role="PartFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="PartFile">
+              <PropertyRef Name="UpdatedByEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Part_PartFile">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartFile" Role="PartFile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartFile">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PartTest">
+          <Key>
+            <PropertyRef Name="PartTestId" />
+          </Key>
+          <Property Name="PartTestId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartId" Type="Int32" Nullable="false" />
+          <Property Name="UTComplete" Type="Boolean" />
+          <Property Name="PTComplete" Type="Boolean" />
+          <Property Name="UTCertPartFileId" Type="Int32" />
+          <Property Name="PTCertPartFileId" Type="Int32" />
+          <Property Name="UTSignoffEmpName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PTSignoffEmpName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UTPassed" Type="Boolean" />
+          <Property Name="PTPassed" Type="Boolean" />
+          <Property Name="TestNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Part" Relationship="JDsBabbittBearingDBModel.PartTest_Part" FromRole="PartTest" ToRole="Part" />
+          <NavigationProperty Name="PartFile" Relationship="JDsBabbittBearingDBModel.PartTest_PartFile_PT" FromRole="PartTest" ToRole="PartFile" />
+          <NavigationProperty Name="PartFile1" Relationship="JDsBabbittBearingDBModel.PartTest_PartFile_UT" FromRole="PartTest" ToRole="PartFile" />
+        </EntityType>
+        <Association Name="PartTest_Part">
+          <End Type="JDsBabbittBearingDBModel.Part" Role="Part" Multiplicity="1" />
+          <End Type="JDsBabbittBearingDBModel.PartTest" Role="PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Part">
+              <PropertyRef Name="PartId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="PartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartTest_PartFile_PT">
+          <End Type="JDsBabbittBearingDBModel.PartFile" Role="PartFile" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartTest" Role="PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartFile">
+              <PropertyRef Name="PartFileId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="PTCertPartFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PartTest_PartFile_UT">
+          <End Type="JDsBabbittBearingDBModel.PartFile" Role="PartFile" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartTest" Role="PartTest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartFile">
+              <PropertyRef Name="PartFileId" />
+            </Principal>
+            <Dependent Role="PartTest">
+              <PropertyRef Name="UTCertPartFileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PartDiameterMeasurement">
+          <Key>
+            <PropertyRef Name="PartDiameterMeasurementId" />
+          </Key>
+          <Property Name="PartDiameterMeasurementId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MeasurementListId" Type="Int32" />
+          <Property Name="MeasuredDate" Type="DateTime" Precision="7" />
+          <Property Name="A" Type="Decimal" Precision="10" Scale="5" />
+          <Property Name="B" Type="Decimal" Precision="10" Scale="5" />
+          <Property Name="C" Type="Decimal" Precision="10" Scale="5" />
+          <Property Name="ODComment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="MeasurementList" Relationship="JDsBabbittBearingDBModel.MeasurementList_PartDiameterMeasurement" FromRole="PartDiameterMeasurement" ToRole="MeasurementList" />
+        </EntityType>
+        <Association Name="MeasurementList_PartDiameterMeasurement">
+          <End Type="JDsBabbittBearingDBModel.MeasurementList" Role="MeasurementList" Multiplicity="0..1" />
+          <End Type="JDsBabbittBearingDBModel.PartDiameterMeasurement" Role="PartDiameterMeasurement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MeasurementList">
+              <PropertyRef Name="MeasurementListId" />
+            </Principal>
+            <Dependent Role="PartDiameterMeasurement">
+              <PropertyRef Name="MeasurementListId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="JDsBabbittBearingDBModelStoreContainer" CdmEntityContainer="JDsDBEntities">
+          <FunctionImportMapping FunctionImportName="UpdateEmployeeSkill" FunctionName="JDsBabbittBearingDBModel.Store.UpdateEmployeeSkill" />
+          <EntitySetMapping Name="Activities">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Activity">
+              <MappingFragment StoreEntitySet="Activity">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ActivityId" ColumnName="ActivityId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Addresses">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Address">
+              <MappingFragment StoreEntitySet="Address">
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutoCompletes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.AutoComplete">
+              <MappingFragment StoreEntitySet="AutoComplete">
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ControlId" ColumnName="ControlId" />
+                <ScalarProperty Name="AutoCompleteId" ColumnName="AutoCompleteId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AutoCompleteEntries">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.AutoCompleteEntry">
+              <MappingFragment StoreEntitySet="AutoCompleteEntry">
+                <ScalarProperty Name="IsDeleteable" ColumnName="IsDeleteable" />
+                <ScalarProperty Name="Entry" ColumnName="Entry" />
+                <ScalarProperty Name="AssociatedTextField" ColumnName="AssociatedTextField" />
+                <ScalarProperty Name="AutoCompleteEntryId" ColumnName="AutoCompleteEntryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CertificateFiles">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.CertificateFile">
+              <MappingFragment StoreEntitySet="CertificateFile">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="OriginalFilename" ColumnName="OriginalFilename" />
+                <ScalarProperty Name="FileURL" ColumnName="FileURL" />
+                <ScalarProperty Name="Filename" ColumnName="Filename" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CertificateFileId" ColumnName="CertificateFileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contacts">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Contact">
+              <MappingFragment StoreEntitySet="Contact">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="CellPhone" ColumnName="CellPhone" />
+                <ScalarProperty Name="WorkPhone" ColumnName="WorkPhone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Customer">
+              <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="ShippingAddressId" ColumnName="ShippingAddressId" />
+                <ScalarProperty Name="BillingAddressId" ColumnName="BillingAddressId" />
+                <ScalarProperty Name="PrimaryContactId" ColumnName="PrimaryContactId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DeliveryInfoes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.DeliveryInfo">
+              <MappingFragment StoreEntitySet="DeliveryInfo">
+                <ScalarProperty Name="PackedBySignOffId" ColumnName="PackedBySignOffId" />
+                <ScalarProperty Name="TrackingNumber" ColumnName="TrackingNumber" />
+                <ScalarProperty Name="DateRequired" ColumnName="DateRequired" />
+                <ScalarProperty Name="DateShipped" ColumnName="DateShipped" />
+                <ScalarProperty Name="ShippedVia" ColumnName="ShippedVia" />
+                <ScalarProperty Name="DeliveryInfoId" ColumnName="DeliveryInfoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="EmergencyPhone" ColumnName="EmergencyPhone" />
+                <ScalarProperty Name="EmergencyContact" ColumnName="EmergencyContact" />
+                <ScalarProperty Name="PIN" ColumnName="PIN" />
+                <ScalarProperty Name="HireDate" ColumnName="HireDate" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="AddressId" ColumnName="AddressId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeFiles">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.EmployeeFile">
+              <MappingFragment StoreEntitySet="EmployeeFile">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="FileURL" ColumnName="FileURL" />
+                <ScalarProperty Name="Filename" ColumnName="Filename" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="EmployeeFileId" ColumnName="EmployeeFileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Jobs">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Job">
+              <MappingFragment StoreEntitySet="Job">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="AllPartsRequirePT" ColumnName="AllPartsRequirePT" />
+                <ScalarProperty Name="AllPartsRequireUT" ColumnName="AllPartsRequireUT" />
+                <ScalarProperty Name="QuoteOnly" ColumnName="QuoteOnly" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="JobNotes" ColumnName="JobNotes" />
+                <ScalarProperty Name="HoldForCustomerApproval" ColumnName="HoldForCustomerApproval" />
+                <ScalarProperty Name="OvertimeRequired" ColumnName="OvertimeRequired" />
+                <ScalarProperty Name="BilledDate" ColumnName="BilledDate" />
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
+                <ScalarProperty Name="ShipByDate" ColumnName="ShipByDate" />
+                <ScalarProperty Name="RequiredDate" ColumnName="RequiredDate" />
+                <ScalarProperty Name="ReceivedDate" ColumnName="ReceivedDate" />
+                <ScalarProperty Name="PurchaseOrderNumber" ColumnName="PurchaseOrderNumber" />
+                <ScalarProperty Name="CustomerJobNumber" ColumnName="CustomerJobNumber" />
+                <ScalarProperty Name="JobStatusId" ColumnName="JobStatusId" />
+                <ScalarProperty Name="CustomerContactId" ColumnName="CustomerContactId" />
+                <ScalarProperty Name="CreatedByEmployeeId" ColumnName="CreatedByEmployeeId" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobStatus">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.JobStatu">
+              <MappingFragment StoreEntitySet="JobStatus">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="JobStatusId" ColumnName="JobStatusId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MeasurementLists">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.MeasurementList">
+              <MappingFragment StoreEntitySet="MeasurementList">
+                <ScalarProperty Name="MeasurementListId" ColumnName="MeasurementListId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartProcesses">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartProcess">
+              <MappingFragment StoreEntitySet="PartProcess">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PartProcessID" ColumnName="PartProcessID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartStatus">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartStatu">
+              <MappingFragment StoreEntitySet="PartStatus">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PartStatusId" ColumnName="PartStatusId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartTypes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartType">
+              <MappingFragment StoreEntitySet="PartType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PartTypeId" ColumnName="PartTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PhotoTypes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PhotoType">
+              <MappingFragment StoreEntitySet="PhotoType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PhotoTypeId" ColumnName="PhotoTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Processes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Process">
+              <MappingFragment StoreEntitySet="Process">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="ProcessTypeId" ColumnName="ProcessTypeId" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProcessTypes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.ProcessType">
+              <MappingFragment StoreEntitySet="ProcessType">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProcessTypeId" ColumnName="ProcessTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignOffs">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.SignOff">
+              <MappingFragment StoreEntitySet="SignOff">
+                <ScalarProperty Name="SignOffDate" ColumnName="SignOffDate" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="RequiredSkillId" ColumnName="RequiredSkillId" />
+                <ScalarProperty Name="SignOffId" ColumnName="SignOffId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sizes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Size">
+              <MappingFragment StoreEntitySet="Sizes">
+                <ScalarProperty Name="CustomerSuppliedMeasurementsListId" ColumnName="CustomerSuppliedMeasurementsListId" />
+                <ScalarProperty Name="SpecialNotes" ColumnName="SpecialNotes" />
+                <ScalarProperty Name="SealSize" ColumnName="SealSize" />
+                <ScalarProperty Name="Tolerance" ColumnName="Tolerance" />
+                <ScalarProperty Name="ShimSize" ColumnName="ShimSize" />
+                <ScalarProperty Name="BoreSizeHorizontal" ColumnName="BoreSizeHorizontal" />
+                <ScalarProperty Name="BoreSize" ColumnName="BoreSize" />
+                <ScalarProperty Name="Clearance" ColumnName="Clearance" />
+                <ScalarProperty Name="Shaft" ColumnName="Shaft" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="SizesId" ColumnName="SizesId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Skills">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Skill">
+              <MappingFragment StoreEntitySet="Skill">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="SkillId" ColumnName="SkillId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Steps">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Step">
+              <MappingFragment StoreEntitySet="Step">
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Requested" ColumnName="Requested" />
+                <ScalarProperty Name="LastRequestedBy" ColumnName="LastRequestedBy" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="StringValue" ColumnName="StringValue" />
+                <ScalarProperty Name="DataType" ColumnName="DataType" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ProcessId" ColumnName="ProcessId" />
+                <ScalarProperty Name="StepNumber" ColumnName="StepNumber" />
+                <ScalarProperty Name="StepId" ColumnName="StepId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StepActivities">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.StepActivity">
+              <MappingFragment StoreEntitySet="StepActivity">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Manager" ColumnName="Manager" />
+                <ScalarProperty Name="Employee" ColumnName="Employee" />
+                <ScalarProperty Name="ActivityId" ColumnName="ActivityId" />
+                <ScalarProperty Name="StepId" ColumnName="StepId" />
+                <ScalarProperty Name="StepActivityId" ColumnName="StepActivityId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimesheetEntries">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.TimesheetEntry">
+              <MappingFragment StoreEntitySet="TimesheetEntry">
+                <ScalarProperty Name="WorkedThroughMealtime" ColumnName="WorkedThroughMealtime" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="NumHoursWorked" ColumnName="NumHoursWorked" />
+                <ScalarProperty Name="Day" ColumnName="Day" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="TimesheetEntryId" ColumnName="TimesheetEntryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vacations">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Vacation">
+              <MappingFragment StoreEntitySet="Vacation">
+                <ScalarProperty Name="IsVacationTime" ColumnName="IsVacationTime" />
+                <ScalarProperty Name="Day" ColumnName="Day" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="NumberOfVacationHoursUsed" ColumnName="NumberOfVacationHoursUsed" />
+                <ScalarProperty Name="VacationSignOffId" ColumnName="VacationSignOffId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="VacationId" ColumnName="VacationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="EmployeeSkill" TypeName="JDsBabbittBearingDBModel.EmployeeSkill" StoreEntitySet="EmployeeSkill">
+            <EndProperty Name="Skill">
+              <ScalarProperty Name="SkillId" ColumnName="SkillId" />
+            </EndProperty>
+            <EndProperty Name="Employee">
+              <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="Parts">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Part">
+              <MappingFragment StoreEntitySet="Part">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IdentifyingInfo" ColumnName="IdentifyingInfo" />
+                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
+                <ScalarProperty Name="PartProcessId" ColumnName="PartProcessId" />
+                <ScalarProperty Name="RequiresUT" ColumnName="RequiresUT" />
+                <ScalarProperty Name="RequiresPT" ColumnName="RequiresPT" />
+                <ScalarProperty Name="NonConformanceReportNotes" ColumnName="NonConformanceReportNotes" />
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
+                <ScalarProperty Name="ShipByDate" ColumnName="ShipByDate" />
+                <ScalarProperty Name="RequiredDate" ColumnName="RequiredDate" />
+                <ScalarProperty Name="WorkScope" ColumnName="WorkScope" />
+                <ScalarProperty Name="PartContactId" ColumnName="PartContactId" />
+                <ScalarProperty Name="PartStatusId" ColumnName="PartStatusId" />
+                <ScalarProperty Name="PartTypeId" ColumnName="PartTypeId" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Certificates">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.Certificate">
+              <MappingFragment StoreEntitySet="Certificate">
+                <ScalarProperty Name="CertificateFileId" ColumnName="CertificateFileId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="CertificateExpires" ColumnName="CertificateExpires" />
+                <ScalarProperty Name="CertificateDate" ColumnName="CertificateDate" />
+                <ScalarProperty Name="CertificateId" ColumnName="CertificateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChangeLogEntries">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.ChangeLogEntry">
+              <MappingFragment StoreEntitySet="ChangeLogEntry">
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="ChangeTime" ColumnName="ChangeTime" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="ChangeLogEntryId" ColumnName="ChangeLogEntryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IncomingInspectionAccessories">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.IncomingInspectionAccessory">
+              <MappingFragment StoreEntitySet="IncomingInspectionAccessory">
+                <ScalarProperty Name="IsInstalled" ColumnName="IsInstalled" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="IncomingInspectionAccessoryId" ColumnName="IncomingInspectionAccessoryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartPhotoes">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartPhoto">
+              <MappingFragment StoreEntitySet="PartPhoto">
+                <ScalarProperty Name="DateTaken" ColumnName="DateTaken" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="PhotoTypeId" ColumnName="PhotoTypeId" />
+                <ScalarProperty Name="PhotoTakenByEmployeeId" ColumnName="PhotoTakenByEmployeeId" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="PartPhotoId" ColumnName="PartPhotoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartFiles">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartFile">
+              <MappingFragment StoreEntitySet="PartFile">
+                <ScalarProperty Name="IsFinalPrint" ColumnName="IsFinalPrint" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="FileUrl" ColumnName="FileUrl" />
+                <ScalarProperty Name="UpdatedByEmployeeId" ColumnName="UpdatedByEmployeeId" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="PartFileId" ColumnName="PartFileId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartTests">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartTest">
+              <MappingFragment StoreEntitySet="PartTest">
+                <ScalarProperty Name="TestNotes" ColumnName="TestNotes" />
+                <ScalarProperty Name="PTPassed" ColumnName="PTPassed" />
+                <ScalarProperty Name="UTPassed" ColumnName="UTPassed" />
+                <ScalarProperty Name="PTSignoffEmpName" ColumnName="PTSignoffEmpName" />
+                <ScalarProperty Name="UTSignoffEmpName" ColumnName="UTSignoffEmpName" />
+                <ScalarProperty Name="PTCertPartFileId" ColumnName="PTCertPartFileId" />
+                <ScalarProperty Name="UTCertPartFileId" ColumnName="UTCertPartFileId" />
+                <ScalarProperty Name="PTComplete" ColumnName="PTComplete" />
+                <ScalarProperty Name="UTComplete" ColumnName="UTComplete" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="PartTestId" ColumnName="PartTestId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartDiameterMeasurements">
+            <EntityTypeMapping TypeName="JDsBabbittBearingDBModel.PartDiameterMeasurement">
+              <MappingFragment StoreEntitySet="PartDiameterMeasurement">
+                <ScalarProperty Name="ODComment" ColumnName="ODComment" />
+                <ScalarProperty Name="C" ColumnName="C" />
+                <ScalarProperty Name="B" ColumnName="B" />
+                <ScalarProperty Name="A" ColumnName="A" />
+                <ScalarProperty Name="MeasuredDate" ColumnName="MeasuredDate" />
+                <ScalarProperty Name="MeasurementListId" ColumnName="MeasurementListId" />
+                <ScalarProperty Name="PartDiameterMeasurementId" ColumnName="PartDiameterMeasurementId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,365 @@
+﻿
+@{
+    ViewBag.Title = "Timesheets Report";
+}
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && HttpContext.Current.Request.Cookies["EmployeeRole"].Value == "Manager")
+{
+    <div class="container">
+        <h2>Timesheets Report</h2>
+        <br />
+        <span>
+            <label>Select Pay Period:</label>
+            <input id="payPeriodDatePicker" style="width:125px;" />
+            <input id="payPeriodYearPicker" style="width:auto;" />
+            <button id="print" class="k-button"><span class="k-icon k-i-excel"></span>Print Report</button>
+            <button id="printAll" class="k-button"><span class="k-icon k-i-excel"></span>Print All Reports</button>
+        </span>
+        <br /><br />
+        <table id="payPeriodTable" class="table table-bordered"></table>
+        <div id="printdiv"></div>
+    </div>
+}
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}
+
+@section scripts
+{
+    <script>
+        $('#timesheetsReportEntry').addClass('aside-entry-active');
+    </script>
+
+    <script>
+
+        Date.prototype.getDOY = function () {
+            var onejan = new Date(this.getFullYear(), 0, 1);
+            return Math.ceil((this - onejan) / 86400000);
+        }
+
+        function getYearList() {
+            var now = new Date();
+
+            var thisYear = now.getFullYear();
+            var lastYear = thisYear - 1;
+            var yearBeforeThat = lastYear - 1;
+            var yearArray = [thisYear, lastYear, yearBeforeThat];
+
+            return yearArray;
+        }
+
+        var empIdArr = [];
+
+        $(document).ready(function () {
+
+            // Year dropdown
+            var years = getYearList();
+            $("#payPeriodYearPicker").kendoDropDownList({
+                change: GetDates,
+                dataBound: GetDates,
+                dataSource: years
+            });
+
+            // This function is called when the payPeriodYearPicker loads/changes
+            // Gets the value (year) and returns set of corresponding pay periods
+            function GetDates() {
+
+                // Get value from year picker
+                var ypValue = { YR: $("#payPeriodYearPicker").val() };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/EmployeePortal/TimesheetReports/GetPayPeriodDates/',
+                    data: ypValue,
+                    success: function (dates) {
+
+                        var dayOfYear = new Date().getDOY();
+                        var index = Math.floor((dayOfYear / 365) * 24)    // default to the current pay period
+
+                        // Initialized Date dropdown and sets inital value
+                        $("#payPeriodDatePicker").kendoDropDownList({
+                            change: GetTimesheets,
+                            dataBound: GetTimesheets,
+                            dataSource: dates,
+                            value: dates[index]
+                        });
+                    },
+                    error: function (dates) {
+                        bootbox.alert("Error in AJAX GetPayPeriodDates", function () { });
+                    }
+                });
+            }
+
+            // Print button click handler
+            $("#print").click(function (e) {
+                $("#print").hide();
+                $(".footer").hide();
+                $(".aside").hide();
+
+                window.print();
+
+                $("#print").show();
+                $(".footer").show();
+                $(".aside").show();
+            });
+
+            $("#printAll").click(PrintAllBtnClick);
+        });
+
+        function OnDocumentReady(date, year) {
+
+            // Year dropdown
+            var years = getYearList();
+            $("#payPeriodYearPicker").kendoDropDownList({
+                change: GetDates,
+                dataBound: GetDates,
+                dataSource: years,
+                value: year
+            });
+
+            // This function is called when the payPeriodYearPicker loads/changes
+            // Gets the value (year) and returns set of corresponding pay periods
+            function GetDates() {
+
+                // Get value from year picker
+                var ypValue = { YR: $("#payPeriodYearPicker").val() };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/EmployeePortal/TimesheetReports/GetPayPeriodDates/',
+                    data: ypValue,
+                    success: function (dates) {
+
+                        // Initialized Date dropdown and sets inital value
+                        $("#payPeriodDatePicker").kendoDropDownList({
+                            change: GetTimesheets,
+                            dataBound: GetTimesheets,
+                            dataSource: dates,
+                            value: date
+                        });
+                    },
+                    error: function (dates) {
+                        bootbox.alert("Error in AJAX GetPayPeriodDates", function () { });
+                    }
+                });
+            }
+
+            // Print button click handler
+            $("#print").click(function (e) {
+                $("#print").hide();
+                $(".footer").hide();
+                $(".aside").hide();
+
+                window.print();
+
+                $("#print").show();
+                $(".footer").show();
+                $(".aside").show();
+            });
+
+            $("#printAll").click(PrintAllBtnClick);
+        }
+
+        function PrintAllBtnClick() {
+
+            $("#printdiv").empty();
+            // GET array of employee IDs
+            // Return partial views
+            // Print
+            var year = $("#payPeriodYearPicker").val();
+            var date = $("#payPeriodDatePicker").val();
+
+            if ((year != "") && (date != "")) {
+                var obj = { employeeId: empIdArr, Year: year, payperiod: date };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/EmployeePortal/TimesheetReports/TimesheetEntries/',
+                    data: obj,
+                    success: function (data) {
+                        $("#printdiv").append(data);
+
+                        var printContents = document.getElementById('printdiv').innerHTML;
+                        var origContents = document.body.innerHTML;
+                        document.body.innerHTML = printContents;
+
+                        // get original padding size for body element
+                        var origPaddingSize = $('body').css('padding');
+
+                        // set new padding on body to fit screen for print
+                        $('body').css('padding', '50px');
+                        window.print();
+
+                        // put things back the way they were
+                        document.body.innerHTML = origContents;
+                        $('body').css('padding', origPaddingSize);
+
+                        // empty div
+                        $("#printdiv").empty();
+
+                        OnDocumentReady(date, year);
+                    },
+                    error: function (data) {
+                        bootbox.alert("Error in PrintAll", function () { });
+                    }
+                });
+            }
+        }
+
+        function GetTimesheets() {
+
+            // Empty employee ID array
+            empIdArr.splice(0, empIdArr.length);
+
+            // Removes all rows from the table
+            $("#payPeriodTable").find("tbody").remove();
+            $("#payPeriodTable").find("thead").remove();
+
+            // Gets the value of DatePicker and splits the dates into 2
+            var dateRange = $("#payPeriodDatePicker").val();
+            var splitResult = dateRange.split(" - ");
+
+            var headerStartDateSplit = splitResult[0].split("/");
+            var headerEndDateSplit = splitResult[1].split("/");
+
+            var headerMonth = parseInt(headerStartDateSplit[0]);
+            var headerStartDay = parseInt(headerStartDateSplit[1]);
+            var headerEndDay = parseInt(headerEndDateSplit[1]);
+
+
+            // Make the date information ready to send over AJAX
+            var obj = { startDate: splitResult[0], endDate: splitResult[1], YR: $("#payPeriodYearPicker").val() }
+
+            $.ajax({
+                type: 'POST',
+                url: '/EmployeePortal/TimesheetReports/GetTimesheetReportsByDate/',
+                data: obj,
+                success: function (data) {
+                    // List of Timesheet Reports
+                    var tsReports = data;
+
+                    // Check that it is not null
+                    if (tsReports.length > 0) {
+                        // Gets number of days in Pay Period
+                        var dayCount = (headerEndDay - headerStartDay) + 1;
+
+                        // Add thead element to table
+                        $("#payPeriodTable").append("<thead><tr id=\"headerRow\"><th>Employee</th><th id=\"blankColHeader\"></th></tr></thead>");
+
+                        // Adds the dates to the header row
+                        for (var j = 0; j < dayCount; j++) {
+                            $("#headerRow").append("<th>" + tsReports[j].Day + "</th>");
+                        }
+
+                        $("#headerRow").append("<th>Total</th>");
+                        $("#headerRow").append("<th>ST</th>");
+                        $("#headerRow").append("<th>OT</th>");
+                        $("#headerRow").append("<th>DT</th>");
+
+                        // Used to keep track of rows in the table
+                        var empID = 0;
+                        var empCounter = 0;
+
+                        // Timesheet data comes in ordered by EmployeeId so this
+                        // iterates through the reports until it finds new employeeID (which triggers new row)
+                        for (var i = 0; i < tsReports.length; i++) {
+                            var tt = 0, st = 0, ot = 0, dt = 0;
+                            var numHoursWorked = tsReports[i].NumHoursWorked;
+
+                            if (empID != tsReports[i].EmployeeId) {
+                                // Next employee
+                                empID = tsReports[i].EmployeeId;
+
+                                // Add employee IDs to array for identifying employees in the currently selected pay period
+                                empIdArr[empCounter++] = tsReports[i].EmployeeId;
+                                // Create new row
+                                $("#payPeriodTable").append("<tbody class=\"employeeTbody\"><tr class=\"empNameRow\"><td rowspan=\"5\"><a href=\"@Url.Action("LoadTimesheetForEmployee", "EmployeeTimesheets")?EmployeeId=" + tsReports[i].EmployeeId + "&payperiod=" + $("#payPeriodDatePicker").val() + "&year=" + $("#payPeriodYearPicker").val() + "\" style=\"text-decoration:underline; cursor:pointer;\">" + tsReports[i].EmployeeName + "</a></td></tr><tr class=\"startTimeRow\"><td style=\"width:100px;\">Start</td></tr><tr class=\"endTimeRow\"><td>End</td></tr><tr class=\"skipMealRow\"><td>Skip Meal</td></tr><tr class=\"hoursWorkedRow\"><td>Hours Worked</td></tr></tbody>");
+
+                                // Insert timesheet data to row
+                                $(".startTimeRow:last").append("<td>" + tsReports[i].StartTime + "</td>");
+                                $(".endTimeRow:last").append("<td>" + tsReports[i].EndTime + "</td>");
+                                if (numHoursWorked > 0)
+                                    $(".hoursWorkedRow:last").append("<td>" + numHoursWorked + "</td>");
+                                else
+                                    $(".hoursWorkedRow:last").append("<td></td>");
+
+                                if (tsReports[i].WorkedThroughMealtime)
+                                    $(".skipMealRow:last").append("<td>Y</td>");
+                                else
+                                    $(".skipMealRow:last").append("<td>N</td>");
+                            }
+                            else {
+                                // Insert timesheet data to row
+                                $(".startTimeRow:last").append("<td>" + tsReports[i].StartTime + "</td>");
+                                $(".endTimeRow:last").append("<td>" + tsReports[i].EndTime + "</td>");
+
+                                if (numHoursWorked > 0)
+                                    $(".hoursWorkedRow:last").append("<td>" + numHoursWorked + "</td>");
+                                else
+                                    $(".hoursWorkedRow:last").append("<td></td>");
+
+                                if (tsReports[i].WorkedThroughMealtime)
+                                    $(".skipMealRow:last").append("<td>Y</td>");
+                                else
+                                    $(".skipMealRow:last").append("<td>N</td>");
+
+
+                                // Used to keep track of timesheet records so that
+                                // the total hour, st, ot, and dt columns can be inserted
+                                var lastEmp = false;
+                                var lastCol = false;
+
+                                if (tsReports[i + 1]) {
+                                    lastEmp = false;
+
+                                    if (tsReports[i + 1].EmployeeId != empID)
+                                        lastCol = true;
+                                }
+                                else
+                                    lastEmp = true;
+
+                                // Used to append the total times columns
+                                if ((lastCol) || (lastEmp)) {
+                                    var reportWithTimeTotals = tsReports[i];
+
+                                    // If last timesheet report entry is blank; find one with matching empID and where the starttime != null
+                                    if (tsReports[i].StartTime == "") {
+                                        for (var j = 0; j < tsReports.length; j++) {
+                                            if ((empID == tsReports[j].EmployeeId) && (tsReports[j].StartTime != "")) {
+                                                reportWithTimeTotals = tsReports[j];
+                                            }
+                                        }
+                                    }
+
+                                    $(".hoursWorkedRow:last").append("<td>" + reportWithTimeTotals.TotalHours + "</td>");
+                                    $(".hoursWorkedRow:last").append("<td>" + reportWithTimeTotals.StraightTime + "</td>");
+                                    $(".hoursWorkedRow:last").append("<td>" + reportWithTimeTotals.Overtime + "</td>");
+                                    $(".hoursWorkedRow:last").append("<td>" + reportWithTimeTotals.DoubleTime + "</td>");
+
+                                    $(".startTimeRow:last").append("<td></td>");
+                                    $(".startTimeRow:last").append("<td></td>");
+                                    $(".startTimeRow:last").append("<td></td>");
+                                    $(".startTimeRow:last").append("<td></td>");
+
+                                    $(".endTimeRow:last").append("<td></td>");
+                                    $(".endTimeRow:last").append("<td></td>");
+                                    $(".endTimeRow:last").append("<td></td>");
+                                    $(".endTimeRow:last").append("<td></td>");
+
+                                    $(".skipMealRow:last").append("<td></td>");
+                                    $(".skipMealRow:last").append("<td></td>");
+                                    $(".skipMealRow:last").append("<td></td>");
+                                    $(".skipMealRow:last").append("<td></td>");
+                                }
+                            }
+                        }
+                    }
+                },
+                error: function (data) {
+                    bootbox.alert("Error in AJAX GetTimesheetReportsByDate", function () { });
+                }
+            });
+        }
+    </script>
+}

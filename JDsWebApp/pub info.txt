@@ -1,0 +1,19 @@
+﻿<publishData>
+<publishProfile profileName="jdbabbittbearings-dev - Web Deploy" publishMethod="MSDeploy" 
+
+publishUrl="jdbabbittbearings-dev.scm.azurewebsites.net:443" 
+msdeploySite="jdbabbittbearings-dev" 
+
+userName="$jdbabbittbearings-dev" userPWD="bruc1hm3ac9XTBHTllcn2dfC0FgPa5YsPpT5A400Xo4efqa6uh3woahAZ1xk"
+
+ destinationAppUrl="http://jdbabbittbearings-dev.azurewebsites.net"
+ 
+  SQLServerDBConnectionString="" mySQLDBConnectionString="" hostingProviderForumLink="" controlPanelLink="http://windows.azure.com" webSystem="WebSites">
+  <databases/></publishProfile><publishProfile profileName="jdbabbittbearings-dev - FTP" publishMethod="FTP" 
+  
+  publishUrl="ftp://waws-prod-sn1-011.ftp.azurewebsites.windows.net/site/wwwroot" ftpPassiveMode="True" 
+  
+  userName="jdbabbittbearings-dev\$jdbabbittbearings-dev" userPWD="bruc1hm3ac9XTBHTllcn2dfC0FgPa5YsPpT5A400Xo4efqa6uh3woahAZ1xk" 
+  destinationAppUrl="http://jdbabbittbearings-dev.azurewebsites.net" SQLServerDBConnectionString="" mySQLDBConnectionString="" hostingProviderForumLink="" 
+  
+  controlPanelLink="http://windows.azure.com" webSystem="WebSites"><databases/></publishProfile></publishData>

@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Current Jobs";
+}
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+<div class="container-fluid">
+    <div class="row">
+        <table id="grid-current-jobs" class="table table-condensed table-hover" data-ajax="true" data-url="/CurrentJobs/GetJobs">
+            <thead>
+                <tr>
+                    <th data-column-id="JobID" data-identifier="true" data-type="numeric" data-formatter="jobFormatter">Job Number</th>
+                    <th data-column-id="Customer">Customer/PO</th>
+                    <th data-column-id="DueDate" data-order="desc" data-type="date" data-formatter="dateFormatter">Due Date</th>
+                    <th data-column-id="JobStatus">Status</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    var partsForJob = [];
+    $(document).ready(function () {
+
+        // *** Toggle Navbar Tabs ***
+        $("#currentJobNavTab button").css("font-weight", "bold");
+        //$("#currentJobNavTab").removeClass("inactiveNavTab");
+        //$("#currentJobNavTab:first-child").addClass("activeNavTab");
+
+        //$("#allJobsNavTab button").css("background-color", "rgb(180, 182, 216)");
+        //$("#employeePortalNavTab button").css("background-color", "rgb(180, 182, 216)");
+        //****************************
+
+        $("#grid-current-jobs").bootgrid({
+            formatters: {
+                jobFormatter: function(row, column) {
+                    return "<span class='glyphicon glyphicon-plus-sign' onclick='expandJob(" + column["JobID"] + ")'/> <a href='JobDetail/Index/" + column["JobID"] + "'>Job # " + column["JobID"] + "</a>";
+                },
+                dateFormatter: function(row, column) {
+                    return new Date(parseInt(column["DueDate"].substr(6))).toDateString();
+                }
+            },
+        });
+
+        getPartsForJobs();
+
+    });
+
+    function expandJob(jobNumber) {
+        var row = $("[data-row-id=" + jobNumber + "]");
+        var el = $("[data-row-id=" + jobNumber + "] td span");
+        el.removeClass('glyphicon-plus-sign');
+        el.addClass('glyphicon-minus-sign');
+        el.attr("onclick", "collapseJob(" + jobNumber + ")");
+
+        if ($("#" + jobNumber + "parts").length == 0) {
+            makePartsTableForJob(jobNumber);
+        }
+
+        $("#" + jobNumber + "parts").slideDown("slow");
+    }
+
+    function collapseJob(jobNumber) {
+        var el = $("[data-row-id=" + jobNumber + "] td span");
+        el.removeClass('glyphicon-minus-sign');
+        el.addClass('glyphicon-plus-sign');
+        el.attr("onclick", "expandJob(" + jobNumber + ")");
+
+        $("#" + jobNumber + "parts").slideUp("fast");
+    }
+
+    function getPartsForJobs(jobIDs) {
+        partsForJob[2146] = [];
+        partsForJob[3210] = [];
+        partsForJob[6713] = [];
+        var part = {
+            partID: "1",
+            partType: "Bearing 13'",
+            step: "Incoming Inspection",
+            stepRatio: "1/6"
+        };
+        partsForJob[2146].push(part);
+        partsForJob[3210].push(part);
+        partsForJob[6713].push(part);
+        part = {
+            partID: "2",
+            partType: "Bearing 14'",
+            step: "Incoming Inspection &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  PT required",
+            stepRatio: "1/6"
+        };
+        partsForJob[2146].push(part);
+        partsForJob[3210].push(part);
+        partsForJob[6713].push(part);
+        part = {
+            partID: "3",
+            partType: "Slinger Ring",
+            step: "Finish Bore Process &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp   UT required",
+            stepRatio: "4/6"
+        };
+        partsForJob[2146].push(part);
+        partsForJob[3210].push(part);
+        partsForJob[6713].push(part);
+    }
+
+    function makePartsTableForJob(jobNumber) {
+        var table = '<div class="container" id="' + jobNumber + 'parts"><div class="row"><div class="col-md-9 col-md-offset-1"><table class="parts-table table table-condensed table-hover"><tbody>';
+        for (var i = 0; i < partsForJob[jobNumber].length; i++) {
+            var part = partsForJob[jobNumber][i];
+            table += '<tr><td><a href="MockSlingerRing/IncomingInspection/' + part.partID + '">' + part.partType + '</a></td>';
+            table += '<td>' + part.step + '</td>';
+            table += '<td>' + part.stepRatio + '</td></tr>';
+        }
+        table += '</tbody></table></div></div></div>';
+
+        var row = $("[data-row-id=" + jobNumber + "]");
+
+        row.after(table);
+    }
+
+</script>

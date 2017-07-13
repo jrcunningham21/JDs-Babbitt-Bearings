@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="37df418d82434a98a621d8771f6f751e" Name="Diagram1" ZoomLevel="124">
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Activity" Width="1.5" PointX="14.25" PointY="10" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Address" Width="1.5" PointX="0.75" PointY="19.625" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.AutoComplete" Width="1.5" PointX="4.25" PointY="10.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.AutoCompleteEntry" Width="1.5" PointX="6.25" PointY="10.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.CertificateFile" Width="1.5" PointX="4.25" PointY="6.375" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Contact" Width="1.5" PointX="5.25" PointY="16.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Customer" Width="1.5" PointX="3" PointY="18.375" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.DeliveryInfo" Width="1.5" PointX="9.75" PointY="28" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Employee" Width="1.5" PointX="3" PointY="23" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.EmployeeFile" Width="1.5" PointX="5.25" PointY="20.875" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Job" Width="1.5" PointX="7.5" PointY="18.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.JobStatu" Width="1.5" PointX="5.25" PointY="24.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.MeasurementList" Width="1.5" PointX="12.75" PointY="27.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Part" Width="1.5" PointX="9.75" PointY="17" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartProcess" Width="1.5" PointX="7.5" PointY="31.5" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartStatu" Width="1.5" PointX="7.5" PointY="13.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartType" Width="1.5" PointX="7.5" PointY="15.75" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PhotoType" Width="1.5" PointX="9.75" PointY="34.625" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Process" Width="1.5" PointX="12" PointY="18.5" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.ProcessType" Width="1.5" PointX="9.75" PointY="14" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.SignOff" Width="1.5" PointX="7.5" PointY="24.75" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Size" Width="1.5" PointX="15" PointY="18.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Skill" Width="1.5" PointX="5.25" PointY="27.375" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Step" Width="1.5" PointX="14.25" PointY="13.125" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.StepActivity" Width="1.5" PointX="16.5" PointY="13.625" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.TimesheetEntry" Width="1.5" PointX="5.25" PointY="29.875" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Vacation" Width="2" PointX="9.75" PointY="24.25" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_StepActivity_Activity" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Address_Customer" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Address_Employee" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Contact_Customer" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Contact_Job" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Contact_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Customer_Contact" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.SignOff_DeliveryInfo" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_Job" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_SignOff" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_TimesheetEntry" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_Vacation" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_EmployeeFile_Employee" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Job_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.JobStatus_Job" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Sizes_MeasurementList" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_Process_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartProcess_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartStatus_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartType_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Sizes_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_Process_ProcessType" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_Step_Process" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.SignOff_Vacation" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Skill_SignOff" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.FK_StepActivity_Step" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.EmployeeSkill" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.Certificate" Width="1.5" PointX="6.5" PointY="6.25" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.CertificateFile_Certificate" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.ChangeLogEntry" Width="1.5" PointX="9.75" PointY="11" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Job_ChangeLogEntry" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.IncomingInspectionAccessory" Width="1.5" PointX="12" PointY="14.875" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Part_IncomingInspectionAccessory" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartPhoto" Width="1.5" PointX="12" PointY="23.125" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_PartPhoto" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Part_PartPhoto" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PhotoType_PartPhoto" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartFile" Width="1.5" PointX="18" PointY="24.625" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Employee_PartFile" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.Part_PartFile" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartTest" Width="1.5" PointX="20.25" PointY="20.75" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartTest_Part" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartTest_PartFile_PT" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.PartTest_PartFile_UT" />
+        <EntityTypeShape EntityType="JDsBabbittBearingDBModel.PartDiameterMeasurement" Width="1.5" PointX="15" PointY="26.625" />
+        <AssociationConnector Association="JDsBabbittBearingDBModel.MeasurementList_PartDiameterMeasurement" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

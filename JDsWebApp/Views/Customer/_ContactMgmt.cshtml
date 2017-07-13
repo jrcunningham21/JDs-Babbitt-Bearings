@@ -1,0 +1,249 @@
+﻿@using JDsDataModel.ViewModels
+@model int
+@*CustomerId*@
+
+<div id="contactsmgmtcontent">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Contact Management</h3>
+        </div>
+
+        <div class="col-md-6">
+            <button id="NewBtn" class="btn btn-primary pull-right h3">New Contact</button>
+        </div>
+    </div>
+
+    <div class="row padd-top">
+        <div id="contactsmgmtdiv" class="padd-top">
+            <div class="col-md-12">
+                <div id="contactsgrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="contactcontentdiv">
+                    
+            </div>
+        </div>
+    </div>
+
+    <div id="editContactContents" class="row">
+
+    </div>
+
+    <div class="row padd-top">
+        <div class="col-md-12">
+            <button id="CloseBtn" class="btn btn-danger">Back</button>
+            <button id="SaveBtn" class="btn btn-primary">Save</button>
+        </div>          
+    </div>
+</div>
+
+<script>
+
+    var selectedContactId = 0;
+
+    function RefreshContactsGrid() {
+        $('#contactsgrid').data('kendoGrid').dataSource.read();
+    }
+
+    function DeleteContact(id, firstName, lastName) {
+        
+        bootbox.dialog(
+        {
+            title: "<span style='color:white'>Delete Contact</span>",
+            message: "Are you sure you want to delete '" + firstName + ' ' + lastName + "' from '" + $("#CustomerId option:selected").text() + "'?",
+            buttons:
+            {
+                Cancel:
+                {   
+                    label: "Cancel",
+                },
+                OK:
+                {
+                    className: "btn-primary",
+                    callback: function()
+                    {
+                        $.ajax(
+                        {
+                            type: 'POST',
+                            url: '/Customer/DeleteContact/',
+                            data: { id: id },
+                            success: function (data)
+                            {
+                                RefreshContactsGrid();
+                            },
+                            error: function (data)
+                            {
+                                bootbox.alert("Error Deleting Contact", function () {});
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    function PopulateContactDetails(id){
+
+        $.ajax({
+            url: "/Customer/PrimaryContactDetails/",
+            data: { id: id },
+            success: function (data) {
+                $('#editContactContents').html(data);
+                //$("#CloseBtn").prop('value', 'Cancel');
+                $("#CloseBtn").html('Cancel');
+                $("#SaveBtn").show();
+            },
+            error: function () {
+                bootbox.alert("Error saving PrimaryContactDetails", function () {});
+            }
+        });
+    }
+
+    function EditContact(id) {
+        selectedContactId = id;
+        PopulateContactDetails(id);
+    }
+
+    $(function () {
+        $("#contactsgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadContacts", "Customer", new {customerId = Model})"
+                },
+                pageSize: 2
+            },
+            pageable: true,
+            scrollable: false,
+            columns: [{
+                field: "ContactId",
+                hidden: true
+            }, {
+                field: "CustomerId",
+                hidden: true
+            }, {
+                field: "",
+                attributes: {
+                    "class": "templateCell"
+                },
+                title: "Contact",
+                template: "#= FirstName # #= LastName # <a href='mailto: #= Email ? Email : null #'>#= Email ? Email : \"\" #</a>"
+            }, {
+                field: "",
+                attributes: {
+                    "class": "templateCell"
+                },
+                title: "Phone",
+                template: "<p id = 'workphone' >#= formatPhoneNumber(WorkPhone, '(Work)') #</p> <p id = 'cellphone' >#= formatPhoneNumber(CellPhone, '(Cell)' ) # </p> <p id = 'fax'> #=formatPhoneNumber(Fax, '(Fax)')# </p>"
+            }, {
+                field: "",
+                width: 30,
+                template: "<a class=\"glyphlink\" onclick='EditContact(#=ContactId#)' readonly='readonly'><span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"></span></a>",
+            }, {
+                field: "",
+                width: 30,
+                template: "<a class=\"glyphlink\" onclick='DeleteContact(#=ContactId#, \"#=FirstName#\", \"#=LastName#\")' readonly='readonly'><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></a>"
+            }]
+        });
+
+        turnOffAutofill("#customercontactcontentdiv");
+
+        $("#SaveBtn").hide();
+
+        var model = @Html.Raw(Json.Encode(Model));
+        var custId = model;
+
+        $("#CloseBtn").click(function () {
+            $.ajax({
+                url: '@Url.Action("CustomerDetails", "Customer")',
+                data: { id: custId
+
+                },
+                success: function(data) {
+                    $('#customercontactcontentdiv').html(data);
+                    $('#customercontactcontentdiv').fadeIn('fast');
+                    $('#customerdetailsmodal').modal('show');
+                },
+                error: function(e) {
+                    bootbox.alert("Error AJAX CustomerDetails", function () {});
+                    $("#customerdetailsmodal").modal('hide');
+                }
+            });
+        });
+
+        $("#SaveBtn").click(function(e) {
+            e.preventDefault();
+           
+            //strip the mask characters "(,),-,'' " from the following entries before saving
+            var newworkphone = $("#contactworkphone").val().replace(/\D/g, "");
+            var newcellphone = $("#contactcellphone").val().replace(/\D/g, "");
+            var newfax = $("#contactfax").val().replace(/\D/g, "");
+
+
+            var model ={
+                ContactId: $("#contact_contactid").val(),
+                CustomerId: custId,
+                FirstName:$("#contactfirstname").val(),
+                LastName:$("#contactlastname").val(),
+                Email: $("#contactemail").val(),
+                WorkPhone: newworkphone,
+                CellPhone: newcellphone,
+                Fax: newfax,
+                Notes:$("#contactnotes").val()
+            }
+
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("SaveContact", "Customer")',
+                data: { model: model,
+                    jsonResponce: true
+                },
+                success: function(data, textStatus, jqXHR) {
+                    if(data.result === false) {
+                        $("#editContactContents").html(data.partialView);
+                    } else {
+                        $('#editContactContents').html("");
+                        $("#SaveBtn").hide();
+                        $("#CloseBtn").html('Back');
+                        RefreshContactsGrid();
+                        OnSaveContactSuccess();
+                        // Adds the new Contacts to the dropdown on Edit Job Details
+                        $.ajax({
+                            url: '/Customer/GetContactsRefreshDropdown',
+                            type: 'GET',
+                            data: { CustomerId: modelId },
+                            success: function (d) {
+                                if (d != "")
+                                {
+                                    $("#ContactId").empty().append(d);                            
+                                }                        
+                            },
+                            error: function (err) {
+                                notification.show({ message: "Error Refreshing Contacts List" }, "error");
+                            }
+                        });
+                    }
+                },
+                error: function(data, textStatus, jqXHR) {
+                    $("#customercontactcontentdiv").html(data.textStatus);
+                    //bootbox.alert(textStatus, function () {});
+                }
+            });
+        });
+
+
+        $("#NewBtn").click(function() {
+            selectedContactId = 0;
+            PopulateContactDetails(0);
+        });
+
+        function OnSaveContactSuccess() {
+            notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");
+        }
+
+    });
+</script>

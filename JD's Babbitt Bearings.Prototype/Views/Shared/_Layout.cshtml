@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+
+<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - JD's Babbitt Bearings Mocks</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        <header id="header">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <img alt="Brand" src="~/Images/JD-Logo.png" class="center-block" style="height:60px;" />
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" style="background-color: #000090;">
+                    <ul style="margin-top:53px;" class="nav navbar-nav navbar-right" id="myTabs">
+                        <li id="currentJobNavTab" role="presentation">
+                            <button style="font-weight:bold;" type="button" class="btn btn-default top-nav-button">Current Jobs</button>
+                        </li>
+                        <li id="allJobsNavTab" role="presentation">
+                            <button style="background-color:rgb(180, 182, 216);" type="button" class="btn btn-default top-nav-button">All Jobs</button>
+                        </li>
+                        <li id="employeePortalNavTab" role="presentation">
+                            <button style="background-color:rgb(180, 182, 216);" type="button" class="btn btn-default top-nav-button">Employee Portal</button>
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- /.container-fluid -->
+        </header>
+
+        <div id="body">
+            <section class="content-wrapper clear-fix">
+                @RenderBody()
+            </section>
+        </div>
+
+        <footer class="footer" id="footer"; style="background: url('../Images/dot-screen.png') repeat #000096;">
+            <div class="content-wrapper">
+                <div >
+                    <p style="color:white; margin-top:-6px;">&copy; @DateTime.Now.Year - JD's Babbitt Bearings</p>
+                </div>
+            </div>
+        </footer>
+
+        @Scripts.Render("~/bundles/jquery")
+        @RenderSection("scripts", required: false)
+
+        <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.bootgrid.min.js"></script>
+    </body>
+</html>
+
+<script>
+$(".pull-down").each(function () {
+    $(this).css('margin-top', $(this).parent().height() - $(this).height())
+});
+
+$("#currentJobNavTab").click(function (e) {
+    window.location.href = '@Url.Action("Index", "CurrentJobs", new { area = "" })';
+});
+$("#allJobsNavTab").click(function (e) {
+    window.location.href = '@Url.Action("Index", "AllJobs", new { area = "" })';
+});
+$("#employeePortalNavTab").click(function (e) {
+    window.location.href = '@Url.Action("Login", "EmployeePortal", new { area = "" })';
+});
+</script>

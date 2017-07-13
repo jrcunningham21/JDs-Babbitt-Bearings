@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+<br/><br/>
+<div class="container">
+    <div class="container">
+        <form role="form">
+        <div class="row">
+            <div class="form-group" style="float: left;width: 125px;">@Html.Label("Employee:")</div>
+            <div class="dropdown col-xs-6" style="display: inline;width: 280px;">
+                <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                    FLORES, ALEX
+                    <span class="caret" style="float: right; margin-top: 7px;"></span>
+                </button>
+                <ul class="dropdown-menu" style="width: 100%;">
+                    <li><a href="#">FLORES, ALEX </a></li>
+                    <li><a href="#">SHOWDY, SLIM</a></li>
+                    <li><a href="#">GIGGS, RYAN</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+                <div class="form-container" style="float: left;width: 125px;">@Html.Label("PIN:")</div>
+                <div class="form-group" style="display: inline;">
+                    <input id="pinTextInput" style="width: 250px; margin-left: 15px;" type="text" />
+            </div>
+        </div>
+        </form>
+    </div>
+    <!-- The PIN pad -->
+    <div class="container col-xs-12" id="pinPadDiv">
+        <div class="row">
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">7</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">8</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">9</button>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">4</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">5</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">6</button>
+        </div>                                      
+        <div class="row">
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">1</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">2</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">3</button>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-lg col-xs-8 pin-pad-button" style="width: 160px">0</button>
+            <button type="button" class="btn btn-lg col-xs-4 pin-pad-button">Back</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;margin-left: 30px">
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success" style="width: 100%" id="">Login</button>
+        </div>
+        <div class="col-md-2">
+            <button id="cancelBtn" type="submit" class="btn btn-danger" style="width: 100%">Cancel</button>
+        </div>
+    </div>
+</div>
+<style>
+    .pin-pad-button {
+        width: 70px;
+        height: 70px;
+        margin: 10px;
+    }
+
+    #pinPadDiv {
+        border: 5px solid darkblue;
+        margin-left: 80px;
+        margin-top: 20px;
+        width: 280px;
+        border-radius: 10px;
+    }
+</style>

@@ -1,0 +1,415 @@
+﻿@model JDsDataModel.ViewModels.Processes.VerifyCustomerSizesViewModel
+
+<style>
+    .topMarginForLabels{
+        margin-top:18px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="row">
+            <div class="col-sm-5" style="margin-left:20px;">
+                <h5>Customer Sizes:</h5>
+            </div>
+            @if (Model.IsPartInsulated)
+            {
+                <div class="col-sm-5" style="margin-left:-70px;">
+                    <h5>Incoming Sizes:</h5>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-5" style="margin-left:-70px;">
+                    <h5>Incoming ID Sizes:</h5>
+                </div>
+            }
+
+        </div>
+
+        <div class="row">
+            @*First Column*@
+            <div class="col-sm-4 panel panel-primary" style="margin-left:25px;">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyShaft, new { @class = "topMarginForLabels pull-left" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyShaft, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyClearance, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyClearance, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyBoreSize, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyBoreSize, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyBoreSizeHorizontal, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyBoreSizeHorizontal, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyShimSize, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyShimSize, new { @class = "modal-textBox form-control", @readonly = "readonly"})
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyTolerance, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifyTolerance, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifySealSize, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-sm-pull-3 jd-table-cell">
+                            @Html.TextBoxFor(m => m.VerifySealSize, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @Html.LabelFor(m => m.VerifyODSizes, new { @class = "topMarginForLabels" })
+                        </div>
+                        <div class="col-md-5" style="margin-left:-15px; width:200px;">
+                            <div style="margin-left:-12px;" class="col-sm-pull-5 jd-table-cell @(!Model.VerifyODSizes.Any()? "collapse" : "")">
+                                <div id="verifyOD_grid_Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.IsPartInsulated)
+            {
+                @*Second column*@
+                <div class="col-sm-4 panel panel-primary" style="margin-left:25px;">
+                    <div class="panel-body">
+                        <div class="row padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingID1Sizes, new { @class = "topMarginForLabels pull-left" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingID1Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingID2Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingID2Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row  padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingOD1Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingOD1Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingOD2Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingOD2Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4 panel panel-primary" style="margin-left:25px;">
+                    <div class="panel-body">
+                        <div class="row padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingID1Sizes, new { @class = "topMarginForLabels pull-left" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingID1Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row  padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingID2Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingID2Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-sm-5" style="margin-left:25px;">
+                    <h5>Final Measured OD Sizes:</h5>
+                </div>
+                <div class="col-sm-4 panel panel-primary" style="margin-left:25px;">
+                    <div class="panel-body">
+                        <div class="row  padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingOD1Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingOD1Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row padd-bottom">
+                            <div class="col-sm-5">
+                                @Html.LabelFor(m => m.VerifyIncomingOD2Sizes, new { @class = "topMarginForLabels" })
+                            </div>
+                            <div class="col-md-5">
+                                <div id="grid_IncomingOD2Sizes">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+</div>
+</div>
+</div>
+
+
+<div class="modal-footer">
+    <div class="jd-table-row pull-right">
+        <div class="jd-table-cell">
+            <button class="btn btn-primary" id="verifySizesCloseBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#verifyOD_grid_Sizes").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("GetODSizes", "Part", new {id = Model.PartID})"
+                }
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "MeasurementListId",
+
+            },{
+                field: "PartDiameterMeasurementId",
+                hidden: true
+            },
+            {
+                field: "ODComment",
+                title: "OD Size",
+                width: 250
+            },
+            {
+                field: "A",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "B",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "C",
+                format: "{0:0.000#}",
+                hidden: true
+            }]
+        });
+
+        $("#grid_IncomingID1Sizes").kendoGrid({
+            dataSource: {
+                data: @Html.Raw(Json.Encode(Model.VerifyIncomingID1Sizes)),
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "Index",
+
+            },{
+                field: "MeasurementId",
+                hidden: true
+            },
+            {
+                field: "MeasurementGroupId",
+                hidden: true
+            },
+            {
+                field: "A",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "B",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "C",
+                width: 105,
+                format: "{0:0.000#}"
+            }]
+        });
+
+        $("#verifySizesCloseBtn").click(function () {
+
+            // Hide this modal
+            $("#verifyCustomerSizesModal").modal('hide');
+
+        });
+
+        $("#grid_IncomingID2Sizes").kendoGrid({
+            dataSource: {
+                data: @Html.Raw(Json.Encode(Model.VerifyIncomingID2Sizes)),
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "Index",
+
+            },{
+                field: "MeasurementId",
+                hidden: true
+            },
+            {
+                field: "MeasurementGroupId",
+                hidden: true
+            },
+            {
+                field: "A",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "B",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "C",
+                width: 105,
+                format: "{0:0.000#}"
+            }]
+        });
+
+        $("#grid_IncomingOD1Sizes").kendoGrid({
+            dataSource: {
+                data: @Html.Raw(Json.Encode(Model.VerifyIncomingOD1Sizes)),
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "Index",
+
+            },{
+                field: "MeasurementId",
+                hidden: true
+            },
+            {
+                field: "MeasurementGroupId",
+                hidden: true
+            },
+            {
+                field: "A",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "B",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "C",
+                width: 105,
+                format: "{0:0.000#}"
+            }]
+        });
+
+        $("#grid_IncomingOD2Sizes").kendoGrid({
+            dataSource: {
+                data: @Html.Raw(Json.Encode(Model.VerifyIncomingOD2Sizes)),
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "Index",
+
+            },{
+                field: "MeasurementId",
+                hidden: true
+            },
+            {
+                field: "MeasurementGroupId",
+                hidden: true
+            },
+            {
+                field: "A",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "B",
+                width: 105,
+                format: "{0:0.000#}"
+            },
+            {
+                field: "C",
+                width: 105,
+                format: "{0:0.000#}"
+            }]
+        });
+
+        // Set up the customer sizes OD grid
+        $("#ODSizesGrid").width(180);   // can't set it any other way! Frustrating grid
+        $("#grid_IncomingID1Sizes").width(180);
+        $("#grid_IncomingID2Sizes").width(180)
+        $("#grid_IncomingOD1Sizes").width(180);
+        $("#grid_IncomingOD2Sizes").width(180)
+
+    });
+</script>

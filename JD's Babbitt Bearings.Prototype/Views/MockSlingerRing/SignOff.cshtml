@@ -1,0 +1,106 @@
+﻿
+
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+
+<style>
+    .pin-pad-button{
+        width:70px;
+        height:70px;
+        margin:10px;
+    }
+
+    #pinPadDiv{
+        border: 5px solid darkblue;
+        margin-left:80px;
+        margin-top:20px;
+        width:280px;
+        border-radius:10px
+    }
+</style>
+
+<!-- This is the popup that allows you to enter a PIN -->
+<div class="modal fade" id="confirmDeleteModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:35px 50px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="glyphicon glyphicon-lock"></span> Sign off </h4>
+            </div>
+
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form">
+                    <div class="container-fluid form-container">
+
+                        <div class="row">
+                            <label class="col-md-5 key-style">Customer:</label>
+                            <div class="col-md-5 value-style" style="margin-top:10px">Acme Parts, Inc.</div> 
+                        </div>
+
+
+                        <div class="row">
+                            <label class="col-md-5 key-style">JD's Job #:</label>
+                            <div class="col-md-5 value-style" style="margin-top:10px">3004</div>
+                        </div>
+
+                        <div class="row">
+                            <label class="col-md-5 key-style">Employee:</label>
+                            <div class="col-md-5 value-style" style="margin-top:10px">SMITH, VLAD</div>
+                        </div>
+
+                        <div class="row">
+                            <label class="col-md-5 key-style">Warnings:</label>
+                            <div class="col-md-5 value-style" style="margin-top:10px">None</div>
+                        </div>
+
+
+                        <div class="row">
+                            <label class="col-md-5 key-style">PIN:</label>
+                            <div class="col-md-5 value-style"><input type="text" style="width:100%" /></div>
+                        </div>
+
+                        <!-- The PIN pad -->
+                        <div class="container-fluid form-container row col-md-12" id="pinPadDiv">
+                            <div class="row">
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">7</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">8</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">9</button>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">4</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">5</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">6</button>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">1</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">2</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">3</button>
+                            </div>
+                            <div class="row">
+                                <button type="button" class="btn btn-lg col-md-8 pin-pad-button" style="width:160px">0</button>
+                                <button type="button" class="btn btn-lg col-md-4 pin-pad-button">Back</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block" style="margin-top:15px"><span class="glyphicon glyphicon-off"></span> Sign Off</button>
+                        <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Don't Sign Off</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@*@{
+    ViewBag.Title = "SignOff";
+}
+
+<h2>SignOff</h2>
+
+#UI 85.1 - Slinger Ring - Final Sign Off*@

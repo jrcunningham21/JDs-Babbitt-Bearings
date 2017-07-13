@@ -1,0 +1,424 @@
+﻿@model JDsDataModel.ViewModels.PartViewModel
+@{
+    ViewBag.Title = "Part Details";
+}
+
+<div id="partDetailsDiv">
+
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="table">
+                <!-- item code -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.ItemCode)
+                    </div>
+                    <div class="col-sm-8">
+                        <select id="ItemCodeMultiSelect" multiple="multiple"/>
+                        @Html.HiddenFor(m => m.ItemCode)
+                    </div>
+                </div>
+
+                <!-- work scope -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.WorkScope)
+                    </div>
+                    <div class="col-sm-8">
+                        <select id="ScopeMultiSelect" multiple="multiple"/>
+                        @Html.HiddenFor(m => m.WorkScope)
+                    </div>
+                </div>
+
+                <!-- part type -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.PartType)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.TextBoxFor(m => m.PartType, new { @class = "form-control", id = "partTypeBox", autocomplete = "off" })
+                        @Html.HiddenFor(m => m.PartType)
+                    </div>
+                </div>
+
+                <!-- part process -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.PartProcesses)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.DropDownListFor(m => m.SelectedPartProcessID,
+                                                new SelectList(Model.PartProcesses, "PartProcessID", "Name", Model.SelectedPartProcessID),
+                                                "-- Select Process --", new { @class = "form-control", id = "partProcessDropDown" })
+                        @Html.HiddenFor(m => m.SelectedPartProcessID)
+                    </div>
+                </div>
+
+                <!-- id info -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.IdentifyingInfo)
+                    </div>
+                    <div class="col-sm-8">
+                        <select id="IDMultiSelect" multiple="multiple" />
+                        @Html.HiddenFor(m => m.IdentifyingInfo)
+                    </div>
+                </div>
+
+                <!-- requires PT -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.RequiresPT)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.CheckBoxFor(m => m.RequiresPT, new { id = "RequiresPT", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                    </div>
+                </div>
+
+                <!-- requires UT -->
+                <div class="row padd-top">
+                    <div class="col-sm-4">
+                        @Html.LabelFor(m => m.RequiresUT)
+                    </div>
+                    <div class="col-sm-8">
+                        @Html.CheckBoxFor(m => m.RequiresUT, new { id = "RequiresUT", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })                   
+
+                    </div>
+                </div>                
+            </div>    
+
+            <div class="row  padd-bottom">
+                <div class="col-sm-8">
+                    <button class="btn btn-primary" id="AddSizesBtn"><span class="glyphicon glyphicon-plus" data-toggle="modal" aria-hidden="true"></span> Add Sizes</button>
+                </div>
+                <div class="col-sm-2">
+                    <button id="SavePartBtn" class="btn btn-block btn-primary" type="submit">Save</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-block btn-danger" id="partCancelBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+  
+       @Html.HiddenFor(m => m.PartID)
+       @Html.HiddenFor(m => m.JobID)    
+</div>
+<style>
+    /*
+        *************Style for AutoComplete**************
+        Temporary-ish, please do not delete. Davis and I made this
+        If this css messes something up please let me know
+        and I (John Cunningham) will put it somewhere more appropriate
+
+    */
+    .k-list li {
+        position: relative;
+        margin: 2px;
+        border-radius: 5px;
+    }
+
+    .k-state-focused {
+        box-shadow: none;
+    }
+
+    button.dd-header-btn {
+        display: inline-block;
+        width: 96%;
+        font-size: 12px;
+        margin: 5px 1%;
+        border: none;
+        background-color: #3992CF;
+        color: #fff;
+        padding: 5px 0;
+        border-radius: 5px;
+    }
+
+    button.delete-button {
+        border: none;
+        background-color: initial;
+        font-size: 12px !important;
+        position: absolute;
+        right: 0;
+    }
+
+    div#ItemCodeMultiSelect-list {
+        position: relative;
+    }
+
+    .k-state-hover {
+        background-color: #3992CF !important;
+        color: #fff !important;
+        background-image: none !important;
+    }
+
+    .k-state-selected {
+        background-color: #7AC946 !important;
+        border: none !important;
+        background-image: none !important;
+    }
+
+    li.k-button {
+        background-image: none !important;
+        border: none !important;
+        background-color: #7AC946;
+        color: #fff;
+        position: relative;
+        margin: 3px;
+    }
+
+    .glyphlink
+    {
+        font-size: 20px !important;
+        float: right !important;
+    }
+
+    /************** END: Style for AutoComplete***************/
+</style>
+
+<script type="text/javascript">
+
+    // When user clicks/touches an input... select all text
+    $("input[type='text']").on("click", function () {
+        $(this).select();
+    });
+
+    $("#SavePartBtn").click(function () {
+        //e.preventDefault();
+
+        // Get and convert Item Code values
+        var ItemCodeSelectedValues = ConvertValueArrayToTextArray($("#ItemCodeMultiSelect").val(),$("#ItemCodeMultiSelect"));
+        var ItemCodeString = ItemCodeSelectedValues.join();
+
+        // Get and convert Scope values
+        var ScopeSelectedValues = ConvertValueArrayToTextArray($("#ScopeMultiSelect").val(),$("#ScopeMultiSelect"));
+        var ScopeString = ScopeSelectedValues.join();
+
+        var BearingType = $("#partTypeBox").val();
+        var ProcessTypeId = $("#partProcessDropDown").val();
+
+        // Get and convert Identification values
+        var IdInfoSelectedValues = ConvertValueArrayToTextArray($("#IDMultiSelect").val(),$("#IDMultiSelect"));
+        var IdInfoString = IdInfoSelectedValues.join();
+
+        var JdsJobID = @Model.JobID;
+        var PartID = @Model.PartID;
+
+        // Consolidate data
+        var part = {
+            JobId : JdsJobID,
+            PartId: PartID,
+            ItemCode : ItemCodeString,
+            WorkScope : ScopeString,
+            PartType : BearingType,
+            PartProcessId : ProcessTypeId,
+            IdentifyingInfo : IdInfoString,
+            RequiresUT : $("#RequiresUT").is(":checked"),
+            RequiresPT : $("#RequiresPT").is(":checked")
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/SavePart/',
+            data: part,
+            success: function (data) {
+                // TODO: Show 'Saved' then close modal
+                $("#partDetailsModal").modal('hide');
+                $('#jobpartsgrid').data('kendoGrid').dataSource.read();
+                //$('#jobpartsgrid').data('kendoGrid').dataSource.read("ReadPartsForJob", "Home", id = 107);
+            },
+            error: function (data) {
+                bootbox.alert("Error in AJAX AddNewPart", function () {});
+            }
+        });
+
+    });
+
+    $(function () {
+        var PartIdVal = @Model.PartID;
+        var JobIdVal = @Model.JobID;
+
+        if (PartIdVal != "0") // If Edit Part
+        {
+            var PartTypeVal = document.getElementById("PartType").value;
+            $("#partTypeBox").val(PartTypeVal);
+
+            // TODO: Wire up Process to save/load properly
+            // Hardcoded 1 for Process = Motor
+            var PartProcessVal = document.getElementById("SelectedPartProcessID").value;
+            $("#partProcessDropDown").val(1);
+        }
+
+        $("#partForm").on("submit", function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: this.action,
+                type: this.method,
+                data: $(this).serialize(),
+                success: function (data) {
+                    $("#partDetailsModal").modal('hide');
+                }
+            });
+        });
+
+        $("#RequiresPT").bootstrapToggle();
+        $("#RequiresUT").bootstrapToggle();
+
+        //Get the data for the multiselect and intializes it with the data.
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/AutoComplete/GetAutoCompleteValuesByControlId/' + 3,
+            dataType: 'json',
+            success: function(data) {
+                var idMS = $("#IDMultiSelect");
+
+                if (data.length > 0) {
+                    data.forEach(function(item) {
+                        idMS.append("<option value='" + item.AutoCompleteID + "'>" + item.Value + "</option>");
+                    });
+                } else {
+                    idMS.append("<option value='none' disabled>None</option>");
+                }
+
+                idMS.multiselect({
+                    enableHTML: true,
+                    enableFiltering: true,
+                    filterPlaceholder: "Add Identification",
+                    buttonClass: 'form-control',
+                    numberDisplayed: 10,
+                    optionLabel: function(element) {
+                        if (element.value === 'none')
+                            return $(element).html();
+                        else
+                            return $(element).html() +
+                                "<span class='glyphicon glyphicon-remove pull-right' style='top:2px;' onclick='DeleteLineItem(event,3)'></span>";
+                    },
+                    label: function(element) {
+                        return '<span class="label label-default">' + $(element).text() + '</span> ';
+                    }
+                });
+
+                //Initalizes the multiselect with the values
+                var intialIDMSValuesString = "@Model.IdentifyingInfo";
+
+                var initalIDMSArray = ConvertTextArrayToValueArray(intialIDMSValuesString.split(","), idMS);
+
+                idMS.multiselect("select",initalIDMSArray);
+
+                BindMultiSelectAddButton(idMS,3);
+            }
+        });
+
+        //Get the data for the multiselect and intializes it with the data.
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/AutoComplete/GetAutoCompleteValuesByControlId/' + 1,
+            dataType: 'json',
+            success: function(data) {
+                var itemCodeMS = $("#ItemCodeMultiSelect");
+
+                if (data.length > 0) {
+                    data.forEach(function(item) {
+                        itemCodeMS.append("<option value='" + item.AutoCompleteID + "'>" + item.Value + "</option>")
+                    });
+                } else {
+                    itemCodeMS.append("<option value='none' disabled>None</option>");
+                } 
+
+                itemCodeMS.multiselect({
+                    enableHTML: true,
+                    enableFiltering: true,
+                    filterPlaceholder: "Add Bearing Description",
+                    buttonClass: 'form-control',
+                    numberDisplayed: 10,
+                    optionLabel: function(element) {
+                        if (element.value === 'none')
+                            return $(element).html();
+                        else
+                            return $(element).html() +
+                                "<span class='glyphicon glyphicon-remove pull-right' style='top:2px;' onclick='DeleteLineItem(event,1)'></span>";
+                    },
+                    label: function(element) {
+                        return '<span class="label label-default">'+ $(element).text() +'</span> ' ;
+                    }
+                });
+
+                //Initalizes the multiselect with the values
+                var intialItemCodeMSValuesString = "@Model.ItemCode";
+
+                var initalItemCodeMSArray = ConvertTextArrayToValueArray(intialItemCodeMSValuesString.split(","), itemCodeMS);
+
+                itemCodeMS.multiselect("select",[]);
+
+                BindMultiSelectAddButton(itemCodeMS,1);
+            }
+        });
+
+        //Get the data for the multiselect and intializes it with the data.
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/AutoComplete/GetAutoCompleteValuesByControlId/' + 2,
+            dataType: 'json',
+            success: function(data) {
+                var scopeMS = $("#ScopeMultiSelect");
+                
+                if (data.length > 0) {
+                    data.forEach(function(item) {
+                        scopeMS.append("<option value='" + item.AutoCompleteID + "'>" + item.Value + "</option>")
+                    });
+                } else {
+                    scopeMS.append("<option value='none' disabled>None</option>");
+                }
+
+                scopeMS.multiselect({
+                    enableHTML: true,
+                    enableFiltering: true,
+                    filterPlaceholder: "Add Scope",
+                    buttonClass: 'form-control',
+                    numberDisplayed: 10,
+                    optionLabel: function(element) {
+                        if (element.value === 'none')
+                            return $(element).html();
+                        else
+                            return $(element).html() +
+                                "<span class='glyphicon glyphicon-remove pull-right' style='top:2px;' onclick='DeleteLineItem(event,2)'></span>";
+                    }
+                });
+
+                //Initalizes the multiselect with the values
+                var intialScopeMSValuesString = "@Model.WorkScope";
+
+                var initalScopeCodeMSArray = ConvertTextArrayToValueArray(intialScopeMSValuesString.split(","), scopeMS);
+
+                scopeMS.multiselect("select",initalScopeCodeMSArray);
+
+                BindMultiSelectAddButton(scopeMS,2);
+            }
+        });
+    });
+
+    $("#AddSizesBtn").click(function () {
+        $.ajax({
+            url: '@Url.Action("Sizes", "Part")',
+            data: {
+                partID: @Model.PartID,
+                //TODO: WIRE
+                sizesID: 0
+            },
+            success: function (data) {
+                $('#partDetailsModal').modal('hide');
+                $('#sizesContentDiv').html(data);
+                $('#sizesContentDiv').fadeIn('fast');
+                $('#sizesModal').modal('show');
+            },
+            error: function (e) {
+                bootbox.alert("AJAX ERROR: AddSizesBtn click", function () {});
+                $("#sizesModal").modal('hide');
+            }
+        });
+    });
+
+    $('#partCancelBtn').click(function () {
+        $("#partDetailsModal").modal('hide');
+    });
+</script>

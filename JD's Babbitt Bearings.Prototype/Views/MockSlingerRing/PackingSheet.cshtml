@@ -1,0 +1,181 @@
+﻿
+@{
+    ViewBag.Title = "PackingSheet";
+}
+
+<script>
+    function showSignOff() {
+        $("#confirmDeleteModal").modal();
+    }
+
+</script>
+
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+
+<div class="container-fluid form-container">
+
+
+    <div id="printableDiv">
+        <link rel="stylesheet" href="site.css">
+
+        <div class="row">
+            <h1 class="col-md-6">ONCORE INDUSTRY</h1>
+            <h2 class="col-md-3">PO #: 0000112</h2>
+            <h2 class="col-md-3">JOB #: 581515</h2>
+        </div>
+
+        <div class="row">
+            <h3 class="col-md-9">ALBERTO GOMEZ (468) 555-4342</h3>
+            <h3 class="col-md-3">JD JOB#: 2003</h3>
+        </div>
+
+        <div class="row">
+            <h2 class="col-md-12">Slinger ring - parts/accessories</h2>
+        </div>
+
+        <!-- Included parts/accessories-->
+        <div class="row">
+            <div class="col-md-12">
+                <table id="grid-basic" class="table table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="name" style="width:75%">Description</th>
+                            <th data-column-id="scope" data-type="numeric">Quantity</th>
+                            <th data-column-id="del" style="width:5%"> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label type="text" style="width:100%">25mm washers. Flat.</label></td>
+                            <td><label type="text" style="width:100%">3</label></td>
+                        </tr>
+
+                        <tr>
+                            <td><label type="text" style="width:100%">36in green wire, 18 gauge</label></td>
+                            <td><label type="text" style="width:100%">2</label></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Inspection values -->
+        <div class="row">
+            <h2 class="col-md-12">Inspection measurements</h2>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-2 ">
+                <label>ID:</label>
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="A" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="B" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="C" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-2 ">
+                <label>OD:</label>
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="A" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="B" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="C" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-2 ">
+                <label>Width:</label>
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="A" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="B" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <input type="text" class="form-control" placeholder="C" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:20px">
+            <label class="col-md-3 key-style ">Inspected by:  </label>
+            <label class="col-md-8 " style="margin-top:7px">JOHNSON, AL</label>
+        </div>
+
+        <div class="row">
+            <label class="col-md-3 key-style ">Packaged by:</label>
+            <label class="col-md-3 " style="margin-top:7px">SLATER, JAMES</label>
+        </div>
+
+        <div class="row">
+            <label class="col-md-3 key-style ">Shipped by:</label>
+            <label class="col-md-3 " style="margin-top:7px">SLATER, JAMES</label>
+        </div>
+
+        <div class="row">
+            <label class="col-md-3 key-style ">Date shipped: </label>
+            <label class="col-md-3  " style="margin-top:7px"> 8/21/2015</label>
+        </div>
+
+        <div class="row">
+            <label class="col-md-3 key-style ">Delivery service:</label>
+            <label class="col-md-3" style="margin-top:7px">  FedEx</label>
+        </div>
+
+        <div class="row">
+            <label class="col-md-3 key-style ">Tracking:  </label>
+            <label class="col-md-3  " style="margin-top:7px">7345327329571354</label>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <button class="btn btn-primary col-md-4 col-md-offset-3 " type="button" id="printBtn"> Print </button>
+        <button class="btn col-md-4" type="button" id="backBtn"> Back</button>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        
+        $("#backBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockSlingerRing/Delivery';
+        });
+
+        $("#printBtn").click(function (e) {
+            e.preventDefault();
+
+            var printContents = document.getElementById("printableDiv").innerHTML; 
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+
+        });
+        
+    });
+
+</script>

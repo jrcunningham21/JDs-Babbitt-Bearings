@@ -1,0 +1,372 @@
+﻿@model JDsDataModel.ViewModels.Processes.PartTestViewModel
+
+@if (Model.RequiresPT || Model.RequiresUT)  // If either are done
+{
+    // Signoff modals
+    <div class="modal fade" id="PTTestSignoffModal" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <h4 class="modal-header"> PT Test Signoff </h4>
+            <div class="modal-body" style="margin-left: 40px">
+                <div class="jd-table">
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-6">
+                            @Html.SignOffHelper(m => m.PTSignoffEmployee, "PTApprovedBy")
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            @Html.LabelFor(m => m.PTPassed)
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-8">
+                            @Html.CheckBoxFor(m => m.PTPassed, new { id = "ptPassed", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No", @onchange = "togglePtPassed()" })
+                        </div>
+                    </div>
+
+                    <div id="returnToStepControls">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <label>Return to step:</label>
+                            </div>
+                        </div>
+
+                        <div class="row padd-bottom">
+                            <div class="col-sm-8">
+                                <input id="returnSteps" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-sm-8">
+                            @Html.LabelFor(m => m.TestNotes)
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.TestNotes, new { id = "ptTestNotes", @cols = 60, @rows = 6 })
+                        </div>
+                    </div>
+
+
+
+                    <div class="row padd-top">
+                        <div class="col-sm-11">
+                            <a id="savePTTest" class="btn btn-primary" style="margin-right:8px" onclick="savePtTest()">Save</a>
+                            <a id="closePTTest" class="btn btn-danger" style="margin-right:8px" onclick="closeTestPopup()">Cancel</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="UTTestSignoffModal" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <h4 class="modal-header"> UT Test Signoff </h4>
+            <div class="modal-body" style="margin-left: 40px">
+                <div class="jd-table">
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-6">
+                            @Html.SignOffHelper(m => m.UTSignoffEmployee, "UTApprovedBy")
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            @Html.LabelFor(m => m.UTPassed)
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-8">
+                            @Html.CheckBoxFor(m => m.UTPassed, new { id = "utPassed", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No", @onchange = "toggleUtPassed()" })
+                        </div>
+                    </div>
+
+                    <div id="returnToStepControlsForUt">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <label>Return to step:</label>
+                            </div>
+                        </div>
+
+                        <div class="row padd-bottom">
+                            <div class="col-sm-8">
+                                <input id="returnToStepForUt" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-sm-8">
+                            @Html.LabelFor(m => m.TestNotes)
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.TestNotes, new { id = "utTestNotes", @cols = 60, @rows = 6 })
+                        </div>
+                    </div>
+
+
+
+                    <div class="row padd-top">
+                        <div class="col-sm-11">
+                            <a id="saveUTTest" class="btn btn-primary" style="margin-right:8px" onclick="saveUtTest()">Save</a>
+                            <a id="closeUTTest" class="btn btn-danger" style="margin-right:8px" onclick="closeTestPopup()">Cancel</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    if (@Model.RequiresPT)
+    {
+        if (@Model.PTComplete)
+        {
+
+            @* PT Test is required and complete *@
+            <div class="row">
+                <div class="col-sm-6">
+                    <Label>PT Testing: <span id="ptTestStatus">Complete</span></Label>
+                </div>
+            </div>
+
+            <div class="row padd-bottom">
+                <div class="col-sm-6">
+                    <a id="viewPTTest" class="btn btn-primary" style="margin-right:8px" onclick="ShowPTTest()">View PT Test</a>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* PT Test is required and incomplete *@
+            <div class="row">
+                <div class="col-sm-6">
+                    <Label>PT Testing: <span id="ptTestStatus">Required</span></Label>
+                </div>
+            </div>
+
+            <div class="row padd-bottom">
+                <div class="col-sm-6">
+                    <a id="viewPTTest" class="btn btn-primary" style="margin-right:8px" onclick="ShowPTTest()">Complete PT Test</a>
+                </div>
+            </div>
+        }
+    }
+
+    if (@Model.RequiresUT)
+    {
+        if (@Model.UTComplete)
+        {
+            @* UT Test is required and complete *@
+            <div class="row">
+                <div class="col-sm-6">
+                    <Label>UT Testing: <span id="utTestStatus">Complete</span> </Label>
+                </div>
+            </div>
+
+            <div class="row padd-bottom">
+                <div class="col-sm-6">
+                    <a id="viewUTTest" class="btn btn-primary" style="margin-right:8px" onclick="ShowUTTest()">View UT Test</a>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* UT Test is required and incomplete *@
+            <div class="row">
+                <div class="col-sm-6">
+                    <Label>UT Testing: <span id="utTestStatus">Required</span></Label>
+                </div>
+            </div>
+
+            <div class="row padd-bottom">
+                <div class="col-sm-6">
+                    <a id="viewUTTest" class="btn btn-primary" style="margin-right:8px" onclick="ShowUTTest()">Complete UT Test</a>
+                </div>
+            </div>
+        }
+    }
+}
+
+<script>
+
+    function savePtTest(){
+        // No signoff? No validation
+        if ($("#PTApprovedBy").val() == '')
+        {
+            $('#PTApprovedBySO').addClass("btn-danger");
+            return;
+        } else {
+            $('#PTApprovedBySO').removeClass("btn-danger");
+        }
+        var isPTPassedChecked =$('#ptPassed').is(':checked');
+
+        var values = {
+            "PartId" : @Model.PartId,
+            "PTPassed" : isPTPassedChecked,
+            "TestNotes" : $("#ptTestNotes").val(),
+            "ReturnStep" : $('#returnSteps').val(),
+            "PTSignoffEmployee": $("#PTApprovedBy").val(),
+            "TestType":  "PT",
+        };
+
+        $.ajax({
+            url: "/ProcessBabbitBearing/SavePartTest",
+            type: "POST",
+            data: values,
+            success: function (data) {
+                // Update the UI accordingly
+                if (data)
+                {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    $("#ptTestStatus").text("Complete");
+                    $("#viewPTTest").text("View PT Test");
+                    var testFailed = !$("#ptPassed").is(":checked");
+                    if (testFailed){
+                        // If we failed, we're rolling back
+                        switch ($('#returnToStep').val()) {
+                            case "2":
+                                window.location.href = "/ProcessBabbitBearing/BB2_PrecastRoughout?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                                break;
+
+                            case "3":
+                                 window.location.href = "/ProcessBabbitBearing/BB3_SpincastProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                                break;
+                        }
+                    }
+                    $('#PTTestSignoffModal').modal('hide');
+                }
+            }
+        });
+    }
+    
+    function saveUtTest(){
+        // No signoff? No validation
+        if ($("#UTApprovedBy").val() == '')
+        {
+            $('#UTApprovedBySO').addClass("btn-danger");
+            return;
+        } else {
+            $('#UTApprovedBySO').removeClass("btn-danger");
+        }
+        var isUTPassedChecked =$('#utPassed').is(':checked');
+
+        var values = {
+            "PartId" : @Model.PartId,
+            "UTPassed" : isUTPassedChecked,
+            "TestNotes" : $("#utTestNotes").val(),
+            "ReturnStep" : $('#returnSteps').val(),
+            "UTSignoffEmployee": $("#UTApprovedBy").val(),
+            "TestType":  "UT",
+        };
+
+        $.ajax({
+            url: "/ProcessBabbitBearing/SavePartTest",
+            type: "POST",
+            data: values,
+            success: function (data) {
+                // Update the UI accordingly
+                if (data)
+                {
+                    $("#utTestStatus").text("Complete");
+                    $("#viewUTTest").text("View UT Test");
+                    var testFailed = !$("#utPassed").is(":checked");
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (testFailed){
+                        // If we failed, we're rolling back
+                        switch ($('#returnToStepForUt').val()) {
+                            case "2":
+                                window.location.href = "/ProcessBabbitBearing/BB2_PrecastRoughout?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                                break;
+
+                            case "3":
+                                window.location.href = "/ProcessBabbitBearing/BB3_SpincastProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                                break;
+                        }
+                    }
+                    $('#UTTestSignoffModal').modal('hide');
+                }
+            }
+        });
+    }
+
+    function togglePtPassed() {
+        // Show or hide the return to step stuff
+        $("#returnToStepControls").slideToggle(this.checked);
+    }
+    function toggleUtPassed() {
+        // Show or hide the return to step stuff
+        $("#returnToStepControlsForUt").slideToggle(this.checked);
+    }
+
+
+    $(function () {
+
+        // Initially hide the controls as required
+        if ('@Model.PTPassed' == 'True'){
+            $('#returnToStepControls').hide();
+        }
+        if ('@Model.UTPassed' == 'True'){
+            $('#returnToStepControlsForUt').hide();
+        }
+
+        var data = [
+            { text: "2 Pre-cast Roughout", value: "2" },
+            { text: "3 Spincast Process", value: "3" },
+        ];
+
+        $("#returnSteps").kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: data,
+            height: 100
+        })
+
+        $("#returnSteps").parent().css("height", "100%");
+        
+        $("#returnToStepForUt").kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: data,
+            height: 100
+        })
+
+        $("#returnToStepForUt").parent().css("height", "100%");
+
+        
+    });
+
+
+    function ShowPTTest() {
+        // Show the pop-up for UT Test
+        $('#PTTestSignoffModal').modal('show');
+    }
+
+
+    function ShowUTTest() {
+        // Show the pop-up for PT Test
+        $('#UTTestSignoffModal').modal('show');
+    }
+
+    function closeTestPopup() {
+        // just close them both
+        $('#PTTestSignoffModal').modal('hide');
+        $('#UTTestSignoffModal').modal('hide');
+    }
+</script>

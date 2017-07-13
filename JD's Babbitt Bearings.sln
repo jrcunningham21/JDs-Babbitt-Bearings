@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{44A92807-80AF-4F73-96AF-106C7C72C0FA}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionItems\Kendo.Mvc.dll = SolutionItems\Kendo.Mvc.dll
+		SolutionItems\Kendo.Mvc.xml = SolutionItems\Kendo.Mvc.xml
+	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "JDsDatabase", "JDsDatabase\JDsDatabase.sqlproj", "{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDsDataModel", "JDsDataModel\JDsDataModel.csproj", "{6E663643-F87B-4093-BD53-A42FD745B5F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDsUnitTests", "JDsUnitTests\JDsUnitTests.csproj", "{989A3EBF-293A-4B91-B99E-9E32CF9052C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDsWebApp", "JDsWebApp\JDsWebApp.csproj", "{C758709F-CF68-464E-9B0C-CA0B0EACD54B}"
+EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "JDsWebApp.Azure", "JDsWebApp.Azure\JDsWebApp.Azure.ccproj", "{1DE8B732-ED2E-4B56-BDB0-4D3220A80CE1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DF72F06-5778-4BF5-8F49-30CD0AA783E2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6E663643-F87B-4093-BD53-A42FD745B5F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E663643-F87B-4093-BD53-A42FD745B5F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E663643-F87B-4093-BD53-A42FD745B5F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E663643-F87B-4093-BD53-A42FD745B5F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989A3EBF-293A-4B91-B99E-9E32CF9052C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989A3EBF-293A-4B91-B99E-9E32CF9052C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989A3EBF-293A-4B91-B99E-9E32CF9052C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989A3EBF-293A-4B91-B99E-9E32CF9052C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C758709F-CF68-464E-9B0C-CA0B0EACD54B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C758709F-CF68-464E-9B0C-CA0B0EACD54B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C758709F-CF68-464E-9B0C-CA0B0EACD54B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C758709F-CF68-464E-9B0C-CA0B0EACD54B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DE8B732-ED2E-4B56-BDB0-4D3220A80CE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DE8B732-ED2E-4B56-BDB0-4D3220A80CE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DE8B732-ED2E-4B56-BDB0-4D3220A80CE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DE8B732-ED2E-4B56-BDB0-4D3220A80CE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

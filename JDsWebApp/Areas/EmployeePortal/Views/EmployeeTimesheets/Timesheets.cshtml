@@ -1,0 +1,228 @@
+﻿@model JDsWebApp.Areas.EmployeePortal.Models.EmployeeTimesheets.TimesheetViewModel
+
+@{
+    ViewBag.Title = "Timesheets";    
+}
+
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && !string.IsNullOrEmpty(HttpContext.Current.Request.Cookies["EmployeeRole"].Value))
+{
+    <section id="timesheetcontent" class="wrapper" style="width: 100%">
+        <div>
+            <h3>Timesheet</h3>
+        </div>
+        <div class="row">
+            <div class="col-sm-3 min-padding-left">
+                @Html.DropDownListFor(x => x.EmployeeId, Model.Employees, new {id = "employeelist", @class = "form-control"})
+            </div>
+            <div class="col-sm-2 min-padding-center">
+                @Html.DropDownList("payPeriodDatePicker", new List<SelectListItem>(), new {@class = "form-control min-padding-center" })
+            </div>
+            <div class="col-sm-2 min-padding-center">
+                @Html.DropDownList("payPeriodYearPicker", Model.Years, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-5 min-padding-right">
+                <button id="timesheetcancelBtn" class="btn btn-danger pull-right" onclick="Reload()" style="width: 80px; margin-left: 8px;" readonly="readonly">Cancel</button>
+                <button id="timesheetsaveBtn" class="btn btn-primary pull-right" onclick="OnSaveClicked()" style="width: 80px; margin-left: 8px;" readonly="readonly">Save</button>
+                <button id="print" class="btn pull-right"><span class="k-icon k-i-excel"></span>Print Report</button>
+            </div>
+        </div>
+
+
+        <div>
+            <div class="row">
+                <h5>@Html.ValidationSummary()</h5>
+            </div>
+            <div style="float: right;">
+                <label id="statuslabel" class="jd-label"></label>
+            </div>
+        </div>
+
+
+        <div id="timesheetsdiv" class="row" style="margin-left: 14px;">
+            
+        </div>
+
+    </section>
+    @section scripts
+    {
+        <script>
+            var employeeId;
+            var startpayperiod;
+
+            function Reload() {
+                location.reload(true);
+            }
+            
+            function GetEmployeeTimesheet() {
+                var year = $("#payPeriodYearPicker").val();
+                var date = $("#payPeriodDatePicker option:selected").text();
+                var empID = $("#employeelist").val();
+
+                if ((year != "") && (date != "") && (empID != "")) {
+                    var obj = { employeeId: empID, Year: year, payperiod: date };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/EmployeePortal/EmployeeTimesheets/TimesheetEntries/',
+                        data: obj,
+                        success: function (data) {
+                            $('#timesheetsdiv').html(data);
+                            $('#timesheetsdiv').fadeIn('fast');
+                        },
+                        error: function (data) {
+                            bootbox.alert("Error in AJAX GetEmployeeTimesheet", function () { });
+                        }
+                    });
+                }
+            }
+            
+            // This function is called when the payPeriodYearPicker loads/changes
+            // Gets the value (year) and returns set of corresponding pay periods
+
+            function GetDates() {
+
+                // Get value from year picker
+                var ypValue = { YR: $("#payPeriodYearPicker").val() };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/EmployeePortal/TimesheetReports/GetPayPeriodDates/',
+                    data: ypValue,
+                    success: function (dates) {
+                        $("#payPeriodDatePicker").empty();
+                        for (i = 0; i < dates.length; i++) {
+                            $("#payPeriodDatePicker").append($("<option></option>").val(i).html(dates[i]));
+                        }
+                        
+                        $("#payPeriodDatePicker").val(@Model.CurrentPayPeriod); 
+                        $("#payPeriodDatePicker").trigger("change");
+
+                        checkForQueryStringValues();
+                    },
+                    error: function (dates) {
+                        bootbox.alert("Error in AJAX GetPayPeriodDates", function () { });
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                $('#timesheetsEntry').addClass('aside-entry-active');
+
+                $("#payPeriodYearPicker").change(function () {
+                    GetDates();
+                });
+
+                $("#employeelist").change(function () {
+                    GetEmployeeTimesheet();
+                });
+                
+                $("#payPeriodDatePicker").change(function () {
+                    GetEmployeeTimesheet();
+                })
+
+                $.ajax({
+                    url: '@Url.Action("GetRole", "EmployeeManagement")',
+                    success: function (role) {
+                        if (role == "Employee") {
+                            $('#employeelist').prop("disabled", true);
+                        }
+                    }
+                });
+
+                // Print button click handler
+                $("#print").click(function (e) {
+                    $("#print").hide();
+                    $(".footer").hide();
+                    $(".aside").hide();
+
+                    window.print();
+
+                    $("#print").show();
+                    $(".footer").show();
+                    $(".aside").show();
+                });
+                
+                GetDates();
+                            
+            });
+
+            function dataBound() {
+
+                var count = $('.start-time-counter').length;
+                for (var i = 0; i < count; i++)
+                {
+                    // make sure the selected values are populated correctly in the dropdown
+
+                    var sh = $("#StartTime" + i + "h").attr('value');
+                    var sm = $("#StartTime" + i + "m").attr('value');
+                    var samPm = $("#StartTimeAmPm" + i).attr('value');
+
+                    var eh = $("#EndTime" + i + "h").attr('value');
+                    var em = $("#EndTime" + i + "m").attr('value');
+                    var eamPm = $("#EndTimeAmPm" + i).attr('value');
+
+                    $("#StartTime" + i + "h option").filter(function () {
+                        return $(this).text() == sh;
+                    }).prop('selected', true);
+
+                    $("#StartTime" + i + "m option").filter(function () {
+                        return $(this).text() == sm;
+                    }).prop('selected', true);
+
+                    $("#StartTimeAmPm" + i + " option").filter(function () {
+                        return $(this).text() == samPm;
+                    }).prop('selected', true);
+
+
+
+                    $("#EndTime" + i + "h option").filter(function () {
+                        return $(this).text() == eh;
+                    }).prop('selected', true);
+
+                    $("#EndTime" + i + "m option").filter(function () {
+                        return $(this).text() == em;
+                    }).prop('selected', true);
+
+                    $("#EndTimeAmPm" + i + " option").filter(function () {
+                        return $(this).text() == eamPm;
+                    }).prop('selected', true);
+                }
+
+            }
+                       
+            function getParameterByName(name) {
+                if (name != null) {
+                    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                        results = regex.exec(location.search);
+                    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+                }
+                else
+                    return "";
+            }
+
+            function checkForQueryStringValues ()
+            {
+                employeeId = getParameterByName('EmployeeId');
+                startpayperiod = getParameterByName('payperiod');
+                year = getParameterByName("year");
+
+                if (employeeId != "")
+                {
+                    var url = window.location.href;
+                    url = url.split("?")[0];
+                    url = url.replace('LoadTimesheetForEmployee', 'Timesheets');
+                    //window.location.href = url;
+                    $("#employeelist").data("kendoDropDownList").value(employeeId);
+                    $("#payPeriodDatePicker").data("kendoDropDownList").search(startpayperiod);
+                    $("#payPeriodYearPicker").data("kendoDropDownList").search(year);
+                }
+            }
+        </script>
+    }
+}
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}

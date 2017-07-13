@@ -1,0 +1,164 @@
+﻿@model JDsWebApp.Areas.EmployeePortal.Models.Certificate.CertificateViewModel
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && HttpContext.Current.Request.Cookies["EmployeeRole"].Value == "Manager")
+{
+    <div id="certificatedetailsdiv">
+        @using (Ajax.BeginForm("SaveCertificate", "Certificate", null,
+                new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    UpdateTargetId = "certificatedetailsdiv",
+                    InsertionMode = InsertionMode.Replace,
+                    OnBegin = "OnSaveCertificateBegin",
+                    OnSuccess = "OnSaveCertificateSuccess"
+                },
+                new { enctype = "multipart/form-data", id = "frmCertificate" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.CertificateId)
+            @Html.HiddenFor(m => m.CertificateFileId)
+            @Html.HiddenFor(m => m.OriginalFilename)
+
+            <div class="jd-table">
+
+                <div class="jd-table-row pull-left">
+                    <div class="jd-table-cell">
+                        @Html.TextBoxFor(m => m.Name, new { @class = "jd-input", id = "name", placeholder = Html.DisplayNameFor(x => x.Name) })
+                    </div>
+                </div>
+
+                @*Display the original filename and download link only if it exists*@
+                @if (!string.IsNullOrWhiteSpace(Model.OriginalFilename) && Model.CertificateFileId > 0)
+                {
+                    <div class="jd-table-row">
+                        <div class="jd-table-row pull-left">
+                            <div class="">
+                                &nbsp;<h5>@Html.DisplayFor(m => m.OriginalFilename, new { @class = "pull-left", id = "filename", style = "" })</h5>
+                            </div>
+                            <div class="jd-table-cell">
+                                <a href="@Model.URL" type="button" class="btn btn-primary">Download</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="jd-table-row">
+                        &nbsp;
+                    </div>
+                }
+
+                <div class="row">
+                    <h5 style="float: left; width: 180px">@Html.DisplayNameFor(m => m.CertificateDate)</h5>
+                    <h5 style="float: right; width: 180px">@Html.DisplayNameFor(m => m.CertificateExpires)</h5>
+                </div>
+                <div class="row">
+                    <div style="float: left">
+                        <input id="certificatedate" name="CertificateDate" style ="width:125px">
+                    </div>
+                    <div style="float: right; margin-right: 55px">
+                        <input id="certificateexpirationdate" name="CertificateExpires"  style="width:125px">
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px">
+                    @Html.TextBoxFor(m => m.CompanyName, new { @class = "jd-input", id = "companyname", placeholder = Html.DisplayNameFor(x => x.CompanyName), style = "float:left;width:380px" })
+                </div>
+
+                <div class="row">
+                    @Html.TextAreaFor(m => m.Notes, new { @class = "jd-input", id = "notes", placeholder = Html.DisplayNameFor(x => x.Notes), style = "width:380px;height:100px" })
+                </div>
+
+                <div class="row" style="margin-right: 15px;">
+                    <input id="certificatecancelBtn" class="btn btn-danger" value="Cancel" onclick="OnCancelClicked()" style="float: right; width: 120px; line-height:normal; margin-left: 8px" readonly="readonly" />
+                    <input id="certificatesaveBtn" class="btn btn-primary" type="submit" value="Save" style="float: right; width: 120px; line-height:normal;" readonly="readonly" />
+                </div>
+
+                <div class="row">
+                    <h5>@Html.ValidationSummary()</h5>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+<script>
+    var isValid = '@Html.Raw(Json.Encode(ViewData.ModelState.IsValid))';
+    var modelId = '@Html.Raw(Json.Encode(Model.CertificateId))';
+
+
+    $(function () {
+
+                
+        $("#certificatedate").kendoDatePicker({
+        }).data("kendoDatePicker").value(@Html.Raw(Json.Encode(Model.CertificateDate)));
+
+        $("#certificateexpirationdate").kendoDatePicker({
+        }).data("kendoDatePicker").value(@Html.Raw(Json.Encode(Model.CertificateExpires)));
+
+        $("#thefile").change(function() {
+            var file = this.files[0];
+            fileName = file.name;
+            size = file.size;
+            type = file.type;
+            //$("#txtuploadedMsgAdd").text("");
+        });
+    });
+
+    function ProgressHandler(e) {
+        if (e.lengthComputable) {
+            $("#divAddInforamtionDialog").show();
+            //$("#txtuploadedMsgAdd").text("  " + fileName + " uploaded successfully");
+        }
+    }
+
+    function OnSaveCertificateBegin() {
+        document.getElementById("certificatesaveBtn").disabled = true;
+        // Perform any client side validation
+    }
+
+    function OnSaveCertificateSuccess(response) {
+        if (isValid != 'true') {
+            $('#statuslabel').text("Save Failed");
+        } else {
+            var formData = new FormData($('#frmUplaodFileAdd')[0]);
+            var id = '@Html.Raw(Json.Encode(Model.CertificateId))';
+            formData.append('id', id);
+            $.ajax({
+                url: '/EmployeePortal/Certificate/UploadCertificateFile',
+                type: 'POST',
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress',
+                        ProgressHandler, false);
+                    }
+                    return myXhr;
+                },
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                },
+                error: function (data) {
+                    bootbox.alert("Error file upload", function () {
+                    });
+                }
+            });
+
+            $('#statuslabel').text("Saved");
+            $("#certificatedetailsmodal").modal('hide');
+            notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");
+            RefreshCertificatesGrid();
+        }
+
+        document.getElementById("certificatesaveBtn").disabled = false;
+    }
+
+    function OnCancelClicked() {
+        $("#certificatedetailsmodal").modal('hide');
+    }
+
+</script>

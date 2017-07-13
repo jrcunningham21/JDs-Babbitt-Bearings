@@ -1,0 +1,324 @@
+﻿
+@model JDsDataModel.ViewModels.SizesViewModel
+
+@{
+    ViewBag.Title = "Sizes";
+}
+<style>
+
+.topMarginForLabels{
+    margin-top:17px;
+}
+</style>
+
+<div id="sizesDiv">
+    @using (Html.BeginForm("Sizes", "Part", FormMethod.Post, new { id = "sizeForm", InsertionMode = InsertionMode.Replace }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="modal-body">
+            <div class="table">
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.Shaft)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Shaft, "{0:0.000#}" , new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.Clearance)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Clearance, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.BoreSize)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.BoreSize, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.BoreSizeHorizontal)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.BoreSizeHorizontal, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.ShimSize)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.ShimSize, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.Tolerance)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Tolerance, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.SealSize)
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.SealSize, "{0:0.000#}", new { @class = "form-control", @autocomplete = "off", @maxLength = 20 })
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-6">
+                        @Html.LabelFor(m => m.ODSizes)
+                    </div>
+                    <div class="col-sm-6 ">
+                        <div class="input-group" id="customerODSizesGroup">
+                            <input id="OD_Sizes" type="text" step="any" class="form-control multi m1" placeholder="OD Size" style="width:100%;"/>
+                            <span class="input-group-btn multi">
+                                <a class='btn btn-primary' onclick="AddODSize('OD_Sizes')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6">
+                        <span class="field-validation-valid" id="CustomerOD_MeasurementsMessage"></span>
+                    </div>
+                </div>
+
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-5"></div>
+                    <div class="col-sm-pull-5 @(!Model.ODSizes.Any()? "collapse" : "")" style="display:block; width:43%; float:right; margin-right:15px;">
+                        <div id="grid_Sizes">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        @Html.LabelFor(m => m.SpecialNotes)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @Html.TextAreaFor(m => m.SpecialNotes, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="row pull-right">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary" id="saveSizesBtn">Save</button>
+                    <button type="button" class="btn btn-danger" id="sizesCancelBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        @Html.HiddenFor(x => x.PartID)
+        @Html.HiddenFor(x => x.SizesID)
+    }
+    @*<div class="extraSpaceAtBtmDiv"></div>*@
+</div>
+
+<script type="text/html" id="ODSizeTemplate">
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="col-sm-6">
+            <input class="form-control ODSizeTemplateInput" />
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#grid_Sizes").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("GetODSizes", "Part", new {id = Model.PartID})"
+                },
+                pageSize: 5
+            },
+            scrollable: false,
+            pageable: true,
+            columns: [{
+                hidden: true,
+                field: "MeasurementListId",
+
+            },{
+                field: "PartDiameterMeasurementId",
+                hidden: true
+            },
+            {
+                field: "ODComment",
+                title: "OD Size",
+                width: 150
+            },
+            {
+                field: "A",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "B",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "C",
+                format: "{0:0.000#}",
+                hidden: true
+            }, {
+                field: "",
+                template: "<a class='glyphlink' onclick='DeleteCustomerSizesMeasurement(#=PartDiameterMeasurementId#)'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a>"
+            }]
+        });
+
+        // When user clicks/touches an input... select all text
+        $("input[type='text']").on("click", function () {
+            $(this).select();
+        });
+
+    });
+
+    function DeleteCustomerSizesMeasurement(measurementId){
+
+        bootbox.confirm("Are you sure you want to delete this?", function(result) {
+            if (result === true) {
+                var url = "/Part/DeleteODSize?partDiameterMeasurementId=" + measurementId;
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        $("#grid_Sizes").data("kendoGrid").dataSource.read();
+                    },
+                    error: function(e) {
+                        alert("Error deleting ODSize");
+                    }
+                });
+            }
+        });
+    }
+
+    function AddODSize(baseid) {
+        
+        var aid = $("#" + baseid );
+
+        var a = aid.val();
+        if (a == "") {
+            toggleValidationMessage("CustomerOD_MeasurementsMessage", "*please enter a value");
+            return false;
+        }
+        else {
+            toggleValidationMessage("CustomerOD_MeasurementsMessage", "");
+
+        }
+
+        var propname = baseid.substring(baseid.lastIndexOf("_") + 1);
+        var griddatasource = $('#grid_' + propname).data("kendoGrid").dataSource;
+        var newindex = griddatasource.total() + 1;
+        griddatasource.add({
+            Index: newindex,
+            MeasurementListId: "0",
+            PartDiameterMeasurementId: "",
+            ODComment: a,
+            A: "",
+            B: "",
+            C: ""
+        });
+        aid.val("");
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/AddODSize/',
+            data: {
+
+                partId: '@Model.PartID',
+                ODSize: a
+            },
+            dataType: "json",
+            success: function (d2) {
+
+                $("#grid_Sizes").data("kendoGrid").dataSource.read();
+                $('#grid_Sizes').parent().show("slow");
+            },
+            error: function (d) {
+
+                alert("AJAX ERROR: AddODSize");
+            }
+        });
+    }
+
+    function AddCustomerSizesMeasurement() {
+
+        var grid = $("#customerODSizesGrid").data("kendoGrid");
+        var val = $("#ODSizeInput").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/AddODSize/',
+            data: {
+                partId: '@Model.PartID',
+                ODSize: val
+            },
+            dataType: "json",
+            success: function (d2) {
+                grid.dataSource.read();
+            },
+            error: function (d) {
+
+                alert("AJAX ERROR: AddODSize");
+            }
+        });
+
+        // Clear input
+        $('#ODSizeInput').val("");
+    }
+
+
+    $('#sizesCancelBtn').bind("click", function () {
+        $('#partDetailsModal').modal('show');
+        $("#sizesModal").modal('hide');
+    });
+
+
+    $('#saveSizesBtn').bind("click", function () {
+
+        // If the user clicks Save and there are OD values that have been
+        // entered, but not saved... Save them
+        if ($("#OD_Sizes").val() != "")
+        {
+            AddODSize('OD_Sizes');
+        }
+
+        var formData = $("#sizeForm").serialize();
+        $.ajax({
+            type: 'POST',
+            url: '/Part/Sizes/',
+            data: formData,
+            dataType: "json",
+            success: function (d2) {
+                $('#partDetailsModal').modal('show');
+                $("#sizesModal").modal('hide');
+                notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+            },
+            error: function (d) {
+
+                //alert("AJAX ERROR: Saving Part Size");
+                $("#sizesContentDiv").html(d.responseText);
+            }
+        });
+
+    });
+</script>

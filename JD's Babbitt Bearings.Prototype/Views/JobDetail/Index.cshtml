@@ -1,0 +1,370 @@
+﻿@model JD_s_Babbitt_Bearings.Models.MockJob
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+<div class="container-fluid form-container">
+
+    <script>
+        function confirmDelete() {
+            $("#confirmDeletePartModal").modal();
+        };
+
+        function goToPartDetails() {
+            window.location.href = '/MockSlingerRing/IncomingInspection';
+        }
+    </script>
+
+    <div class="row">
+        <h3 class="col-md-5">
+            Add Job / Edit Job Details
+        </h3>
+
+        <div class="col-md-3 " style="margin-top:25px">
+            <button type="button" class="btn " id="jobHistoryBtn">History</button>
+            <button type="button" class="btn btn-danger" id="deleteJobBtn">Delete Job</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDeleteModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Delete this job - are you sure?</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>Customer:</label> Acme Parts, Inc.
+                        </div>
+                        <div class="form-group">
+                            <label>JD's Job #:</label> 3004
+                        </div>
+                        <div class="form-group">
+                            <label>Customer Job #:</label> 6754091
+                        </div>
+                        <div class="form-group">
+                            <label>Employee:</label> Adam
+                        </div>
+                        <div class="form-group">
+                            <label for="psw"> Please enter reasons for cancelling this job: </label>
+                            <textarea type="text" class="form-control" id="psw" placeholder="Notes" style="height:100px"> </textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Cancel this job</button>
+                        <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Don't cancel this job</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeletePartModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Delete this part - are you sure?</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>Customer:</label> Acme Parts, Inc.
+                        </div>
+                        <div class="form-group">
+                            <label>JD's Job #:</label> 3004
+                        </div>
+                        <div class="form-group">
+                            <label>Customer Job #:</label> 6754091
+                        </div>
+                        <div class="form-group">
+                            <label>Employee:</label> Adam
+                        </div>
+                        <div class="form-group">
+                            <label>Part:</label> Slinger Ring
+                        </div>
+     
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Delete this part</button>
+                        <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Don't delete this part</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <form role="form">
+
+        <div class="row">
+
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">JD's Job #:</label>
+            </div>
+
+            <div class="value-style col-md-2" style="margin-top:10px">
+                <label>7515</label>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="key-style col-md-3 ">
+                <label>Customer Job #:</label>
+            </div>
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Job #" style="width:100%" />
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="key-style col-md-3">
+                <label>PO #:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="PO #" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label>Customer:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div class="dropdown" >
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        ONCOR ENERGY
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href=" #">
+                        Acme parts</a></li>
+                        <li><a href="#">Geneva Steel</a></li>
+                        <li><a href="#">Frisco ISD</a></li>
+                    </ul>
+                </div>
+            </div>  
+            <button class="col-md-2 btn" id="addCustomerBtn">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add Customer
+            </button>
+            <button class="col-md-2 btn" id="editCustomerBtn" style="margin-left:5px">
+                Edit Customer
+            </button>
+        </div>                                          
+                                                        
+        <div class="row">                               
+            <div class="key-style col-md-3">            
+                <label>Contact:</label>                 
+            </div>                                      
+
+            <div class="value-style col-md-4">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        SMITH, JONAS
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li> <a href=" #">GOMEZ, SALLY </a>  </li>
+                        <li><a href="#">BLACK, THOMAS</a></li>
+                        <li><a href="#">WELLS, JOSH</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>                                          
+                                                        
+        <div class="row">                               
+            <div class="key-style col-md-3">            
+                <label>Date Received:</label>           
+            </div>                                      
+                                                        
+            <div class="value-style col-md-4">          
+                <input type="date" class="form-control" style="width:100%" />
+            </div>                                      
+        </div>                                          
+                                                        
+        <div class="row">                               
+            <div class="key-style col-md-3">            
+                <label>Date Required:</label>           
+            </div>                                      
+                                                        
+            <div class="value-style col-md-4">          
+                <input type="date" class="form-control" style="width:100%" />
+            </div>                                      
+        </div>                                          
+                                                        
+        <div class="row">                               
+            <div class="key-style col-md-3">            
+                <label>Ship by:</label>                 
+            </div>                                      
+                                                        
+            <div class="value-style col-md-4">          
+                <input type="date" class="form-control" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 key-style">
+                <label>Time:</label>
+            </div>
+
+            <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+            <div class="col-md-1 form-label" style="text-align:left">ST:</div>
+            <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+            <div class="col-md-1 form-label" style="text-align:left">OT:</div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-4">
+                @Html.CheckBox("Hold for customer approval")
+                Hold for customer approval
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <h3>Parts:</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <table id="grid-basic" class="table table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="name" data-type="numeric" style="width:20%">Name</th>
+                            <th data-column-id="scope">Scope</th>
+                            <th data-column-id="edit" style="width:5%"> </th>
+                            <th data-column-id="del" style="width:5%"> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Slinger Ring</td>
+                            <td>Flat style. Fix and refinish</td>
+                            <td>
+                                <button class="btn btn-sm" type="button" onclick="goToPartDetails()">Edit</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="confirmDelete()">Delete</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Slinger Ring</td>
+                            <td>T-style. Fix and refinish</td>
+                            <td>
+                                <button class="btn btn-sm" type="button" onclick="goToPartDetails()">Edit</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="confirmDelete()">Delete</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Bearing</td>
+                            <td>Include degreasing</td>
+                            <td>
+                                <button class="btn btn-sm" type="button" onclick="goToPartDetails()">Edit</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="confirmDelete()">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label style="margin-top:5px">Add new part:</label>
+            </div>
+
+            <div class="dropdown col-md-3">
+                <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                    SLINGER RING
+                    <span class="caret" style="float:right; margin-top:7px;"></span>
+                </button>
+                <ul class="dropdown-menu" style="width:100%;">
+                    <li><a href="#">BABBITT BEARING </a></li>
+                    <li><a href="#">HYDROGEN SEAL</a></li>
+                    <li><a href="#">THRUST SHOE</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown col-md-4" style="margin-top:5px">
+                <button class="btn btn-sm">Add</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Job notes:</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <textarea type="text" class="form-control" id="psw" placeholder="Notes" style="height:100px"></textarea>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:20px">
+            <div class="col-md-2 col-md-offset-8">
+                <button id="saveBtn" type="submit" class="btn btn-success" style="width:100%">Save</button>
+            </div>
+            <div class="col-md-2">
+                <button id="cancelBtn" type="submit" class="btn btn-danger" style="width:100%">Cancel</button>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#deleteJobBtn").click(function () {
+                $("#confirmDeleteModal").modal();
+            }); 
+
+            $("#addCustomerBtn").click(function (e) {
+                e.preventDefault();
+                window.location.href = '/MockCustomer/AddEditCustomer';
+            }); 
+
+            $("#editCustomerBtn").click(function (e) {
+                e.preventDefault();
+                window.location.href = '/MockCustomer/AddEditCustomer';
+            });
+
+            $("#saveBtn").click(function (e) {
+                e.preventDefault();
+                window.location.href = '/';
+            });
+
+            $("#cancelBtn").click(function (e) {
+                e.preventDefault();
+                window.location.href = '/';
+            });
+        });
+
+
+
+
+
+    </script>

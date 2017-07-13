@@ -1,0 +1,202 @@
+﻿@model JDsDataModel.ViewModels.PartInfoPhotoViewModel
+
+
+<style>
+    
+</style>
+
+<div id="takePartPhotoWin" style="display:none;">
+    <div style="text-align: center;">
+        <div class="camera" id="camera-area">
+            <video id="video">Video stream not available.</video>
+            <button class="btn_overlay" id="photoShutterBtn"></button>
+        </div>
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <div id="takePhotoBtnWrapper">
+
+            <button class="btn btn-danger" id="cancelPhotoShutterBtn" style="width:150px; margin-top:8px;">Cancel</button>
+
+        </div>
+
+        <select id="videoSource" hidden></select>
+
+    </div>
+
+</div>
+
+<div>
+
+    @*Photo*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+
+                    <div class="jd-table-cell ">
+                        <img id="partPhotoImg" src='@Model.URL' style='max-width:100%; max-height:150px; min-height:150px;' />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Notes*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <textarea id="partPhotoNotes" rows="4" cols="70" placeholder="Photo notes">@Model.PhotoNotes</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Upload and Take Photos buttons*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+
+                    <div class="jd-table-cell jd-width-75">
+
+                        <div id="divUploadFileAdd" style="margin-top: 8px; margin-bottom: 25px; margin-left: 15px">
+                            <form enctype="multipart/form-data" id="frmUploadFileAdd">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <input id="btnupload" class="btn btn-primary" type="button" value="Upload" style="float: left; width: 100px; margin-top: 20px;" />
+                                    <label id="txtuploadedMsgAdd" style="margin-top:25px; margin-left:10px;"></label>
+                                </div>
+                                <div class="row">
+                                    <input id="thefile" name="file" type="file" style="float: left; margin-top: 10px; visibility:hidden" />
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Save and Cancel buttons*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <button id="savePhotoBtn" class="btn btn-primary" style="width:150px;">Save</button>
+                    <!-- <button id="takePhotoBtn" class="btn btn-primary" style="width:150px; margin-left:5px;">Take Photo</button> -->
+                    <button id="cancelPhotoBtn" class="btn btn-danger" style="width:150px; margin-left:5px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    var video = null;
+    var canvas = null;
+    var photo = null;
+    var startbutton = null;
+
+    function displayPhotoGrid() {
+        $('#addEditPhotoDetails').hide();
+        $('#PhotosTab').show();
+    }
+
+    $(function () {
+
+        $("#cancelPhotoBtn").click(function () {
+            displayPhotoGrid();
+        });
+
+        $("#savePhotoBtn").click(function () {
+            var values =
+            {
+                "PartPhotoId": @Model.PartPhotoId,
+                "PartId": @Model.PartId,
+                "URL": $('#partPhotoImg').attr("src"),
+                "PhotoNotes": $('#partPhotoNotes').val()
+            }
+
+            $.post("@Url.Action("SavePartPhoto", "Part")", values, function(data)
+            {
+                if (data === false)
+                    bootbox.alert("Error file upload", function () {});
+
+                $('#partPhotosgrid').data('kendoGrid').dataSource.read();
+                $('#partPhotosgrid').data('kendoGrid').refresh();
+                displayPhotoGrid();
+            });
+        });
+
+
+
+        $("#takePhotoBtn").click(function () {
+            //navigator.getUserMedia returns a false positive on Microsoft Edge
+            if(navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+                initTakePhotoWindow( "#takePartPhotoWin", "#partPhotoImg", @Model.PartId);
+            } else {
+                bootbox.alert("Sorry your browser does not currently support taking photos from the browser. Please either upload the photos or use a compatible browser", function () {});
+            }
+
+        });
+
+
+        $("#thefile").change(function () {
+            var file = this.files[0];
+            fileName = file.name;
+            size = file.size;
+            type = file.type;
+            $("#txtuploadedMsgAdd").text("");
+            $("#btnupload").removeAttr('disabled');
+
+            $("#savePhotoBtn").prop("disabled", true);
+
+            var formData = new FormData($('#frmUploadFileAdd')[0]);
+            formData.append('id', @Model.PartId);
+            $.ajax({
+                url: '/Part/PartInfoPhotoUpload',
+                type: 'POST',
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress',
+                        ProgressHandler, false);
+                    }
+                    return myXhr;
+                },
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.success == true) {
+                        // We already said it was successful. Update the URL of the image
+                        $("#partPhotoImg").attr("src", data.URL);
+                    } else {
+                        $("#txtuploadedMsgAdd").text("  " + fileName + " uploaded failed.");
+                    }
+
+                    $("#savePhotoBtn").prop("disabled", false);
+                },
+                error: function (data) {
+                    bootbox.alert("Error file upload", function () {});
+                    $("#savePhotoBtn").prop("disabled", false);
+                }
+            });
+        });
+
+        $("#btnupload").click(function () {
+            $('#thefile').click();
+        });
+    }); // end load func
+
+
+
+
+</script>

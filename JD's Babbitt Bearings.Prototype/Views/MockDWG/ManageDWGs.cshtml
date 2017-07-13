@@ -1,0 +1,228 @@
+﻿
+@{
+    ViewBag.Title = "ManageDWGs";
+}
+
+<script>
+    function editDrawing() {
+        $("#editDrawingDialog").modal();
+    }
+
+    function deleteDrawing() {
+        $("#confirmDeleteModal").modal();
+    }
+
+</script>
+
+<style>
+    .img-row {
+        margin: 5px;
+        padding: 5px;
+    }
+
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+        width: 130px;
+    }
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+
+<div class="container-fluid form-container">
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDeleteModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Delete this drawing - are you sure?</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>Customer:</label> Acme Parts, Inc.
+                        </div>
+                        <div class="form-group">
+                            <label>JD's Job #:</label> 3004
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Delete this drawing </button>
+                        <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Don't delete this drawing </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="editDrawingDialog" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Add / Edit Drawing</h4>
+                </div>
+
+                <div class="container-fluid form-container">
+                    <div class="row">
+
+                        <div class="col-md-4" style="margin-top:20px">
+                            <h2>filename1.pdf</h2>
+                        </div>
+
+                        <div class="col-md-8">
+                            <h3>Notes</h3>
+                            <textarea type="text" class="form-control" id="psw" placeholder="Notes" style="height:100px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom:20px; margin-top:20px">
+                        
+                        <div class="col-md-3">
+                            <span class="btn btn-default btn-file">
+                                Upload <input type="file">
+                            </span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <button type="submit" class="btn " data-dismiss="modal" style="width:100%"> Save</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-warning " data-dismiss="modal" style="width:100%"> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <h1 class="col-md-6">Slinger Ring Drawings</h1>
+        <h1 class="col-md-6" style="text-align:right">Job# 5913</h1>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/Doc1.pdf" style="margin-top:20px;">
+                <h2>file1.pdf</h2>
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Drawing of the 3/8in gripley included in the packaging.
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editDwgBtn" type="button" class="btn  btn-block" onclick="editDrawing()">Edit</button>
+            <button id="deleteDwgBtn" type="button" class="btn btn-warning btn-block" onclick="deleteDrawing()">Delete</button>
+        </div>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/Doc1.pdf" style="margin-top:20px;">
+                <h2>thrust shoes.pdf</h2>
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Bearing drawing of the passive flux.
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editDwgBtn" type="button" class="btn  btn-block" onclick="editDrawing()">Edit</button>
+            <button id="deleteDwgBtn" type="button" class="btn btn-warning btn-block" onclick="deleteDrawing()">Delete</button>
+        </div>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/Doc1.pdf" style="margin-top:20px;">
+                <h2>bearing_backing.pdf</h2>
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Bearing drawing of the passive flux.
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editDwgBtn" type="button" class="btn  btn-block" onclick="editDrawing()">Edit</button>
+            <button id="deleteDwgBtn" type="button" class="btn btn-warning btn-block" onclick="deleteDrawing()">Delete</button>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-4 col-md-offset-4">
+            <button id="addDrawingBtn" type="submit" class="btn btn-success" style="width:100%"><span class="glyphicon glyphicon-plus-sign"></span> Add new drawing</button>
+        </div>
+        <div class="col-md-4">
+            <button id="backBtn" type="submit" class="btn " style="width:100%">Back</button>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+
+        $("#addDrawingBtn").click(function (e) {
+            e.preventDefault();
+            $("#editDrawingDialog").modal();
+        });
+
+        $("#backBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockSlingerRing/IncomingInspection';
+        });
+
+
+
+    });
+
+</script>

@@ -1,0 +1,326 @@
+﻿
+@{
+    ViewBag.Title = "Vacation Report";
+}
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && !string.IsNullOrEmpty(HttpContext.Current.Request.Cookies["EmployeeRole"].Value))
+{
+
+    <div id="printDiv">
+        <section>
+            <div>
+                <h2>Vacation Report</h2>
+                <span>
+                    <label>Select Employee:</label>
+                    <input id="employeelist" />
+                </span>
+            </div>
+        </section>
+        <br />
+        <section>
+            <div>
+                <label>Start Date:</label>
+                <span id="startDate"></span>
+            </div>
+            <br />
+            <div class="row form-group">
+                <div class="col-sm-4">
+                    <label>Accumulated Vacation Hours:</label>
+                    <span id="accumulatedHours"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label>Accumulated Personal Hours:</label>
+                    <span id="accumulatedPersonalHours"></span>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-4">
+                    <label>Total Vacation Hours Taken:</label>
+                    <span id="usedHours"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label>Total Personal Hours Taken:</label>
+                    <span id="usedPersonalHours"></span>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-4">
+                    <label>Remaining Vacation Hours:</label>
+                    <span id="remainingHours"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label>Remaining Personal Hours:</label>
+                    <span id="remainingPersonalHours"></span>
+                </div>
+            </div>
+        </section>
+        <br />
+        <section>
+            <div class="row">
+                <div class="col-xs-3">
+                    <h4>Start date:</h4>
+                    <input id="start" style="height:100%;"/>
+                </div>
+                <div class="col-xs-3">
+                    <h4>End date:</h4>
+                    <input id="end" style="height:100%;"/>
+                </div>
+            </div>
+            <br />
+            <button id="export" class="k-button"><span class="k-icon k-i-excel"></span>Export to Excel</button>
+            <button id="print" class="k-button"><span class="k-icon k-i-excel"></span>Print Report</button>
+            <br /><br />
+            <div id="grid" style="width:400px;"></div>
+        </section>
+    </div>
+}
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}
+
+<style>
+    #printDiv > section:nth-child(1) > div > span > span > span {
+        padding-left: 5px;
+        padding-bottom: 5px;
+    }
+</style>
+
+@section scripts
+{
+    <script>
+        $('#vacationReportEntry').addClass('aside-entry-active');
+    </script>
+
+    <script>
+
+        var employeeId = $('#employeelist').val();
+
+        // Used to check if this is the initial load of employee from the dropdown
+        var empChange = true;
+
+        $(document).ready(function () {
+            // Kendo drop down list for employees
+            $("#employeelist").kendoDropDownList({
+                dataTextField: "EmployeeName",
+                dataValueField: "EmployeeId",
+                change: LoadSelected,
+                dataBound: LoadSelected,
+                dataSource: {
+                    transport: {
+                        read: {
+                            dataType: "json",
+                            url: "/EmployeePortal/VacationReport/GetEmployees"
+                        }
+                    }
+                }
+            });
+
+            // Init the list to the current user
+            $.ajax({
+                url: '@Url.Action("GetId", "EmployeeManagement")',
+                success: function (id) {
+                    $('#employeelist').data("kendoDropDownList").value(id);
+                    empChange = true;
+                    LoadSelectedById(id);
+                }
+            });
+
+            // Lock the list if you're not a manager
+            $.ajax({
+                url: '@Url.Action("GetRole", "EmployeeManagement")',
+                success: function (role) {
+                    if (role == "Manager") {
+                        $('#employeelist').data("kendoDropDownList").enable(true);
+                    }
+                    else {
+                        $('#employeelist').data("kendoDropDownList").enable(false);
+                    }
+                }
+            });
+
+
+
+        });
+
+        // Date range pickers to filter grid
+        function startChange() {
+            var startDate = start.value(),
+            endDate = end.value();
+
+            if (startDate) {
+                startDate = new Date(startDate);
+                startDate.setDate(startDate.getDate());
+                end.min(startDate);
+            } else if (endDate) {
+                start.max(new Date(endDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+            empChange = false;
+            LoadSelected();
+        }
+
+        function endChange() {
+            var endDate = end.value(),
+            startDate = start.value();
+
+            if (endDate) {
+                endDate = new Date(endDate);
+                endDate.setDate(endDate.getDate());
+                start.max(endDate);
+            } else if (startDate) {
+                end.min(new Date(startDate));
+            } else {
+                endDate = new Date();
+                start.max(endDate);
+                end.min(endDate);
+            }
+            empChange = false;
+            LoadSelected();
+        }
+
+        var start = $("#start").kendoDatePicker({
+            change: startChange
+        }).data("kendoDatePicker");
+
+        var end = $("#end").kendoDatePicker({
+            change: endChange
+        }).data("kendoDatePicker");
+
+        start.max(end.value());
+        end.min(start.value());
+
+
+        function LoadSelectedById(id) {
+
+            var obj = { empID: id };
+            var returnedData;
+
+            $.ajax({
+                type: 'GET',
+                url: '/EmployeePortal/VacationReport/GetEmployeeVacationDetails/',
+                data: obj,
+                dataType: "json",
+                success: function (data) {
+                   
+                    $("#startDate").text(data.StartDate);
+                    $("#accumulatedHours").text(data.TotalAccumulatedVacationHours);
+                    $("#remainingHours").text(data.RemainingVacationHours);
+                    $("#usedHours").text(data.UsedVacationHours);
+
+                    $("#accumulatedPersonalHours").text(data.TotalAccumulatedPersonalHours);
+                    $("#remainingPersonalHours").text(data.RemainingPersonalHours);
+                    $("#usedPersonalHours").text(data.UsedPersonalHours);
+
+                    // Gets the Start Date of Employee and converts it to a Date object
+                    var parts = data.StartDate.split('/');
+                    var startdate = new Date(parts[2], parts[0] - 1, parts[1]);
+
+                    // Gets the current date
+                    var today = new Date();
+                    var dd = today.getDate();
+                    var mm = today.getMonth() + 1; //January is 0!
+                    var yyyy = today.getFullYear();
+
+                    var startDatePicker = $("#start").data("kendoDatePicker");
+                    var endDatePicker = $("#end").data("kendoDatePicker");
+
+                    var oneYearAgoToday = new Date();
+                    oneYearAgoToday.setFullYear(oneYearAgoToday.getFullYear() - 1);
+
+                    if (empChange == true) {
+                        startDatePicker.value(null);
+                        endDatePicker.value(null);
+                    }
+
+                    // If there is no date set (initial load of Employee from dropdown)
+                    if (!startDatePicker.value()) {
+                        // Initialize datepicker values
+                        // Get the employee anniversary for this year, even if it hasn't occured
+                        var dd = startdate.getDate();
+                        var mm = startdate.getMonth();
+                        var yyyy = today.getFullYear();
+                        anniv = new Date(yyyy, mm, dd);
+
+                        // if the anniversary hasn't yet occured, make it last years anniversary
+                        if (anniv > today)
+                            anniv.setFullYear(anniv.getFullYear() - 1);
+                       
+                        startDatePicker.value(anniv);
+                        endDatePicker.value(today);
+                    }
+
+
+                    // This mechanism is used to determine if the Employees vacations
+                    // fall within range of the datepickers
+                    var vacations = [];
+                    var counter = 0;
+                    for (var i = 0; i < data.Vacations.length; i++) {
+                        var dateparts = data.Vacations[i].VacationDate.split('/');
+                        var vacdate = new Date(dateparts[2], dateparts[0] - 1, dateparts[1]);
+                        var ed = end.value();
+                        var sd = start.value();
+
+                        if ((vacdate <= ed) && (vacdate >= sd)) {
+                            vacations[counter] = data.Vacations[i];
+                            counter++;
+                        }
+                    }
+
+                    // Get Employee Name for saving excel file and remove spaces
+                    var name = $(".k-input").text();
+                    name = name.replace(/\s/g, '');
+
+                    // Initialize kendo Grid
+                    $("#grid").kendoGrid({
+                        dataSource: vacations,
+                        excel: {
+                            fileName: name + "VacationReport.xlsx"
+                        },
+                        columns: [
+                            { field: "VacationDate", title: "Vacation Date", filterable: { ui: "datepicker" } },
+                            { field: "ApprovedBy", title: "Approved By" },
+                            { field: "NumHours", title: "Hours" },
+                            { field: "HourType", title: "Hour Type"}
+                        ],
+                        scrollable: false
+                    }).data("kendoGrid");
+
+                    empChange = true;
+                },
+                error: function (data) {
+                    bootbox.alert("Error in AJAX GetEmployeeVacationDetails", function () { });
+                }
+            });
+        }
+
+        function LoadSelected() {
+            employeeId = $('#employeelist').val();
+            LoadSelectedById(employeeId);
+        };
+
+        // Export as Excel click handler
+        $("#export").click(function (e) {
+            $("#grid").data("kendoGrid").saveAsExcel();
+        });
+
+        // Print button click handler
+        $("#print").click(function (e) {
+            $("#print").hide();
+            $("#export").hide();
+            $(".footer").hide();
+            $(".aside").hide();
+
+            window.print();
+
+            $("#print").show();
+            $("#export").show();
+            $(".footer").show();
+            $(".aside").show();
+        });
+
+    </script>
+}

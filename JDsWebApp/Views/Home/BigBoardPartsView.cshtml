@@ -1,0 +1,35 @@
+﻿@model JDsDataModel.ViewModels.RightBigBoardViewModel
+
+<div id="part-date-@Model.JobID" style="font-weight:600; margin:5px; font-size:20px;">Parts for Job @Model.JobID</div>
+@foreach (var part in Model.PartsViews)
+{
+    string partClass = "";
+    if (part.PartStatusId == 1)
+    {
+        partClass = "bigboard-part-notstarted";
+    }
+    else if (part.PartStatusId == 2)
+    {
+        partClass = "bigboard-part-inprogress";
+    }
+    else if (part.PartStatusId == 3)
+    {
+        partClass = "bigboard-part-complete";
+    }
+    else if (part.PartStatusId == 4)
+    {
+        partClass = "bigboard-part-blocked";
+    }
+
+    <div class="@partClass" id="part-@part.PartID" onclick="loadProcess(@part.StepNumber,@part.ProcessId)">
+        <div class="partInfo" style="font-weight:600;">
+            @string.Format("{0} / {1} / {2}", part.ItemCode, part.WorkScope, part.IdentifyingInfo)<label class="pull-right partStatus">@part.PartStatusName</label>
+        </div>
+        <div class="scope">Scope: @part.WorkScope</div>
+        <div class="ptStatus">PT Required: @(part.RequiresPT ? "Yes" : "No")</div>
+        <div class="utStatus">UT Required: @(part.RequiresUT ? "Yes" : "No")</div>
+        <div class="customerSize">Customer Sizes: @(part.HasCustSizes ? "Yes" : "No")</div>
+        <div class="currentStep">Current Step: <span>@part.CurrentStep</span></div>
+    </div>
+    
+}

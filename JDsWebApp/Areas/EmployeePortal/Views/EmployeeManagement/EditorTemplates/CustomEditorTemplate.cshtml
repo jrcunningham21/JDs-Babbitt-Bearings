@@ -1,0 +1,379 @@
+﻿@model JDsWebApp.Areas.EmployeePortal.Models.Vacation.VacationViewModel
+@{
+    //required in order to render validation attributes
+    ViewContext.FormContext = new FormContext();
+}
+<style>
+    .k-window-title:before 
+    {
+        content: "Vacation ";
+    }
+
+    .invisibleRadioDiv{
+        visibility: collapse;
+    }
+
+    .hoursLeft{
+        margin-top:5px;
+    }
+
+    .halfDay{
+        display: inline-block;
+        margin-left: 10px;
+    }
+</style>
+
+@functions{
+    public Dictionary<string, object> generateDatePickerAttributes(
+           string elementId,
+           string fieldName,
+           string dataBindAttribute,
+           Dictionary<string, object> additionalAttributes = null)
+    {
+
+        Dictionary<string, object> datePickerAttributes = additionalAttributes != null ? new Dictionary<string, object>(additionalAttributes) : new Dictionary<string, object>();
+
+        datePickerAttributes["id"] = elementId;
+        datePickerAttributes["name"] = fieldName;
+        datePickerAttributes["data-bind"] = dataBindAttribute;
+        datePickerAttributes["required"] = "required";
+        datePickerAttributes["style"] = "z-index: inherit;";
+
+        return datePickerAttributes;
+    }
+}
+
+<script>
+
+    $('.k-scheduler-update').hide();
+    $('.k-scheduler-delete').hide();
+
+    function pickerChange() {
+        @* Check to see if the start and end dates are the same. If they differ, user is taking full vacation, so hide the hours radio*@
+
+        var ed = $('\#endDate').data("kendoDatePicker").value();
+        var sd = $('\#startDate').data("kendoDatePicker").value();
+
+        var s1 = new Date(Date.parse(sd));
+        var e1 = new Date(Date.parse(ed));
+        if (+ed === +sd) {
+
+            $('\#allDayDiv').removeClass('invisibleRadioDiv');
+            $('\#allDayLabelDiv').removeClass('invisibleRadioDiv');
+        } else {
+            $('\#allDayDiv').addClass('invisibleRadioDiv');
+            $('\#allDayLabelDiv').addClass('invisibleRadioDiv');
+        }
+
+        @*  Also check to see if the vacation now requires a signoff*@
+        @*  DoesVacationRequireSignoff(DateTime start, DateTime end, int employeeId, bool isFullVacationDay)*@
+
+        var amountOfHoursVacation = (Math.ceil(Math.abs(e1.getTime() - s1.getTime()) / (1000 * 3600 * 24))) * 8;
+
+        if (amountOfHoursVacation == 0) {
+            $.ajax({
+                url: '@Url.Action("GetVacationHoursRemainingAdjusted", "EmployeeManagement")',
+                data: { id: $('\#EmployListDropDown').data("kendoDropDownList").value(), fullDay: document.getElementById("isFullVacationDay-true").checked },
+                success: function (data) {
+                    $('.hoursLeft').html(data);
+                }
+            });
+        }
+        else {
+            $.ajax({
+                url: '@Url.Action("GetVacationHoursRemainingCustom", "EmployeeManagement")',
+                data: { id: $('\#EmployListDropDown').data("kendoDropDownList").value(), hours: amountOfHoursVacation },
+                success: function (data) {
+                    $('.hoursLeft').html(data);
+                }
+            });
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetId", "EmployeeManagement")',
+            success: function (id) {
+                if (id == $('\#EmployListDropDown').data("kendoDropDownList").value()) {
+                    $.ajax({
+                        url: '@Url.Action("DoesVacationRequireSignoff", "EmployeeManagement")',
+                        data: { startStr: s1.toUTCString(), endStr: e1.toUTCString(), employeeId: $('\#EmployListDropDown').data("kendoDropDownList").value(), isFullVacationDay: document.getElementById("isFullVacationDay-true").checked },
+                        success: function (data) {
+                            if (data.RequiresSignOff) {
+                                $('.k-scheduler-update').hide();
+                                $('\#signoff-div').show();
+                            }
+                            else {
+                                $('\#signoff-div').hide();
+                                $('.k-scheduler-update').show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function employeelist_change() {
+
+        var ed = $('\#endDate').data("kendoDatePicker").value();
+        var sd = $('\#startDate').data("kendoDatePicker").value();
+
+        var s1 = new Date(Date.parse(sd));
+        var e1 = new Date(Date.parse(ed));
+
+        $.ajax({
+            url: '@Url.Action("GetVacationHoursRemainingAdjusted", "EmployeeManagement")',
+            data: { id: $('\#EmployListDropDown').data("kendoDropDownList").value(), fullDay: document.getElementById("isFullVacationDay-true").checked },
+            success: function (data) {
+                $('.hoursLeft').html(data);
+                $.ajax({
+                    url: '@Url.Action("GetRole", "EmployeeManagement")',
+                    success: function (role) {
+                        if (role == "Manager") {
+                            $('.k-scheduler-delete').show();
+                            $('.k-scheduler-update').show();
+                        }
+                        else {
+                            $.ajax({
+                                url: '@Url.Action("GetId", "EmployeeManagement")',
+                                success: function (id) {
+                                    if (id == $('\#EmployListDropDown').data("kendoDropDownList").value()) {
+                                        $('.k-scheduler-delete').show();
+                                        $.ajax({
+                                            url: '@Url.Action("DoesVacationRequireSignoff", "EmployeeManagement")',
+                                            data: { startStr: s1.toUTCString(), endStr: e1.toUTCString(), employeeId: $('\#EmployListDropDown').data("kendoDropDownList").value(), isFullVacationDay: document.getElementById("isFullVacationDay-true").checked },
+                                            success: function (data) {
+                                                if (data.RequiresSignOff) {
+                                                    $('.k-scheduler-update').hide();
+                                                    $('\#signoff-div').show();
+                                                }
+                                                else {
+                                                    $('\#signoff-div').hide();
+                                                    $('.k-scheduler-update').show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        $('\#endDate').data("kendoDatePicker").enable(false);
+                                        $('\#startDate').data("kendoDatePicker").enable(false);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+
+<div class="k-edit-label">
+    @(Html.LabelFor(model => model.EmployeeId, "Employee:"))
+</div>
+
+<div data-container-for="EmployeeId" class="k-edit-field">
+    @(Html.Kendo().DropDownListFor(model => model.EmployeeId)
+            .Name("EmployListDropDown")
+            .HtmlAttributes(new { data_bind = "value:EmployeeId", style = "width: 200px", disabled = "true", @class = "employee-dropdown" })
+            .DataTextField("EmployeeName")
+            .DataValueField("EmployeeId")
+            .OptionLabel("Select")
+            .ValuePrimitive(true)
+            .DataSource(source =>
+            {
+                source.Read(read =>
+                {
+                    read.Action("GetEmployeesForVacationDropdown", "EmployeeManagement");
+                })
+                .ServerFiltering(true);
+            })
+            .Events(e =>
+            {
+                e.Change("employeelist_change");
+            })
+    )
+</div>
+
+<div class="k-edit-label">
+    @(Html.LabelFor(model => model.Start, "Start:"))
+</div>
+
+<div data-container-for="start" class="k-edit-field">
+    @(Html.Kendo().DatePickerFor(model => model.Start)
+        .Events(e =>
+          {
+              e.Change("pickerChange");
+          })
+        .HtmlAttributes(generateDatePickerAttributes("startDate", "start", "value:start,invisible:true")))
+
+    <span data-bind="text: startTimezone"></span>
+    <span data-for="start" class="k-invalid-msg"></span>
+</div>
+
+<div class="k-edit-label">
+    @(Html.LabelFor(model => model.End, "End:"))
+</div>
+
+<div data-container-for="end" class="k-edit-field">
+
+
+    @(Html.Kendo().DatePickerFor(model => model.End)
+        .Events(e =>
+          {
+              e.Change("pickerChange");
+          })
+        .HtmlAttributes(generateDatePickerAttributes(
+            "endDate",
+            "end",
+            "value:end,invisible:true",
+            new Dictionary<string, object>() { { "data-dateCompare-msg", "End date should be greater than or equal to the start date" } })))
+
+
+    <span data-bind="text: endTimezone"></span>
+    <span data-for="end" class="k-invalid-msg"></span>
+</div>
+
+<div class="k-edit-label" id="allDayLabelDiv">
+    @(Html.LabelFor(model => model.IsFullVacationDay, "Full/Half:" ))
+</div>
+
+<div data-container-for="IsFullVacationDay" class="k-edit-field" id="allDayDiv">
+
+    <fieldset>
+
+        @Html.RadioButtonFor(e => e.IsFullVacationDay, "true", new { id = "isFullVacationDay-true", onclick= "checkVacationFullDay(true)"  })   
+        @Html.Label("isFullVacationDay-true","Full Day")
+
+        @Html.RadioButtonFor(e => e.IsFullVacationDay, "false", new { id = "isFullVacationDay-true", style = "margin-left: 20px;", onclick= "checkVacationFullDay(false)" })
+        @Html.Label("isFullVacationDay-true","Half Day")
+
+        
+    </fieldset>
+
+</div>
+
+<div class="k-edit-label">
+    <label >Hours left:</label>
+</div>
+
+<div class="k-edit-field" >
+    <div class="hoursLeft" >__</div>
+</div>
+
+
+
+
+<div id="signoff-div" style="display:none;">
+    <div class="k-edit-label">
+        <label style="color:red;">Permission Required: </label>
+    </div>
+
+    <div class="k-edit-field">
+        <button id="signoffbtn" class="jd-button" onclick="signOff()">Sign Off</button>
+    </div>
+</div>
+
+@Html.CheckBoxFor(m => m.SignOffRequired, new { style = "visibility:hidden" })
+
+<script>
+    $('\#signoffbtn').click(function () {
+        $.ajax({
+            url: '@Url.Action("SignOff", "EmployeeManagement")',
+            type: 'GET',
+            data: { skillName: "Management" },
+            success: function (data) {
+                $('\#signOffContentDiv').html(data);
+                $('\#signOffContentDiv').fadeIn('fast');
+                $('\#signOffModal').modal('show');
+                
+            },
+            error: function (e) {
+                bootbox.alert("Error", function () {});
+                $("\#signOffModal").modal('hide');
+            }
+        });
+    });
+
+    function SignOffSenderAction(signOffId) {
+        $("\#signOffModal").modal('hide');
+        $('\#signoff-div').hide();
+        $('.k-scheduler-update').show();
+    }
+
+    function signOff() {
+
+        @*var pin = $('\#pin').val();
+        $.ajax({
+            url: '@Url.Action("SignOff", "EmployeeManagement")',
+            type: "POST",
+            data: { pin: pin },
+            success: function (data) {
+                if (data == 1 || data == "1") {
+                    $('\#signoff-div').hide();
+                    $('.k-scheduler-update').show();
+                }
+                else if (data == 0 || data == "0") {
+                    alert("Invalid PIN");
+                }
+                else if (data == 2 || data == "2") {
+                    alert("Does not meet the required skill")
+                }
+            }
+        });*@
+    }
+
+    function appendKey(p) {
+
+        var pin = document.getElementById("pin").value + p;
+        document.getElementById("pin").value = pin;
+
+    }
+
+    function backspaceKey() {
+        var old = document.getElementById('pin').value;
+        document.getElementById('pin').value = old.slice(0, -1);
+    }
+
+    function checkVacationFullDay(check) {
+        $.ajax({
+            url: '@Url.Action("GetVacationHoursRemainingAdjusted", "EmployeeManagement")',
+            data: { id: $('\#EmployListDropDown').data("kendoDropDownList").value(), fullDay: check },
+            success: function (data) {
+                $('.hoursLeft').html(data);
+            }
+        });
+    }
+
+    $(".k-timezone-toggle").on("click", function () {
+        var isVisible = $(this).is(":checked");
+        var container = $(this).closest(".k-popup-edit-form");
+
+        var endTimezoneRow = container.find("label[for='EndTimezone']").parent().add(container.find("div[data-container-for='endTimezone']"));
+        endTimezoneRow.toggle(isVisible);
+
+        if (!isVisible) {
+            var uid = container.attr("data-uid");
+            var scheduler = $("\#scheduler").data("kendoScheduler");
+            var model = scheduler.dataSource.getByUid(uid);
+            model.set("endTimezone", null);
+        }
+    });
+
+    var endTimezone = '${data.endTimezone}';
+
+    if (!endTimezone || endTimezone == "null") {
+        $(".k-timezone-toggle").trigger('click');
+    }
+
+    $(function () {
+        employeelist_change();
+    });
+
+
+</script>
+
+
+@{
+    ViewContext.FormContext = null;
+}

@@ -1,0 +1,241 @@
+﻿@model JDsDataModel.ViewModels.BigBoardJobViewModelTest
+
+@{
+    List<SelectListItem> SortList = new List<SelectListItem>()
+    {
+        new SelectListItem() {Text = "Due Date", Value = "0"},
+        new SelectListItem() {Text = "Customer", Value = "1"},
+        new SelectListItem() {Text = "Create Date", Value = "2"},
+        new SelectListItem() {Text = "Part Type", Value = "3"}
+    };
+}
+
+<div id="main-content" class="bigboard-maincontent">
+    <div class="row padd-top">
+        <div class="col-md-7">
+            <h2>Current Jobs</h2>
+        </div>
+        <div class="col-md-1">
+            <a href="@Url.Action("JobDetails", "Home")" id="newJobBtn" class="btn btn-primary h2">New Job</a>
+        </div>
+        <div class="col-md-2">
+            <input id="search" type="search" placeholder="Search..." class="form-control h2" />
+        </div>
+        <div class="col-md-2">
+            @Html.DropDownListFor(x => x.SortMethod, SortList, new { @class = "h2 form-control" })
+        </div>
+    </div>
+    <div class="bigboard-body">
+        <div class="bigboard-left" id="bigboard-left">
+            @Html.Partial("BigBoardJobsView", Model)
+        </div>
+        <div class="bigboard-right" id="bigboard-right">
+
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        var currentJobSelectedID = 0;
+        var typingTimer;
+
+        @*Interval for the user to stop typing before the search happens*@
+        var waitInterval = 1000;
+        var scrollToNextJobTimer;
+        var intervalCount = 10;
+        
+        var hasErrorBeenNotified = false;
+
+        function getLoadView(scrollToID) {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("BigBoardJobsView", "Home")" + "?sort=" + $("#SortMethod").val() + "&searchText=" + $("#search").val(),
+                success: function (data) {
+                    $("#bigboard-left").html(data);
+                    if (scrollToID != null && scrollToID !== 0) {
+                        $("#job-" + scrollToID).parent()[0].scrollIntoView();
+                    }
+                    $("#bigboard-right").html("");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (!hasErrorBeenNotified) {
+                        hasErrorBeenNotified = true;
+                        bootbox.alert("Error communicating with the server", function () { });
+                    }
+                }
+            });
+        }
+
+        function loadParts(context, jobID, sortMethod) {
+            if ($('.bigboard-arrow') != null)
+                $('.bigboard-arrow').remove();
+
+            context.append("<div class='bigboard-arrow'></div>");
+            currentJobSelectedID = jobID;
+
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("BigBoardPartsView", "Home")" + "?id=" + jobID + "&sortMethod=" + sortMethod,
+                success: function (data) {
+                    $("#bigboard-right").html(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (!hasErrorBeenNotified) {
+                        hasErrorBeenNotified = true;
+                        bootbox.alert("Error communicating with the server", function () { });
+                    }
+                }
+            })
+        }
+
+        function updatePartsView(jobID, sortMethod) {
+            sortMethod = sortMethod || $("#sort").val();
+            currentJobSelectedID = 0;
+            
+            if (sortMethod != 0) {
+                stopAutoScroll();
+            } else {
+                startAutoScroll();
+            }
+
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("BigBoardPartsView", "Home")" + "?id=" + jobID + "&sortMethod=" + sortMethod,
+                success: function (data) {
+                    $("#bigboard-right").html(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (!hasErrorBeenNotified) {
+                        hasErrorBeenNotified = true;
+                        bootbox.alert("Error communicating with the server", function () { });
+                    }
+                }
+            })
+        }
+
+        function loadProcess(stepNumber, id) {
+            kendo.ui.progress($('body'), true);
+            var method = "";
+            switch (stepNumber) {
+                case 1:
+                    method = "BB1_IncomingInspection";
+                    break;
+                case 2:
+                    method = "BB2_PrecastRoughout";
+                    break;
+                case 3:
+                    method = "BB3_SpincastProcess";
+                    break;
+                case 4:
+                    method = "BB4_PostcastCleanup";
+                    break;
+                case 5:
+                    method = "BB5_PostcastRoughout";
+                    break;
+                case 6:
+                    method = "BB6_InsulationProcess";
+                    break;
+                case 7:
+                    method = "BB7_CleanupProcess";
+                    break;
+                case 8:
+                    method = "BB8_FinalMachineInspection";
+                    break;
+                case 9:
+                    method = "BB9_FinishBoreProcess";
+                    break;
+                case 10:
+                    method = "BB10_FinalAssembly";
+                    break;
+                case 11:
+                    method = "BB12_Delivery";
+                    break;
+                case 12:
+                    method = "BB12_Delivery";
+                    break;
+                case 13:
+                    method = "BB13_FinalSignOff";
+                    break;
+            }
+
+            $.ajax({
+                url: "/ProcessBabbitBearing/" + method,
+                data: { id: id },
+                success: function (data) {
+                    window.location = "/ProcessBabbitBearing/" + method + "?id=" + id;
+                    kendo.ui.progress($('body'), false);
+                }
+            });
+        }
+
+        $("#SortMethod").on("change", function (e) {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("BigBoardJobsView", "Home")" + "?sort=" + $("#SortMethod").val() + "&searchText=" + $("#search").val(),
+                success: function (data) {
+                    $("#bigboard-left").html(data);
+                    $("#bigboard-right").html("");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    bootbox.alert("Error communicating with the server", function () { });
+                }
+            });
+        });
+
+        $("#search").on("input", function (e) {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function () {
+                getLoadView(0);
+            }, waitInterval);
+        });
+
+        $(document).ready(function () {
+            var jobHub = $.connection.BigboardHub;
+
+            jobHub.client.edit = function (JobId, OldRequiredDate, RequiredDate) {
+                setTimeout(function () {
+                    notification.show({ message: "Job ID " + JobId + "'s required date has been updated" }, "successful");
+                    var scrollToID = currentJobSelectedID;
+                    if (scrollToID === 0) {
+                        scrollToID = JobId;
+                    }
+                    getLoadView(scrollToID);
+                }, 5000);
+            };
+
+            jobHub.client.update = function (JobId, JobStatus, Header, FirstName, LastName, WorkPhone, ShipByDate, PartStatus, QuoteOnly, RequiredDate, ReceivedDate, CompanyName, isNew) {
+                setTimeout(function () {
+                    notification.show({ message: "Job ID " + JobId + "'s infomation has been updated" }, "successful");
+                    var scrollToID = currentJobSelectedID;
+                    if (scrollToID === 0) {
+                        scrollToID = JobId;
+                    }
+                    getLoadView(scrollToID);
+                }, 5000);
+            };
+
+            jobHub.client.updatePartStatus = function (jobId, partId, newStatusId, workScope, shipDate, hasSizes, curStep, partTypeName, identifyingInfo, partStatusName, stepNumber, processId, requiresUT, requiresPT) {
+                setTimeout(function () {
+                    notification.show({ message: "Part " + partId + "'s information has been updated" }, "successful");
+                    if (jobId == currentJobSelectedID) {
+                        updatePartsView(jobId);
+                    }
+                }, 5000);
+            };
+
+            $.connection.hub.start().done(function () {
+
+            });
+        });
+
+
+    </script>
+}

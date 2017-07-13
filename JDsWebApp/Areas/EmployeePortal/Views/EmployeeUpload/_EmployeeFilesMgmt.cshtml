@@ -1,0 +1,196 @@
+﻿@using JDsWebApp.Areas.EmployeePortal.Models.EmployeeUpload
+@model EmployeeFilesMgmtViewModel
+
+<input type="hidden" id="_employeepartialview" value="employefiles" />
+<div style="width: 600px; margin-left: 15px; margin-top: 45px;">
+    <div class="row">
+        <div id="divUploadFileAdd" style="margin-top: 8px; margin-bottom: 25px; margin-left: 15px">
+            <form enctype="multipart/form-data" id="frmUplaodFileAdd">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <input id="thefile" name="file" type="file" style="float: left; margin-top: 10px"/>
+                </div>
+                <div class="row">
+                    <input id="btnupload" class="btn btn-primary" type="button" value="Upload" style="float: left; width: 100px; margin-top: 20px;" disabled="disabled" readonly="readonly"/>
+                    <label id="txtuploadedMsgAdd" style="float: left;"></label>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 8px">
+        <div id="employeefilesdiv">
+            <div id="employeefilesgrid"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 8px">
+        <h5 style="width: 105px">Employee:</h5>
+    </div>
+    <div class="row">
+        <a class="btn btn-primary" onclick="LoadSelectedEmployee()" style="width: 100px"><span aria-hidden="true"></span>Manage</a>
+    </div>
+</div>
+
+<div class="modal fade" id="signOffModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off</h4>
+        <div id="signOffContentDiv"></div>
+    </div>
+</div>
+
+<style>
+
+    .k-window-titlebar {
+        background-color: #215fa8;
+        height: 80px !important;
+        text-align: center;
+        vertical-align: middle;
+        color: white;
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+    div.k-window-content {
+        padding: 0;
+        border-radius: 0;
+        background-color: #F6F6FF;
+    }
+
+    #certs-employeefilesgrid .k-icon {
+        display: none;
+    }
+
+</style>
+
+<script>
+    var isValid = '@Html.Raw(Json.Encode(ViewData.ModelState.IsValid))';
+    var employeeId = '@Html.Raw(Json.Encode(Model.Id))';
+    var fileId = 0;
+
+    $(function () {
+        $("#employeefilesgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadEmployeeFiles", "EmployeeUpload", new {id = Model.Id})"
+                },
+                pageSize: 5
+            },
+            pageable: true,
+            sortable: true,
+            columns: [{
+                field: "Filename",
+                title: "Name:"
+            }, {
+                field: "Uploaded",
+                title: "Uploaded:",
+                width: 200,
+                template: "#= kendo.toString(kendo.parseDate(Uploaded, 'MM/dd/yyyy'), 'MM/dd/yyyy') #"
+            }, {
+                field: "",
+                template: "<a type='button' class='btn btn-primary' style='width: 90px' href='#= URL #'>Download</a>"
+            }, {
+                field: "",
+                template: "<input type='button' class='btn btn-danger' style='width: 75px' name=FileId value='Delete' onclick='DeleteFile(#=FileId#)' readonly='readonly'/>"
+            }]
+        })
+
+        $("#thefile").change(function () {
+            var file = this.files[0];
+            fileName = file.name;
+            size = file.size;
+            type = file.type;
+            $("#txtuploadedMsgAdd").text("");
+            $("#btnupload").removeAttr('disabled');
+        });
+
+        $("#btnupload").click(function () {
+            var formData = new FormData($('#frmUplaodFileAdd')[0]);
+            formData.append('id', employeeId);
+            $.ajax({
+                url: '/EmployeePortal/EmployeeUpload/UploadEmployeeFile',
+                type: 'POST',
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress',
+                        ProgressHandler, false);
+                    }
+                    return myXhr;
+                },
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    RefreshFilesGrid(data);
+                },
+                error: function (data) {
+                    bootbox.alert("Error file upload", function () { });
+                }
+            });
+        });
+    });
+
+    function DownloadFile(id) {
+        window.location.href = "/EmployeePortal/EmployeeUpload/DownloadEmployeeFile?id=" + id;
+    }
+
+    function DeleteFile(id) {
+        fileId = id;
+
+        $.ajax({
+            url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+            type: 'GET',
+            data: { skillName: "Management" },
+            success: function (data) {
+                $('#signOffContentDiv').html(data);
+                $('#signOffContentDiv').fadeIn('fast');
+                $('#signOffModal').modal('show');
+            },
+            error: function (e) {
+                alert("Error");
+                $("#signOffModal").modal('hide');
+            }
+        });
+    }
+
+    function SignOffSenderAction(empname) {
+        $.ajax({
+            type: 'POST',
+            url: '/EmployeePortal/EmployeeUpload/DeleteEmployeeFile/',
+            data: { id: fileId },
+            success: function (data) {
+                $("#signOffModal").modal('hide');
+                RefreshFilesGrid();
+            },
+            error: function (data) {
+                bootbox.alert("Error AJAX DeleteEmployeeFile", function () { });
+            }
+        });
+    }
+
+    function ProgressHandler(e) {
+        if (e.lengthComputable) {
+            $("#divAddInforamtionDialog").show();
+            $("#txtuploadedMsgAdd").text("  " + fileName + " uploaded successfully");
+        }
+    }
+
+    function RefreshFilesGrid() {
+        //alert("RefreshFilesGrid");
+        $('#employeefilesgrid').data('kendoGrid').dataSource.read();
+    }
+
+    function LoadEmployee(employeeId) {
+        $.get('/EmployeePortal/EmployeeManagement/EmployeeDetails/?id=' + employeeId, function (data) {
+            $('#employeecontentdiv').html(data);
+            $('#employeecontentdiv').fadeIn('fast');
+        });
+    }
+
+    function LoadSelectedEmployee() {
+        var employeeId = $('#employeelist').val();
+        LoadEmployee(employeeId);
+    }
+
+</script>

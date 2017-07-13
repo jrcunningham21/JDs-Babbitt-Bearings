@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6E663643-F87B-4093-BD53-A42FD745B5F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JDsDataModel</RootNamespace>
+    <AssemblyName>JDsDataModel</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activity.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Address.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AutoComplete.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AutoCompleteEntry.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Certificate.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CertificateFile.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ChangeLogEntry.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Contact.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Customer.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DeliveryInfo.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employee.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeFile.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="IncomingInspectionAccessory.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="JDsDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JDsDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="JDsDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="JDsDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JDsDB.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Job.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="JobStatu.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MeasurementList.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Part.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartDiameterMeasurement.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartFile.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartPhoto.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartProcess.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartStatu.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartTest.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PartType.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PhotoType.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Process.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProcessType.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SignOff.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Size.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Skill.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Step.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StepActivity.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TimesheetEntry.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vacation.cs">
+      <DependentUpon>JDsDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BoreMeasurementViewModel.cs" />
+    <Compile Include="ViewModels\ContactViewModel.cs" />
+    <Compile Include="ViewModels\CustomerSummaryViewModel.cs" />
+    <Compile Include="ViewModels\CustomerViewModel.cs" />
+    <Compile Include="ViewModels\JobViewModel.cs" />
+    <Compile Include="ViewModels\OutgoingFormsForJobViewModel.cs" />
+    <Compile Include="ViewModels\OutgoingFormViewModel.cs" />
+    <Compile Include="ViewModels\PartInfoPopupViewModel.cs" />
+    <Compile Include="ViewModels\PartViewModel.cs" />
+    <Compile Include="ViewModels\Processes\DeliveryStepViewModel.cs" />
+    <Compile Include="ViewModels\Processes\PartTestViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB10_FinalAssemblyViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB11_FinalInspectionViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB12_DeliveryViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB13_FinalSignOffViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB1_IncomingInspectionViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB2_PrecastRoughoutViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB3_SpincastProcessViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB4_PostcastCleanupViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB5_PostcastRoughoutViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB6_InsulationProcessViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB7_CleanupProcessViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB8_FinalMachineInspectionViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\BB9_FinishBoreProcessViewModel.cs" />
+    <Compile Include="ViewModels\Processes\ProcessBabbittBearing\IncomingInspectionAccessoryViewModel.cs" />
+    <Compile Include="ViewModels\Processes\StepViewModel.cs" />
+    <Compile Include="ViewModels\Processes\VerifyCustomerSizesViewModel.cs" />
+    <Compile Include="ViewModels\SignOffViewModel.cs" />
+    <Compile Include="ViewModels\SizesViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="JDsDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>JDsDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="JDsDB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>JDsDB.edmx</DependentUpon>
+      <LastGenOutput>JDsDB.Context.cs</LastGenOutput>
+    </None>
+    <None Include="JDsDB.edmx.diagram">
+      <DependentUpon>JDsDB.edmx</DependentUpon>
+    </None>
+    <None Include="JDsDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>JDsDB.edmx</DependentUpon>
+      <LastGenOutput>JDsDB.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

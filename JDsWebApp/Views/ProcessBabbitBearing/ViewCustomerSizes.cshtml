@@ -1,0 +1,135 @@
+﻿@model JDsDataModel.ViewModels.SizesViewModel
+
+<div class="container">
+    <div class="row padd-top">
+        <div class="col-sm-4 panel panel-primary" style="margin-left:95px;">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.Shaft, new { @class = "topMarginForLabels pull-left" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.Shaft, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.Clearance, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.Clearance, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.BoreSize, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.BoreSize, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.BoreSizeHorizontal, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.BoreSizeHorizontal, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.ShimSize, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.ShimSize, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.Tolerance, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.Tolerance, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.SealSize, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-sm-pull-3 jd-table-cell">
+                        @Html.TextBoxFor(m => m.SealSize, new { @class = "modal-textBox form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-5">
+                        @Html.LabelFor(m => m.ODSizes, new { @class = "topMarginForLabels" })
+                    </div>
+                    <div class="col-md-5" style="margin-left:-15px; width:200px;">
+                        <div style="margin-left:-12px;" class="col-sm-pull-5 jd-table-cell @(!@Model.ODSizes.Any()? "collapse" : "")">
+                            <div id="viewOD_grid_Sizes">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="jd-table-row pull-right">
+        <div class="jd-table-cell">
+            <button class="btn btn-primary" id="viewSizesCloseBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#viewSizesCloseBtn").click(function () {
+            // Hide this modal
+            $("#viewCustomerSizesModal").modal('hide');
+        });
+        
+        $("#viewOD_grid_Sizes").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("GetODSizes", "Part", new {id = Model.PartID})"
+                }
+            },
+            scrollable: false,
+            columns: [{
+                hidden: true,
+                field: "MeasurementListId",
+
+            },{
+                field: "PartDiameterMeasurementId",
+                hidden: true
+            },
+            {
+                field: "ODComment",
+                title: "OD Size",
+                width: 250
+            },
+            {
+                field: "A",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "B",
+                format: "{0:0.000#}",
+                hidden: true
+            },
+            {
+                field: "C",
+                format: "{0:0.000#}",
+                hidden: true
+            }]
+        });
+    });
+</script>

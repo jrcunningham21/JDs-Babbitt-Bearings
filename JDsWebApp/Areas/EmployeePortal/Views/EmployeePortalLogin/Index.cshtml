@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    @*<title>@ViewBag.Title</title>*@
+    <title>JD's Employee Portal</title>
+</head>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/kendo/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/kendo")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/site")
+    @*<script src="http://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.js"></script>*@
+
+@using JDsWebApp.Areas.EmployeePortal.Models.EmployeePortalLogin
+@model JDsWebApp.Areas.EmployeePortal.Models.EmployeePortalLogin.EmployeeLoginViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div align="center">
+  
+    <div class="container center-block">
+        <div class="row">
+            <h2>ENTER YOUR JD'S PIN BELOW</h2>
+            @*<div class="content-wrapper">*@
+            @using (Html.BeginForm("LogIn", "EmployeePortalLogin", FormMethod.Post, new { }))
+            {
+
+                <div class="container" style="width:360px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @*@Html.PasswordFor(m => m.Pin, new { @id = "pin", @class = "jd-input", autocomplete = "off", placeholder = Html.DisplayNameFor(x => x.Pin), style = "width: 100px;height:48px" })*@
+                            @Html.PasswordFor(m => m.Pin, new { @id = "pin", @class = "form-control", placeholder = Html.DisplayNameFor(x => x.Pin), @readonly = "readonly", style = "width: 255px;" })
+                        </div>
+
+                    </div>
+
+                    <div class="row padd-top">
+                        <div id="keypad">
+                            <input type="button" class="pinButton" value="7" onclick="appendKey('7'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="8" onclick="appendKey('8'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="9" onclick="appendKey('9'); return false;" readonly="readonly" /><br />
+                            <input type="button" class="pinButton" value="4" onclick="appendKey('4'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="5" onclick="appendKey('5'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="6" onclick="appendKey('6'); return false;" readonly="readonly" /><br />
+                            <input type="button" class="pinButton" value="1" onclick="appendKey('1'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="2" onclick="appendKey('2'); return false;" readonly="readonly" />
+                            <input type="button" class="pinButton" value="3" onclick="appendKey('3'); return false;" readonly="readonly" /><br />
+                            <input type="button" class="pinButton" value="0" onclick="appendKey('0'); return false;" style="width: 165px" readonly="readonly" />
+                            <input type="button" class="pinButton" value="&larr;" onclick="backspaceKey(); return false;" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-sm-12 centered-text">
+                            @Html.ValidationMessageFor(m => m.Pin, string.Empty, new { @class = "help-block" })
+                            @*@Html.ValidationSummary()*@
+                        </div>
+                    </div>
+                    <div class="row padd-top">
+                        <div class="col-md-12 ">
+                            <button  type="submit" class="btn  btn-success" id="login"  style="width:79%;">LOGIN</button>
+                        </div>
+                      
+                    </div>
+                    <div class="row padd-top">
+                       
+                        <div class="col-sm-12">
+                <button  class="btn btn-danger" name="Cancel" id="cancelBtn" style="width:79%;">CANCEL</button>
+            </div>
+                    </div>
+                    <div class="row padd-top">
+                        @*<div class="col-sm-6">
+                            <input type="submit" id="login" class="btn btn-success pull-right" name="Login" value="LOGIN" readonly="readonly" />
+                        </div>*@
+                        @*<div class="col-sm-6">
+                            <input id="cancelBtn" class="btn btn-danger pull-left" name="Cancel" value="CANCEL" readonly="readonly" />
+                        </div>*@
+                    </div>
+
+                </div>
+
+            }
+
+
+
+                </div>
+
+        </div>
+</div>
+
+<script>
+     var uri =  window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api/SignOff/';
+
+    function appendKey(p) {
+
+        var pin = document.getElementById("pin").value + p;
+        document.getElementById("pin").value = pin;
+
+        //$.getJSON(uri + pin)
+        //    .done(function (data) {
+
+        //        if (data.IsValidPIN) {
+        //            $("#LogIn").submit();
+        //        }
+        //    });
+    }
+
+    function backspaceKey() {
+        var old = document.getElementById('pin').value;
+        document.getElementById('pin').value = old.slice(0, -1);
+    }
+
+    $("#cancelBtn").click(function (e) {
+        e.preventDefault();
+        window.location.href = "/";
+    });
+</script>
+

@@ -1,0 +1,384 @@
+﻿@using JDsWebApp.Helpers
+@model JDsDataModel.ViewModels.CustomerViewModel
+
+<div id="customerdetailsdiv">
+    @using (Ajax.BeginForm("SaveCustomer", "Customer", null,
+                new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    UpdateTargetId = "customerdetailsdiv",
+                    InsertionMode = InsertionMode.Replace,
+                    OnBegin = "OnSaveCustomerBegin",
+                    OnComplete = "OnSaveCustomerComplete"
+                },
+                new { id = "editCustomerForm" }))
+    {
+        <div>
+            <div class="row" tabindex="0">
+             <div class="col-md-6">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.CustomerId, new { id = "customerid" })
+                 <div class="row padd-top">
+                     <div class="col-md-12">
+                         @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control ", height = 20, id = "companyname", placeholder = Html.DisplayNameFor(x => x.CompanyName)})
+                         @Html.ValidationMessageFor(m => m.CompanyName)
+                     </div>
+                 </div>
+                 <div class="row padd-top">
+                     <div class="col-md-12">
+                         @Html.HiddenFor(m => m.BillingAddressId)
+                         <h5 >@Html.DisplayNameFor(m => m.BillingAddressId)</h5>
+                         @Html.ValidationMessageFor(m => m.BillingAddressId)
+                     </div>
+                 </div>
+                 <div class="row padd-top"><div class="col-md-12">@Html.TextBoxFor(m => m.BillingAddressLine1, new { @class = "form-control ", id = "billingaddress1", placeholder = Html.DisplayNameFor(x => x.BillingAddressLine1) })</div>  </div>
+                 <div class="row padd-top"><div class="col-md-12">@Html.TextBoxFor(m => m.BillingAddressLine2, new { @class = "form-control ", id = "billingaddress2", placeholder = Html.DisplayNameFor(x => x.BillingAddressLine2) })</div>  </div>
+                 <div class="row padd-top">
+                    
+                         <div class="col-md-7">
+                             @Html.TextBoxFor(m => m.BillingCity, new { @class = "form-control ", id = "billingcity", placeholder = Html.DisplayNameFor(x => x.BillingCity) })
+                             @Html.ValidationMessageFor(m => m.BillingCity)
+                         </div>
+                         <div class="col-md-5">
+                             @Html.DropDownListFor(x => x.BillingState, SelectListItemHelper.GetUsStatesList(), new { @class = "form-control ", id = "billingstate" })
+                             @Html.ValidationMessageFor(m => m.BillingState)
+                         </div>
+                       
+                     </div>
+                 <div class="row padd-top">
+                     <div class="col-md-8">
+                         @Html.TextBoxFor(m => m.BillingZip, new { @class = "form-control ", id = "billingzip", placeholder = Html.DisplayNameFor(x => x.BillingZip), @type = "number", onkeydown="autofocusNext(event, id)" })
+                         @Html.ValidationMessageFor(m => m.BillingZip)
+                         @Html.HiddenFor(m => m.BillingCountry)
+                     </div>
+                 </div>
+                 </div>
+
+             <div class="col-md-6">                   
+                    <div class="row padd-top">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.Code, new { @class = "form-control", id = "companycode", placeholder = Html.DisplayNameFor(x => x.Code)})
+                            @Html.ValidationMessageFor(m => m.Code)
+                        </div>
+                    </div>
+                    
+                    <div class="row padd-top">
+                        <div class="col-md-12">
+                            @Html.HiddenFor(m => m.ShippingAddressId)
+                            <h5>@Html.DisplayNameFor(m => m.ShippingAddressId)</h5>
+                        </div>
+                    </div>
+                    <div class="row padd-top">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.ShippingAddressLine1, new { @class = "form-control ", id = "shippingaddress1", placeholder = Html.DisplayNameFor(x => x.ShippingAddressLine1) })
+                            @Html.ValidationMessageFor(m => m.ShippingAddressLine1)
+                        </div>
+                    </div>
+                    <div class="row padd-top">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.ShippingAddressLine2, new { @class = "form-control ", id = "shippingaddress2", placeholder = Html.DisplayNameFor(x => x.ShippingAddressLine2) })
+                            @Html.ValidationMessageFor(m => m.ShippingAddressLine2)
+                        </div>
+                    </div>
+                    <div class="row padd-top">
+                        <div class="col-md-7">
+                            @Html.TextBoxFor(m => m.ShippingCity, new { @class = "form-control ", id = "shippingcity", placeholder = Html.DisplayNameFor(x => x.ShippingCity) })
+                            @Html.ValidationMessageFor(m => m.ShippingCity)
+                        </div>
+                        <div class="col-md-5">
+                            @Html.DropDownListFor(x => x.ShippingState, SelectListItemHelper.GetUsStatesList(), new { @class = "form-control ", id = "shippingstate" })
+                            @Html.ValidationMessageFor(m => m.ShippingState)
+                        </div>
+                    </div>
+                 <div class="row padd-top">
+                     <div class="col-md-8">
+                         @Html.TextBoxFor(m => m.ShippingZip, new {@class = "form-control ", id = "shippingzip", placeholder = Html.DisplayNameFor(x => x.BillingZip), @type = "number", onkeydown = "autofocusNext(event, id)"})
+                         @Html.ValidationMessageFor(m => m.ShippingZip)
+                         @Html.HiddenFor(m => m.ShippingCountry)
+                     </div>
+                 </div>
+
+                 <div class="row padd-top">
+                     <div class="col-md-12">
+                         <input type="checkbox" onclick="shippingAddressFill(this.form);" name="sameshipping" value="true"/> Shipping address same as billing
+                     </div>
+                 </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Set Primary Contact:</h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="kendoDivPrimaryContact" class="col-md-6">
+                    @Html.DropDownListFor(x => x.PrimaryContactId, (SelectList)ViewBag.Contacts, new { @class = "form-control ", id = "contactlist" })
+                </div>
+                <div class="col-md-6">
+                    <input class="btn btn-primary" value="Add / Edit" onclick="LoadContactMgmt(@Model.CustomerId)" readonly="readonly" style="width:100px;" />
+                </div>
+            </div>
+
+            <div class="row" id="primarycontactcontentdiv">
+            </div>
+
+            <div class="row padd-top">
+                <!-- save and cancel -->
+                    <div class="col-md-12">
+                    <input id="customersaveBtn" class="btn btn-primary" value="Save" readonly="readonly" style="width:100px;"/>
+                    <input id="customercancelBtn" class="btn btn-danger" value="Close" onclick="OnCancelClicked()" readonly="readonly" style="width:100px;"/>
+                </div>
+                    </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label id="statuslabel" class="jd-label"></label>
+                    </div>
+                </div>
+          
+        </div>
+       
+    }
+</div>
+<style>
+    #kendoDivPrimaryContact span.k-dropdown-wrap.k-state-default {
+        border-radius: 0;
+    }
+
+    #kendoDivPrimaryContact span.k-input{
+        height:31px;
+        background-color: white;
+        padding:4px;
+    }
+
+    #kendoDivPrimaryContact span.k-select{
+        background: white;
+    }
+
+     #kendoDivPrimaryContact .k-state-selected.k-state-selected:link, .k-state-selected:visited, .k-list>.k-state-selected, .k-list>.k-state-highlight, .k-panel>.k-state-selected, .k-ghost-splitbar-vertical, .k-ghost-splitbar-horizontal, .k-draghandle.k-state-selected:hover, .k-scheduler .k-scheduler-toolbar .k-state-selected, .k-scheduler .k-today.k-state-selected, .k-marquee-color {
+         background-color:#215fa8;
+         border-color:#215fa8;
+         color:white;
+     }
+</style>
+<script>
+    var isValid = '@Html.Raw(Json.Encode(ViewData.ModelState.IsValid))';
+    var modelId = '@Html.Raw(Json.Encode(Model.CustomerId))';    
+
+    $("#customersaveBtn").click(function (e) {
+        OnSaveCustomerBegin();
+
+        $.ajax({
+            url: '/Customer/SaveCustomer',
+            type: 'POST',
+            data: $("#editCustomerForm").serialize(),
+            success: function (data) {
+
+                $("#customerdetailsdiv").html(data.View);
+
+                $.ajax({
+                    url: '/Customer/GetCustomersRefreshDropdown',
+                    type: 'GET',                    
+                    success: function (data) {
+                        $("#CustomerId").empty().append(data);
+                        // select the new customer
+                        $("#CustomerId option[value=" + modelId + "]").prop("selected", true);
+                        // show the edit customer button
+                        $("#EditCustomerBtn").show();
+                    },
+                    error: function (err) {
+                        notification.show({ message: "Error Saving Customer Details" }, "error");
+                    }
+                });
+
+                // Used to select the Primary Contact on Edit Job Details in Contacts dropdown
+                var selectedContactId = $('#contactlist option:selected').val();
+                if(selectedContactId)
+                    $("#ContactId option[value=" + selectedContactId + "]").prop("selected", true);
+
+                if(data.IsSuccessful == true)
+                    OnSaveCustomerComplete("success");
+            },
+            error: function (error) {
+                OnSaveCustomerComplete("fail");
+                $("#customercontactcontentdiv").html(error.responseText);
+            }
+        });
+    });
+
+    function OnSaveCustomerBegin() {
+        document.getElementById("customersaveBtn").disabled = true;
+        // Perform any client side validation
+    }
+
+    function OnSaveCustomerComplete(response) {
+      
+        if (response == "success") {
+            notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");           
+        } else {
+            $('#statuslabel').text("Save Failed");
+        }
+
+        document.getElementById("customersaveBtn").disabled = false;
+    }
+
+    function OnCancelClicked() {
+      
+        $("#customerdetailsmodal").modal('hide');
+    }
+
+    function LoadContactMgmt(customerid) {
+        if (customerid > 0) {
+
+            $.ajax({
+                url: '/Customer/SaveCustomer',
+                type: 'POST',
+                data: $("#editCustomerForm").serialize(),
+                success: function (data) {
+                    $.ajax({
+                        url: '/Customer/GetCustomersRefreshDropdown',
+                        type: 'GET',                    
+                        success: function (data) {
+                            $("#CustomerId").empty().append(data);
+                            // select the new customer
+                            $("#CustomerId option[value=" + modelId + "]").prop("selected", true);
+                            // show the edit customer button
+                            $("#EditCustomerBtn").show();
+                        },
+                        error: function (err) {
+                            notification.show({ message: "Error Saving Customer Details" }, "error");
+                        }
+                    });
+                },
+                error: function(data) {
+
+                }
+            });
+
+            $.get('/Customer/ContactMgmt/?customerId=' + customerid, function(data) {
+                $('#customercontactcontentdiv').html(data);
+                $('#customercontactcontentdiv').fadeIn('fast');
+            });
+        } else {
+            bootbox.alert("Error customerid 0", function () {});
+        }
+    }
+
+    function LoadPrimaryContact(contactid) {
+        $.get('/Customer/PrimaryContactDetails/' + contactid,
+            function (data) {
+                $('#primarycontactcontentdiv').html(data);
+                $('#primarycontactcontentdiv').fadeIn('fast');
+                DisableContactInputs();
+            });
+    }
+
+    function NewPrimaryContact() {
+        var id = $("#contactlist").val();
+        if (id != 0) {
+            $("#contactlist").getKendoDropDownList().dataSource.insert({
+                ContactId: "0",
+                Name: "New Contact"
+            });
+
+            $("#contactlist").data("kendoDropDownList").select(0);
+            LoadPrimaryContact(0);
+        }
+    }
+
+    function LoadSelectedPrimaryContact() {
+        var employeeId = $('#contactlist').val();
+        LoadPrimaryContact(employeeId);
+    }
+
+    function LoadContactDropDownList() {
+        $("#contactlist").kendoDropDownList({
+            dataTextField: "Name",
+            dataValueField: "ContactId",
+            change: LoadSelectedPrimaryContact,
+            //dataBound: LoadSelectedPrimaryContact,
+            dataSource: {
+                transport: {
+                    read: {
+                        dataType: "json",
+                        data: { id: modelId },
+                        url: "/Customer/GetContactsForDropdown"
+                    }
+                }
+            }
+        });
+    }
+
+    function DisableContactInputs() {
+       $("#contactfirstname").prop('disabled', true);
+       $("#contactlastname").prop('disabled', true);
+       $("#contactemail").prop('disabled', true);
+       $("#contactworkphone").prop('disabled', true);
+       $("#contactfax").prop('disabled', true);
+       $("#contactcellphone").prop('disabled', true);
+       $("#contactnotes").prop('disabled', true);
+    }
+    
+    function RemoveContact(contactID) {
+
+    }
+
+    $(function () {
+        LoadContactDropDownList();
+        $("#contactlist").data("kendoDropDownList").dataSource.one("change", LoadSelectedPrimaryContact);
+        turnOffAutofill("#editCustomerForm");
+        
+        setTabindexes();
+
+        // indicate add/edit mode on the dialog header
+        var customerDetailsHeaderTemplate = printf("{0} Customer {1}", $("#companyname").val() ? "Edit" : "Add", "{0}");
+        
+        // add company name to the dialog header
+        $("#companyname").on("input", function()
+        {
+            $("#customerdetailsmodal h4").text(printf(customerDetailsHeaderTemplate, this.value));
+        });
+
+        // trigger a header update
+        $("#companyname").trigger("input");
+    });
+
+    //to force tab ordering
+    function setTabindexes(){
+        var counter = 1;
+        var tabbablethings = $("#customercontactcontentdiv").find(".form-control, .btn").each(function(index, val){
+            //console.log(this);
+            if ($(this).attr("type") !== "hidden" && $(this).is(":not(:disabled)")){
+            
+                $(this).attr('tabIndex', counter);
+                counter++;
+            }
+        });
+    }
+    //tabindexes must be manually set before using this
+    function autofocusNext(event, id){
+        if (event.keyCode == "9"){
+            var nexttab = parseInt($("#"+id).attr('tabindex')) + 1;
+            $("*[tabindex = '" + nexttab + "']").focus();
+        }
+
+    }
+
+    function shippingAddressFill(f) {
+        if (f.sameshipping.checked) {
+            f.shippingaddress1.value = f.billingaddress1.value;
+            f.shippingaddress2.value = f.billingaddress2.value;
+            f.shippingcity.value = f.billingcity.value;
+            f.shippingstate.value = f.billingstate.value;
+            f.shippingzip.value = f.billingzip.value;
+        } else {
+            f.shippingaddress1.value = '';
+            f.shippingaddress2.value = '';
+            f.shippingcity.value = '';
+            f.shippingzip.value = '';
+        }
+    }
+
+</script>

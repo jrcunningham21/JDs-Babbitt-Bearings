@@ -1,0 +1,616 @@
+﻿@{
+    ViewBag.Title = "Vacation";
+}
+
+<link rel="stylesheet" href="~/Content/StyleSheets/EmployeeManagement/Vacation.css"/>  
+
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && !string.IsNullOrEmpty(HttpContext.Current.Request.Cookies["EmployeeRole"].Value))
+{
+    <div class="modal fade" id="signOffModal" style="z-index:50; top:20%; position:fixed;" role="dialog">
+        <div class="modal-dialog">
+            <h4 class="modal-header"> Sign Off</h4>
+            <div id="signOffContentDiv"></div>
+        </div>
+    </div>
+
+    <div id="scheduler"></div>   
+}
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}
+
+<script id="customEditorTemplate" type="text/x-kendo-template">
+    <div class="k-edit-label"><label for="title">Employee:</label></div>
+    <div data-container-for="title" class="k-edit-field">
+        <select id="EmployeeDropDown" 
+                data-bind="value:EmployeeId, source:employeeDataSource, enabled: isEmployeeDropDownEnabled" 
+                data-value-field="EmployeeId" 
+                data-text-field="EmployeeName" 
+                style="width:200px;" 
+                class="employee-dropdown"
+                onchange="employeeSelectedChanged(event)"></select>
+    </div>
+    <div class="k-edit-label">
+        <label for="start">Start</label>
+    </div>
+    <div data-container-for="start" class="k-edit-field">
+        <input type="text" 
+               data-role="datepicker" 
+               data-interval="15" 
+               data-type="date" 
+               data-bind="value:start, enabled: isDatePickerEnabled"
+               name="start" 
+               id="startDate" 
+               onchange="dateChanged(event)" />
+        <span data-for="start" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label">
+        <label for="end">End</label>
+    </div>
+    <div data-container-for="end" class="k-edit-field">
+        <input type="text" data-type="date" data-role="datepicker" 
+               data-bind="value:end, enabled: isDatePickerEnabled"
+               onchange="dateChanged(event)" name="end"                 
+               data-datecompare-msg="End date should be greater than or equal to the start date" 
+               id="endDate" />
+        <span data-for="end" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label" data-bind="visible: showVacationDayRadioBtn">
+        <label for="IsFullVacationDay">Full/Half:</label>
+    </div>
+    <div data-container-for="IsFullVacationDay" class="k-edit-field" id="allDayDiv" data-bind="visible: showVacationDayRadioBtn">
+        <input type="radio" id="isFullVacationDay-true" value="true" name="isFullVacationDay" data-bind="checked: IsFullVacationDay, enabled: isDatePickerEnabled" onclick="radioButtonChanged(event)" />
+        <label for="isFullVacationDay-true">Full Day</label>
+
+        <input type="radio" id="isFullVacationDay-false" value="false" name="isFullVacationDay" data-bind="checked: IsFullVacationDay, enabled: isDatePickerEnabled" onclick="radioButtonChanged(event)"/>
+        <label for="isFullVacationDay-false">Half Day</label>
+    </div>
+    <div class="k-edit-label">
+        <label for="IsVacationTime">Time Type:</label>
+    </div>
+    <div data-container-for="IsVacationTime" class="k-edit-field" id="vacationTimeDiv">
+        <input type="radio" id="IsVacationTime-true" value="true" name="IsVacationTime" data-bind="checked: IsVacationTime, enabled: isDatePickerEnabled" onclick="IsVacationTimeRadioBtnChanged(event)" />
+        <label for="IsVacationTime-true">Vacation Time</label>
+
+        <input type="radio" id="IsVacationTime-false" value="false" name="IsVacationTime" data-bind="checked: IsVacationTime, enabled: isDatePickerEnabled" onclick="IsVacationTimeRadioBtnChanged(event)" />
+        <label for="IsVacationTime-false">Personal Time</label>
+    </div>
+    <div class="k-edit-label">
+        <label>Hours Left:</label>
+    </div>
+    <div class="k-edit-field">
+        <div class="hoursLeft" style="margin-top:6px;" data-bind="text:remainingVacationHours"></div>
+    </div>
+    <div class="k-edit-label" data-bind="visible: requiresSignOff">
+        <label>Sign Off:</label>
+    </div>
+    <div class="k-edit-field" data-bind="visible: requiresSignOff">
+        <button type="button" id="signOffBtn" class="btn btn-primary" data-bind="visible: requiresSignOff">Sign Off</button>
+    </div>
+    
+    <input id="vacationID" class="hidden" data-bind="value:VacationEntryId"/>
+    <input id="EmployeeID" class="hidden" data-bind="value:EmployeeId" />    
+</script>
+
+<script>
+    $('#vacationEntry').addClass('aside-entry-active');
+
+    var holidays = [
+        "1/1/2014",
+        "5/26/2014",
+        "7/4/2014",
+        "9/1/2014",
+        "11/27/2014",
+        "12/25/2014",
+        "1/1/2015",
+        "5/25/2015",
+        "7/3/2015",
+        "9/7/2015",
+        "11/26/2015",
+        "12/25/2015",
+        "1/1/2016",
+        "5/30/2016",
+        "7/4/2016",
+        "9/5/2016",
+        "11/24/2016",
+        "12/26/2016",
+        "1/2/2017",
+        "5/29/2017",
+        "7/4/2017",
+        "9/4/2017",
+        "11/23/2017",
+        "12/25/2017",
+        "1/1/2018",
+        "5/28/2018",
+        "7/4/2018",
+        "9/3/2018",
+        "11/22/2018",
+        "12/25/2018",
+        "1/1/2019",
+        "5/27/2019",
+        "7/4/2019",
+        "9/2/2019",
+        "11/28/2019",
+        "12/25/2019",
+        "1/1/2020",
+        "5/25/2020",
+        "7/3/2020",
+        "9/7/2020",
+        "11/26/2020",
+        "12/25/2020",
+        "1/1/2021",
+        "5/31/2021",
+        "7/5/2021",
+        "9/6/2021",
+        "11/25/2021",
+        "12/24/2021",
+        "12/31/2021",
+        "5/30/2022",
+        "7/4/2022",
+        "9/5/2022",
+        "11/24/2022",
+        "12/26/2022",
+        "1/2/2023",
+        "5/29/2023",
+        "7/4/2023",
+        "9/4/2023",
+        "11/23/2023",
+        "12/25/2023",
+        "1/1/2024",
+        "5/27/2024",
+        "7/4/2024",
+        "9/2/2024",
+        "11/28/2024",
+        "12/25/2024",
+        "1/1/2025",
+        "5/26/2025",
+        "7/4/2025",
+        "9/1/2025",
+        "11/27/2025",
+        "12/25/2025",
+        "1/1/2026",
+        "5/25/2026",
+        "7/3/2026",
+        "9/7/2026",
+        "11/26/2026",
+        "12/25/2026",
+        "1/1/2027",
+        "5/31/2027",
+        "7/5/2027",
+        "9/6/2027",
+        "11/25/2027",
+        "12/24/2027",
+        "12/31/2027",
+        "5/29/2028",
+        "7/4/2028",
+        "9/4/2028",
+        "11/23/2028",
+        "12/25/2028",
+        "1/1/2029",
+        "5/28/2029",
+        "7/4/2029",
+        "9/3/2029",
+        "11/22/2029",
+        "12/25/2029",
+        "1/1/2030",
+        "5/27/2030",
+        "7/4/2030",
+        "9/2/2030",
+        "11/28/2030",
+        "12/25/2030",
+        "1/1/2031",
+        "5/26/2031",
+        "7/4/2031",
+        "9/1/2031",
+        "11/27/2031",
+        "12/25/2031",
+        "1/1/2032",
+        "5/31/2032",
+        "7/5/2032",
+        "9/6/2032",
+        "11/25/2032",
+        "12/24/2032",
+        "12/31/2032",
+        "5/30/2033",
+        "7/4/2033",
+        "9/5/2033",
+        "11/24/2033",
+        "12/26/2033",
+        "1/2/2034",
+        "5/29/2034",
+        "7/4/2034",
+        "9/4/2034",
+        "11/23/2034",
+        "12/25/2034",
+        "1/1/2035",
+        "5/28/2035",
+        "7/4/2035",
+        "9/3/2035",
+        "11/22/2035",
+        "12/25/2035",
+        "1/1/2036",
+        "5/26/2036",
+        "7/4/2036",
+        "9/1/2036",
+        "11/27/2036",
+        "12/25/2036",
+        "1/1/2037",
+        "5/25/2037",
+        "7/3/2037",
+        "9/7/2037",
+        "11/26/2037",
+        "12/25/2037",
+        "1/1/2038",
+        "5/31/2038",
+        "7/5/2038",
+        "9/6/2038",
+        "11/25/2038",
+        "12/24/2038",
+        "12/31/2038",
+        "5/30/2039",
+        "7/4/2039",
+        "9/5/2039",
+        "11/24/2039",
+        "12/26/2039",
+        "1/2/2040",
+        "5/28/2040",
+        "7/4/2040",
+        "9/3/2040",
+        "11/22/2040",
+        "12/25/2040",
+        "1/1/2041",
+        "5/27/2041",
+        "7/4/2041",
+        "9/2/2041",
+        "11/28/2041",
+        "12/25/2041",
+        "1/1/2042",
+        "5/26/2042",
+        "7/4/2042",
+        "9/1/2042",
+        "11/27/2042",
+        "12/25/2042",
+        "1/1/2043",
+        "5/25/2043",
+        "7/3/2043",
+        "9/7/2043",
+        "11/26/2043",
+        "12/25/2043",
+        "1/1/2044",
+        "5/30/2044",
+        "7/4/2044",
+        "9/5/2044",
+        "11/24/2044",
+        "12/26/2044",
+        "1/2/2045",
+        "5/29/2045",
+        "7/4/2045",
+        "9/4/2045",
+        "11/23/2045",
+        "12/25/2045",
+        "1/1/2046",
+        "5/28/2046",
+        "7/4/2046",
+        "9/3/2046",
+        "11/22/2046",
+        "12/25/2046",
+        "1/1/2047",
+        "5/27/2047",
+        "7/4/2047",
+        "9/2/2047",
+        "11/28/2047",
+        "12/25/2047",
+        "1/1/2048",
+        "5/25/2048",
+        "7/3/2048",
+        "9/7/2048",
+        "11/26/2048",
+        "12/25/2048",
+        "1/1/2049",
+        "5/31/2049",
+        "7/5/2049",
+        "9/6/2049",
+        "11/25/2049",
+        "12/24/2049"
+    ];
+    function getHolidays() {
+        return holidays;
+    }
+
+
+
+    function eventEdited(e) {
+        if ($("#EmployeeID").val() === "0") {
+            if (e.event.EmployeeId === 0) {
+                e.event.EmployeeId = readCookie("EmployeeID");
+                $("#EmployeeID").val(readCookie("EmployeeID"));
+                $("#EmployeeDropDown").val(readCookie("EmployeeID"));
+            } else {
+                $("#EmployeeID").val(e.event.EmployeeId);
+            }
+        }
+
+        var isSameDate = moment($("#startDate").val()).isSame($("#endDate").val());
+
+        if (isSameDate) {
+            viewModel.set("showVacationDayRadioBtn", true);
+        } else {
+            viewModel.set("showVacationDayRadioBtn", false); 
+        }
+
+        viewModel.set("isDatePickerEnabled", false);
+        viewModel.set("requiresSignOff", true);
+        viewModel.set("signedOff", false);
+
+        updateVacationHoursRemaining(e.event.EmployeeId, $("#isFullVacationDay-true").is(":checked"));
+
+        setPermissions($("#EmployeeID").val());        
+    }
+
+    function needsSignOffs() {
+        if (readCookie("EmployeeRole") != "Manager") {
+            $(".k-scheduler-update").hide();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("DoesVacationRequireSignoff","EmployeeManagement")",
+                data: {
+                    startStr: $("#startDate").val(),
+                    endStr: $("#endDate").val(),
+                    employeeId: $("#EmployeeID").val(),
+                    isFullVacationDay: $("#isFullVacationDay-true").is(":checked"),
+                    isVacationHours: $("#IsVacationTime-true").is(":checked"),
+                    vacationID: $("#vacationID").val()
+                },
+                success: function(data) {
+                    if (data.RequiresSignOff) {
+                        if (!viewModel.get("signedOff")) {
+                            viewModel.set("requiresSignOff", true);
+                            $('#signOffBtn').off();
+                            $('#signOffBtn').click(function() {
+                                $.ajax({
+                                    url: '@Url.Action("SignOff", "SignOff", new { area = ""})',
+                                    type: 'GET',
+                                    data: { skillName: "Management" },
+                                    success: function(data) {
+                                        $('#signOffContentDiv').html(data);
+                                        $('#signOffContentDiv').fadeIn('fast');
+                                        $('#signOffModal').modal('show');
+
+                                    },
+                                    error: function(e) {
+                                        bootbox.alert("Error", function() {});
+                                        $("#signOffModal").modal('hide');
+                                    }
+                                });
+                            });
+                        } else {
+                            $(".k-scheduler-update").show();
+                            $(".k-scheduler-delete").show();
+                        }
+                    } else {
+                        $(".k-scheduler-update").show();
+                        $(".k-scheduler-delete").show();
+                        viewModel.set("requiresSignOff", false);
+                    }
+                },
+                error: function(data) {
+                    bootbox.alert("Error communicating with the server", function() {});
+                }
+            });
+        } else {
+            $(".k-scheduler-update").show();
+            $(".k-scheduler-delete").show();
+            viewModel.set("requiresSignOff", false);    
+        }
+    }
+
+    function employeeSelectedChanged(event) {
+        updateVacationHoursRemaining(event.target.value, $("#isFullVacationDay-true").is(":checked"));
+
+        setPermissions(event.target.value);
+    }
+
+    function updateVacationHoursRemaining(employeeID, isFullTimeVacationDay) {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetVacationHoursRemaining", "EmployeeManagement")",
+            data: {
+                id: employeeID,
+                startDateString: $("#startDate").val(),
+                endDateString: $("#endDate").val(),
+                isFullVacation: isFullTimeVacationDay,
+                isVacationTime: $("#IsVacationTime-true").is(":checked"),
+                vacationID: $("#vacationID").val()
+            },
+            success: function(data) {
+                viewModel.set("remainingVacationHours", data);
+            },
+            error: function(data) {
+                viewModel.set("remainingVacationHours", "N/A");
+            }
+        });
+    }
+
+    function setPermissions(employeeID) {
+        if (readCookie("EmployeeRole") !== "Manager") {
+            if (readCookie("EmployeeID") === employeeID) {
+                viewModel.set("isDatePickerEnabled", true);
+                needsSignOffs();
+            } else {
+                $(".k-scheduler-delete").hide();
+                $(".k-scheduler-update").hide();
+                viewModel.set("isDatePickerEnabled", false);
+                viewModel.set("requiresSignOff", false);
+            }
+        } else {
+            viewModel.set("isEmployeeDropDownEnabled", true);
+            viewModel.set("isDatePickerEnabled", true);
+            viewModel.set("requiresSignOff", false);
+        }
+    }
+
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    function highlightHolidays() {
+        var scheduler = $('#scheduler').data('kendoScheduler');    //loop through all slot/event/tile
+        var holidays = getHolidays();
+
+        setTimeout(function () {
+            scheduler.view().table.find("td[role=gridcell]").each(function () {
+                var slot = scheduler.slotByElement($(this));      //find start date
+
+                if (slot != null) {
+                    slot.startDate.setHours(0, 0, 0, 0);
+
+                    //compare date curent event with holiday
+                    var shortDate = (slot.startDate.getMonth() + 1) + "/" + slot.startDate.getDate() + "/" + slot.startDate.getFullYear();
+
+                    var result = $.inArray(shortDate, holidays);
+                    if (result > -1) {
+                        $(this).addClass("k-holiday");
+                        console.log("Added holiday for: " + shortDate);
+                    }
+                }
+            });
+        }, 50);
+    }
+
+    function dateChanged(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        var isSameDate = moment($("#startDate").val()).isSame($("#endDate").val());
+
+        if (isSameDate) {
+            viewModel.set("showVacationDayRadioBtn", true);
+        } else {
+            viewModel.set("showVacationDayRadioBtn", false);
+            $("#isFullVacationDay-true").trigger('click');
+        }
+
+        updateVacationHoursRemaining($("#EmployeeID").val(), $("#isFullVacationDay-true").is(":checked"));
+        needsSignOffs();
+    }
+
+    function radioButtonChanged(event) {
+        updateVacationHoursRemaining($("#EmployeeID").val(), $("#isFullVacationDay-true").is(":checked"));
+        needsSignOffs();
+    }
+
+    function SignOffSenderAction(signOffName, signOffID) {
+        $("#signOffModal").modal('hide');
+        $('#signoff-div').hide();
+        $('.k-scheduler-update').show();
+        viewModel.set("requiresSignOff", false);
+        viewModel.set("signedOff", true);
+        viewModel.get("schedulerDataSource").get($("#vacationID").val()).set("SignOffId", signOffID);
+    }
+
+    function IsVacationTimeRadioBtnChanged(event) {
+        updateVacationHoursRemaining($("#EmployeeID").val(), $("#isFullVacationDay-true").is(":checked"));
+        needsSignOffs();
+    }
+
+    function onRequestEnd(event) {
+        if (event.type === "create" || event.type === "update") {
+            $("#scheduler").data("kendoScheduler").dataSource.read();
+            $("#scheduler").data("kendoScheduler").refresh();
+        }
+    }
+
+    var viewModel = kendo.observable({
+        schedulerDataSource: new kendo.data.SchedulerDataSource({
+            type: 'aspnetmvc-ajax',
+            transport: {
+                read: "@Url.Action("Read", "EmployeeManagement")",
+                update: "@Url.Action("Update", "EmployeeManagement")",
+                create: "@Url.Action("Create", "EmployeeManagement")",
+                destroy: "@Url.Action("Destroy", "EmployeeManagement")"
+            },
+            schema: {
+                data: "Data",
+                model: {
+                    id: "VacationEntryId",
+                    fields: {
+                        EmployeeId: {
+                            "type": "number",
+                            "defaultValue": 0
+                        },
+                        EntryTitle: {
+                            "type": "string",
+                            "defaultValue": "No title"
+                        },
+                        IsFullVacationDay: {
+                            "type": "boolean",
+                            "defaultValue": true
+                        },
+                        title: {
+                            "from": "Title",
+                            "type": "string"
+                        },
+                        start: {
+                            "from": "Start",
+                            "type": "date"
+                        },
+                        end: {
+                            "from": "End",
+                            "type": "date"
+                        },
+                        IsVacationTime: {
+                            "type": "boolean",
+                            "defaultValue": true
+                        },
+                        VacationEntryId: {
+                            "type": "number",
+                            "defaultValue" : 0
+                        },
+                        SignOffId: {
+                            "type": "number",
+                            "defaultValue": ""
+                        }
+                    }
+                }
+            },
+            requestEnd: onRequestEnd
+        }),
+        employeeDataSource: new kendo.data.DataSource({
+            transport: {
+                read: "@Url.Action("GetEmployeesForVacationDropdown","EmployeeManagement")"
+            }
+        }),
+        remainingVacationHours: 0,
+        showVacationDayRadioBtn: true,
+        isDatePickerEnabled: false,
+        requiresSignOff: false,
+        signedOff: false,
+        isEmployeeDropDownEnabled: false
+    });
+
+    $(document).ready(function() {
+        $("#scheduler").kendoScheduler({
+            edit: eventEdited,
+            navigate: highlightHolidays,
+            height: 650,
+            editable: {
+                template: $("#customEditorTemplate").html()
+            },
+            width: 650,
+            views: [{
+                type: "month"
+            }, {
+                type: "day"
+            }],
+            dataSource: viewModel.schedulerDataSource
+        });       
+    });
+</script>

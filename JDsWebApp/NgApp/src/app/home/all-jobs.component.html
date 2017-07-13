@@ -1,0 +1,23 @@
+<link href="~/Content/bootstrap.css" />
+
+<section class="section">
+    <div class="row padd-bottom padd-top">
+        <h2 style="display:inline-block;">All Jobs</h2>
+        <div style="float:right; margin-top:20px;">
+            <button style="display:inline-block" id="newJobBtn" class="btn btn-primary">New Job</button>
+            <input id="search" type="search" placeholder="Search..." class="alljobs-search form-control" onkeyup="filter($(this).val())" />
+        </div>
+    </div>
+
+    <div id="grid" style="height:600px;"></div>
+
+    <div class="modal fade" id="signOffModal" role="dialog">
+        <div class="modal-dialog">
+                <h4 class="modal-header">Sign Off</h4>
+            <div id="signOffContentDiv"></div>
+        </div>
+    </div>
+
+   <!-- @{Html.RenderPartial("~/Views/Part/PartInfoPopUpModal.cshtml");} -->
+
+</section>

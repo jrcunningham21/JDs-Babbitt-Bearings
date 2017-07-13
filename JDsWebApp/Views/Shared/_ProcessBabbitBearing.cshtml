@@ -1,0 +1,517 @@
+﻿@model JDsDataModel.ViewModels.Processes.StepViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row row-bottom-smaller" style="margin-top:20px;">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-6 ">
+                    <h2 class="pull-left">JD#: @Html.DisplayFor(m => m.CustomerLabel)</h2>
+                </div>
+
+                <div class="col-sm-6 ">
+                    <h5 class="pull-right">Contact: @Html.DisplayFor(m => m.ContactLabel)</h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 ">
+                    <h5 class="pull-left">@Html.DisplayFor(m => m.JobSummary)</h5>
+                </div>
+                <div class="col-sm-6">
+                    <div class="pull-right" style="padding-left:5px;">
+                        <button class="btn btn-primary" id="showPartInfoBtn">Part Info</button>
+                    </div>      
+                    <div class="pull-right">
+                        <button class="btn btn-primary" id="goToJobBtn">Go To Job</button>
+                    </div>              
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <aside class="aside" id="workflowContainer">
+                    <div class="aside-entry" id="process_BB1_IncomingInspectionEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(1)">Incoming Inspection</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB2_PrecastRoughoutEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(2)">Pre-cast Roughout</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB3_SpincastProcessEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(3)">Spincast Process</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB4_PostcastCleanUpEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(4)">Post-cast Clean up</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB5_PostcastRoughoutEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(5)">Post-cast Roughout</a>
+                        </span>
+                    </div>
+                    
+                    <div class="aside-entry @(Model.IsInsulated ? "" : "hidden")" id="process_BB6_InsulationProcessEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(6)">Insulation Process</a>
+                        </span>
+                    </div>
+
+                    <div class="aside-entry" id="process_BB7_CleanupProcessEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(7)">Clean up Process</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB8_FinalMachineInspectionEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(8)">Final Machine Inspection</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB9_FinishBoreProcessEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(9)">Finish Bore Process</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB10_FinalAssemblyEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(10)">Final Assembly</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB11_FinalInspectionEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(11)">Final Inspection</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB12_DeliveryEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(12)">Delivery</a>
+                        </span>
+                    </div>
+                    <div class="aside-entry" id="process_BB13_FinalSignOffEntry">
+                        <span class="aside-entry-span">
+                            <a onclick="NavigateStep(13)">Final Sign Off</a>
+                        </span>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="col-sm-9">
+                <section class="section">
+
+                    @RenderBody()
+
+                    <div class="modal fade" id="signOffModal" role="dialog" style="z-index:10909">
+                        <div class="modal-dialog">
+                            <h4 class="modal-header"> Sign Off</h4>
+                            <div id="signOffContentDiv"></div>
+                        </div>
+                    </div>
+
+                    @{Html.RenderPartial("~/Views/Part/PartInfoPopUpModal.cshtml");}
+
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+@RenderSection("scripts", required: false)
+
+@section scripts
+{
+    <script>
+        var navId = 0;
+        var signOffId = "";
+        var eidString = "";
+        var eidIndex = 0;
+        var eidId = 0;
+        var stepData = @Html.Raw(Model.StepData);
+        var notification;
+
+        $(function () {
+            $(".actionLink").click(function(e) {
+                e.preventDefault();
+                AskForSaveBeforeLinkRedirect(SaveToServer, $(e.currentTarget).prop("href"));
+            });
+
+            // When user clicks/touches an input... select all text
+            $("input[type='text']").on("click", function () {
+                $(this).select();
+            });
+
+            $(".aside-entry-active").append("<div class='arrow'></div>");
+
+            $("#showPartInfoBtn").click(function () {
+                var partId = '@Html.Raw(Json.Encode(Model.PartId))';
+                showPartPopup(partId, 0);
+            });
+
+            $("#goToJobBtn").click(function (e) {
+                AskForSaveBeforeLinkRedirect(SaveToServer, "/JobDetails?id=" + '@Html.Raw(Json.Encode(Model.JobId))');
+            });
+
+            notification = $("#successfulSaveNotification").kendoNotification({
+                position: {
+                    pinned: true,
+                    top: 4
+                },
+                autoHideAfter: 1500,
+                show: onShow,
+                stacking: "down",
+                templates: [{
+                    type: "successful",
+                    template: $("#successTemplate").html()
+                }]
+            }).data("kendoNotification");
+
+        });
+
+        function getURLParameter(name) {
+            return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+        }
+
+        // Because of single sign off action callback.
+        function SignOffSenderAction(empname) {
+            addJobChangeLogEntry(0, "Signoff by: " + empname)
+
+            if (navId > 0) {
+                var pid = getURLParameter('id');
+
+                // This is the signoff for the nav operations in the aside on the left
+                switch (navId) {
+                    case 1:
+                        window.location.href = "/ProcessBabbitBearing/BB1_IncomingInspection/?id=" + pid;
+                        break;
+                    case 2:
+                        window.location.href = "/ProcessBabbitBearing/BB2_PrecastRoughout/?id=" + pid;
+                        break;
+                    case 3:
+                        window.location.href = "/ProcessBabbitBearing/BB3_SpincastProcess/?id=" + pid;
+                        break;
+                    case 4:
+                        window.location.href = "/ProcessBabbitBearing/BB4_PostcastCleanup/?id=" + pid;
+                        break;
+                    case 5:
+                        window.location.href = "/ProcessBabbitBearing/BB5_PostcastRoughout/?id=" + pid;
+                        break;
+                    case 6:
+                        window.location.href = "/ProcessBabbitBearing/BB6_InsulationProcess/?id=" + pid;
+                        break;
+                    case 7:
+                        window.location.href = "/ProcessBabbitBearing/BB7_CleanupProcess/?id=" + pid;
+                        break;
+                    case 8:
+                        window.location.href = "/ProcessBabbitBearing/BB8_FinalMachineInspection/?id=" + pid;
+                        break;
+                    case 9:
+                        window.location.href = "/ProcessBabbitBearing/BB9_FinishBoreProcess/?id=" + pid;
+                        break;
+                    case 10:
+                        window.location.href = "/ProcessBabbitBearing/BB10_FinalAssembly/?id=" + pid;
+                        break;
+                    case 11:
+                        window.location.href = "/ProcessBabbitBearing/BB11_FinalInspection/?id=" + pid;
+                        break;
+                    case 12:
+                        window.location.href = "/ProcessBabbitBearing/BB12_Delivery/?id=" + pid;
+                        break;
+                    case 13:
+                        window.location.href = "/ProcessBabbitBearing/BB13_FinalSignOff/?id=" + pid;
+                        break;
+                    default:
+                        navId = 0;
+                }
+
+                navId = 0;
+            }
+            else if (signOffId != "") {
+                var ids = signOffId.split(",");
+                var i = 0;
+
+                $("#signOffModal").modal('hide');
+
+                for (i = 0; i < ids.length; i++) {
+                    var tb = document.getElementById(ids[i]);
+                    var btn = $("#" + ids[i] + "SO");
+                    tb.value = empname;
+
+                    btn.removeClass("btn-danger");
+
+                    btn.find("span").removeClass("glyphicon-minus");
+                    btn.find("span").addClass("glyphicon-ok");
+
+                    var modelelement = document.getElementById(ids[i] + "1");
+
+                    if (modelelement != null) {
+                        modelelement.value = empname;
+                        $("#" + ids[i] + "SO1").removeClass("btn-danger");
+                    }
+                }
+
+                signOffId = "";
+
+                // This mechanism is used for the Sign Off All modal...
+                // When a user signs off on the last sign off, call that steps
+                // save function so that the workflow progresses to the next step
+                if($("#signOffGroupModal").hasClass('in'))
+                {
+                    var j = 0;
+                    var signOffCount = $("#signOffGroupModal input").length;
+                    captureCompletedSignoffs();
+                    $("#signOffGroupModal input").each(function(){
+                        if($(this).val() != '')
+                        {
+                            j++;
+                        }
+
+                        if(j == (signOffCount))
+                        {
+                            Save();
+                        }
+                    });
+                }
+            }
+            else if (eidIndex > 0) {
+                $("#signOffModal").modal('hide');
+                var grid = $('#' + eidString).data("kendoGrid");
+                var ds = grid.dataSource;
+                var data = ds.data();
+
+                // positive based index... 0 = new record
+                ds.remove(data[eidIndex - 1]);
+
+                // reindex for handling multiple row adds
+                for (var i = 0; i < data.length; i++) {
+                    data[i].Index = i + 1;
+                }
+
+                grid.refresh();
+                var count = grid.dataSource.total();
+                if (count == 0)
+                    $('#' + eidString).parent().hide("slow");
+                eidIndex = 0;
+                eidString = "";
+            }
+            else if (eidId > 0) {
+                $("#signOffModal").modal('hide');
+                var grid = $('#' + eidString).data("kendoGrid");
+                var ds = grid.dataSource;
+                var data = ds.data();
+
+                ds.remove(ds.get(eidId));
+                grid.refresh();
+
+                eidId = 0;
+                eidString = "";
+            }
+            else if (workflowSignoffCallback !== null)
+            {
+                $("#signOffModal").modal('hide');
+                workflowSignoffCallback();
+            }
+
+        }
+
+        function NavigateStep(id) {
+            navId = id;
+
+            // Only management can navigate
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () { });
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function AddMeasurement(baseid) {
+            var aid = $("#" + baseid + "A");
+            var bid = $("#" + baseid + "B");
+            var cid = $("#" + baseid + "C");
+            var a = aid.val();
+            var b = bid.val();
+            var c = cid.val();
+
+            a = formatToMinDecimals(a, 3);
+            b = formatToMinDecimals(b, 3);
+            c = formatToMinDecimals(c, 3);
+
+            var is_a_valid = 1;
+            var is_b_valid = 1;
+            var is_c_valid = 1;
+            var maxStrLen = 9;
+
+            //client-side validation
+            if (a == '' || a.length > maxStrLen) {
+                is_a_valid = 0;
+                aid.css('background-color', '#ffaaaa');
+            } else {
+                aid.css('background-color', '');
+            }
+
+            if (b == '' || b.length > maxStrLen) {
+                is_b_valid = 0;
+                bid.css('background-color', '#ffaaaa');
+            } else {
+                bid.css('background-color', '');
+            }
+
+            if (c == '' || c.length > maxStrLen) {
+                is_c_valid = 0;
+                cid.css('background-color', '#ffaaaa');
+            } else {
+                cid.css('background-color', '');
+            }
+
+            if (is_a_valid == 1 &&
+                is_b_valid == 1 &&
+                is_c_valid == 1) {
+
+                if($("#" + baseid + "Message").hasClass("field-validation-error")) {
+                    toggleValidationMessage(baseid + "Message");
+                }
+
+                // {BB#_PropertyName}
+                var propname = baseid.substring(baseid.lastIndexOf("_") + 1);
+                var griddatasource = $('#grid_' + propname).data("kendoGrid").dataSource;
+                var newindex = griddatasource.total() + 1;
+
+                griddatasource.add({
+                    Index: newindex,
+                    MeasurementId: "0",
+                    MeasurementGroupId: "",
+                    A: a,
+                    B: b,
+                    C: c
+                });
+
+                aid.val("");
+                bid.val("");
+                cid.val("");
+                griddatasource.sync();
+
+                $('#grid_' + propname).parent().show("slow");
+
+                return true;
+            } else {
+                var errorCount = 0;
+                var errorMessage = "";
+
+                if(is_a_valid !== 1){
+                    errorCount ++;
+                }
+
+                if(is_b_valid !== 1){
+                    errorCount ++;
+                }
+
+                if(is_c_valid !== 1){
+                    errorCount ++;
+                }
+
+                if(errorCount == 1){
+                    if(is_a_valid !== 1){
+                        errorMessage = "A ";
+                    } else if(is_b_valid !== 1){
+                        errorMessage = "B ";
+                    } else if(is_c_valid !== 1){
+                        errorMessage = "C ";
+                    }
+                } else if(errorCount == 2) {
+                    if(is_a_valid !== 0){
+                        errorMessage = "B and C ";
+                    } else if(is_b_valid !== 0){
+                        errorMessage = "A and C ";
+                    } else if(is_c_valid !== 0){
+                        errorMessage = "A and B ";
+                    }
+                } else if(errorCount == 3){
+                    errorMessage = "A, B and C ";
+                }
+
+                if(errorCount > 1) {
+                    errorMessage = errorMessage + " are not valid values";
+                } else {
+                    errorMessage = errorMessage + " is not a valid value";
+                }
+
+                toggleValidationMessage(baseid + "Message", errorMessage);
+
+                return false;
+            }
+        }
+
+        function DeleteMeasurement(eid, index, skillname) {
+            eidString = eid;
+            eidIndex = index;
+            navId = 0;
+            signOffId = "";
+
+            // confirm PIN for delete of measurement.
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () { });
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function DeleteKGridById(eid, id, skillname) {
+            eidString = eid;
+            eidId = id;
+            navId = 0;
+            signOffId = "";
+
+            // confirm PIN for delete of measurement.
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () { });
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+    </script>
+
+    <script id="successTemplate" type="text/x-kendo-template">
+        <div class="upload-success">
+            <div class="h5"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>#= message #</div>
+        </div>
+    </script>
+
+}

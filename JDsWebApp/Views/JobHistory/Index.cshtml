@@ -1,0 +1,107 @@
+﻿
+
+<div class="container">
+    <div class="row">
+
+        <h2 style=" display:inline-block">Job History</h2>
+    </div>
+
+    <div class="row padd-top" style="">
+
+
+        <div class=" col-sm-11">
+            <button id="jobDetailsBtn" class="btn btn-primary" style="margin-left:-15px; display:inline-block">Job Details</button>
+            <button id="bigBoardBtn" class="btn btn-primary" style="margin-left:20px">Current Jobs</button>
+        </div>
+
+
+    </div>
+
+    <div class="row col-sm-6 padd-top panel panel-primary">
+        <div class="panel-body">
+
+            <div class="row col-sm-12">
+                <div class="col-sm-4">
+                    <label >JD's Job #:</label>
+                </div>
+                <div class="col-sm-4 pull-left">
+                    @ViewBag.JobNum 
+                </div>
+            </div>
+
+            <div class="row col-sm-12">
+                <div class="col-sm-4">
+                    <label>Status:</label>
+                </div>
+                <div class="col-sm-4 pull-left">
+                    @ViewBag.Status
+                </div>
+            </div>
+
+            <div class="row col-sm-12">
+                <div class="col-sm-4">
+                    <label>Company:</label>
+                </div>
+                <div class="col-sm-4 pull-left">
+                    @ViewBag.Company
+                </div>
+            </div>
+
+            <div class="row col-sm-12">
+                <div class="col-sm-4">
+                    <label>Job Created:</label>
+                </div>
+                <div class="col-sm-4 pull-left">
+                    @ViewBag.Received
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row" style="clear:both">
+
+        <ol id="colors">
+
+            @foreach (var entry in (List<string>)ViewBag.Entries)
+            {
+                <li>
+                    @entry
+                </li>
+            }
+
+        </ol>
+
+
+
+    </div>
+
+    <div class="row" style="clear:both">
+        <label class="jd-label"></label>
+    </div>
+
+    @section scripts
+    {
+        <script>
+
+            $(function () {
+
+
+                $("#bigBoardBtn").click(function () {
+                    kendo.ui.progress($('body'), true);
+                    window.location.href = "/";
+                });
+
+                $("#jobDetailsBtn").click(function () {
+                    kendo.ui.progress($('body'), true);
+                    window.location.href = "/JobDetails?id="+ @ViewBag.JobNum;
+                });
+
+
+            });
+
+
+        </script>
+    }
+</div>

@@ -1,0 +1,13 @@
+﻿    #Content > div:nth-child(1) > div:nth-child(2) > span > span {
+        height: 33px;
+        padding-left: 5px;
+        padding-top: 2px;
+    }
+    #Content > div:nth-child(1) > div:nth-child(2) > span {
+        float: left;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+    #hiredate {
+        height: 100%;
+    }

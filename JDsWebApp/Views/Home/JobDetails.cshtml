@@ -1,0 +1,891 @@
+﻿@using JDsDataModel.ViewModels
+@model JobViewModel
+
+@{
+    ViewBag.Title = "Job Details";
+
+    //bool editMode = Model.CustomerId != 0 ? true : false;
+
+    // both existing and new jobs always have an id; having a customer id is used as the flag of an existing job,
+    // yet initially we are in view or read-only mode--not edit mode. Edit mode is triggered by the 'enable editing' action on this page
+    // (a call to SignOffSenderAction with deletepartid == 0) or by clicking new job from home--in which case we do not have a customer Id
+    bool addNewMode = Model.Header == "Add New Job";
+}
+<div id="jobDetails">
+
+    <form id="jobDetailsForm">
+
+    <div class="content-main">
+        <!-- header and actions -->
+        <div class="container">
+            <div class="row padd-top padd-bottom">
+                <div class="row col-md-3">
+                    <span class="h2">@Model.Header Test 5</span>
+                </div>
+            </div>
+            <div class="row padd-bottom ">
+                <button id="bigBoardBtn" class="btn btn-primary" type="button">Current Jobs</button>
+                <a id="historyBtn" class="btn btn-primary">History</a>
+                <button id="deleteBtn" class="btn btn-danger" type="button">Delete Job</button>
+                <a id="enableEditBtn" class="btn btn-primary">Enable Edit</a>
+            </div>
+        </div>
+
+        <!-- customer -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.CustomerId)
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.CustomerId, (SelectList)ViewBag.Customers, "Select Customer...", new { @class = "form-control ", @data_live_search = "true" })
+                @Html.ValidationMessageFor(x => x.CustomerId)
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary" id="NewCustomerBtn" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Customer</button>
+                <button class="btn btn-primary" id="EditCustomerBtn" type="button"><span aria-hidden="true"></span> Edit Customer</button>
+            </div>
+        </div>
+
+        <!-- contact -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.ContactId)
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.ContactId, (SelectList)ViewBag.Contacts, "Select Contact...", new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.ContactId)
+            </div>
+        </div>
+
+        <!-- job ID and show all parts -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.JobID)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.JobID, new { @class = "form-control", @disabled="disabled" })
+            </div>
+            <div class="col-md-3">
+                <a id="printOutgoingFormsBtn" class="btn btn-primary">Print All Part Outgoing Forms</a>
+            </div>
+        </div>
+
+        <!-- customer job number -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.CustomerJobNumber)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.CustomerJobNumber, new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.CustomerJobNumber), @autocomplete="off" })
+            </div>
+        </div>
+
+        <!-- purchase order number -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.PurchaseOrderNumber)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.PurchaseOrderNumber, new { @class = "form-control", @placeholder = Html.DisplayNameFor(x => x.PurchaseOrderNumber), @autocomplete = "off" })
+            </div>
+        </div>
+
+        <!-- date received -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.ReceivedDate)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.ReceivedDate, new { @class = "form-control datepicked-field", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.ReceivedDate)
+            </div>
+        </div>
+
+        <!-- date required -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.RequiredDate)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.RequiredDate, new { @class = "form-control datepicked-field", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.RequiredDate)
+            </div>
+        </div>
+
+        <!-- ship by date -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.ShipByDate)
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.ShipByDate, new { @class = "form-control datepicked-field", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.ShipByDate)
+            </div>
+        </div>
+
+        <!-- overtime required -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-2">
+                @Html.LabelFor(x => x.OvertimeRequired)
+            </div>
+            <div class="col-md-4">
+                @Html.ToggleButtonFor(x => x.CoercedOvertimeRequired, "OvertimeRequired", new Dictionary<string, object> { { "ST", false }, { "OT", true } })
+            </div>
+        </div>
+        @if (Model.JobID != 0)
+            {
+                <!-- hold for customer approval and quote only -->
+            <div class="row padd-top padd-bottom">
+                <div class="col-md-2"></div>
+                <div class="col-md-3">
+                    @Html.LabelFor(m => m.HoldForCustomerApproval)
+                    <br />
+                    @Html.CheckBoxFor(m => m.CoercedHoldForCustomerApproval, new { id = "HoldForCustomerApproval", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(m => m.QuoteOnly)
+                    <br />
+                    @Html.CheckBoxFor(m => m.CoercedQuoteOnly, new { id = "QuoteOnly", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                </div>
+            </div>
+
+            <!-- all parts require PT, UT -->
+                <div class="row padd-top padd-bottom">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(m => m.AllPartsRequirePT)
+                        <br />
+                        @Html.CheckBoxFor(m => m.CoercedAllPartsRequirePT, new { id = "AllPartsRequirePT", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(m => m.AllPartsRequireUT)
+                        <br />
+                        @Html.CheckBoxFor(m => m.CoercedAllPartsRequireUT, new { id = "AllPartsRequireUT", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                    </div>
+                </div>
+
+            <!-- new part button -->
+                <div class="row padd-top padd-bottom">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" id="NewPartBtn"><span class="glyphicon glyphicon-plus" data-toggle="modal" aria-hidden="true"></span> New Part</button>
+                    </div>
+                </div>
+
+            <!-- parts grid -->
+                <div class="row padd-top padd-bottom">
+                    <div class="col-md-12">
+                        <div id="jobpartsgrid"></div>
+                    </div>
+                </div>
+            }
+
+        <!-- notes -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-12">
+                <div class="jd-table">
+                    <div class="jd-table-row">
+                        <div class="jd-table-cell jd-width-sm">
+                            @Html.LabelFor(x => x.JobNotes)
+                        </div>
+                        <div class="jd-table-cell jd-width-50">
+                            @Html.TextAreaFor(x => x.JobNotes, new { @class = "form-control", placeholder = "Please enter important notes about this job" })
+                        </div>
+                        <div class="jd-table-cell jd-width-smaller"></div>
+                        <div class="jd-table-cell"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- save and cancel -->
+        <div class="row padd-top padd-bottom">
+            <div class="col-md-12">
+                <button id="saveBtn" type="submit" class="btn btn-primary">Save</button>
+                <button id="cancelBtn" class="btn btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    @Html.HiddenFor(x => x.JobID)
+</form>
+
+    <div class="modal fade" id="signOffModal" role="dialog" data-backdrop="static"  data-keyboard="false"  >
+        <div class="modal-dialog">
+            <h4 class="modal-header"> Sign In</h4>
+            <div id="signOffContentDiv"></div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="partDetailsModal" role="dialog" data-backdrop="static"  data-keyboard="false">
+        <div class="modal-dialog">
+            <h4 class="modal-header"> Add/Edit Bearing </h4>
+                <div id="partDetailsContentDiv" >
+                </div>           
+        </div>
+    </div>
+
+    <div class="modal fade" id="customerdetailsmodal" role="dialog" data-backdrop="static"  data-keyboard="false">
+        <div class="modal-dialog" style="width: 710px; background-color: transparent;">
+            <div class="modal-header" style="background-color: #215fa8; height: 60px; padding-bottom: 35px">
+                <h4 style="color: white; width: auto; float: none; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Add/Edit Customer</h4>
+            </div>            
+            <div id="customercontactcontentdiv" style="background:white; padding: 20px;">
+            </div>
+            <div style="height:400px; background:transparent;">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sizesModal" role="dialog" data-backdrop="static"  data-keyboard="false">
+        <div class="modal-dialog" style="background:transparent;">
+            <h4 class="modal-header"> Add Sizes </h4>
+                <div id="sizesContentDiv" style="background:white;"></div>
+            <div style="height:400px; background:transparent;">
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+<div class="extraSpaceAtBtmDiv"></div>
+<div id="printAllOFdiv"></div>
+<script>
+
+    // global set after editing enabled
+    var editMode = false;
+
+    // When user clicks/touches an input... select all text
+    $("input[type='text']").on("click", function () {
+        $(this).select();
+    });
+
+    var deletepartid = 0;
+    var deleteJob = false;
+
+    $('#jobDetailsForm').submit(function(e){
+        e.preventDefault();
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddJob", "Home")',
+            data: $(this).serialize(),
+            success: function(data) {
+                if(data.IsSuccessful == true)
+                {
+                    window.location = "/JobDetails/" + data.JobID;
+                    jobDetailsForm_OnSuccess();
+                }
+
+                else {
+                    $("#main-container").html(data.View);
+                }
+
+                 
+            },
+            error: jobDetailsForm_OnFailure
+
+        });
+
+        return false;
+    });
+        
+    function loadProcessForPart(stepNumber, partId) {        
+
+        if ($('#CustomerId').val() != "" && $('#ContactId').val() != "" && 
+            $('#RequiredDate').val() != "" && $('#ShipByDate').val() != "")
+        {
+            kendo.ui.progress($('body'), true);
+
+            // Form is valid... save
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddJob", "Home")',
+                data: $('#jobDetailsForm').serialize(),
+                success: function (data) {
+                    $.ajax({
+                        url: "/ProcessBabbitBearing/GetProcessIdFromPartId?partId=" + partId,
+                        type: "GET",
+                        data: { partId: partId },
+                        success: function (data) {
+                            var procId = data;
+                            var method = "";
+                            switch (stepNumber) {
+                                case 1:
+                                    method = "BB1_IncomingInspection";
+                                    break;
+                                case 2:
+                                    method = "BB2_PrecastRoughout";
+                                    break;
+                                case 3:
+                                    method = "BB3_SpincastProcess";
+                                    break;
+                                case 4:
+                                    method = "BB4_PostcastCleanup";
+                                    break;
+                                case 5:
+                                    method = "BB5_PostcastRoughout";
+                                    break;
+                                case 6:
+                                    method = "BB6_InsulationProcess";
+                                    break;
+                                case 7:
+                                    method = "BB7_CleanupProcess";
+                                    break;
+                                case 8:
+                                    method = "BB8_FinalMachineInspection";
+                                    break;
+                                case 9:
+                                    method = "BB9_FinishBoreProcess";
+                                    break;
+                                case 10:
+                                    method = "BB10_FinalAssembly";
+                                    break;
+                                case 11:
+                                    method = "BB12_Delivery";
+                                    break;
+                                case 12:
+                                    method = "BB12_Delivery";
+                                    break;
+                                case 13:
+                                    method = "BB13_FinalSignOff";
+                                    break;
+                            }
+
+                            $.ajax({
+                                url: "/ProcessBabbitBearing/" + method,
+                                data: { id: procId },
+                                success: function (data) {
+                                    window.location = "/ProcessBabbitBearing/" + method + "?id=" + procId;
+                                    kendo.ui.progress($('body'), false);
+                                }
+                            });
+                        }
+                    });
+
+                },
+                error: jobDetailsForm_OnFailure
+
+            });
+        }
+        else
+        {
+            // Required fields missing entries
+            $('#jobDetailsForm').valid();
+            bootbox.alert("Required fields must be filled out before continuing", function () {});
+        }       
+    }
+        
+    function LoadContactsDropDown() {
+        
+        var selectedItemId = $("#CustomerId").val();
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: '@Url.Action("GetContacts", "Home")',
+            data: { customerId: selectedItemId },
+            success: function (contacts)
+            {
+                $("#ContactId").empty();
+                    
+                if (contacts.length > 0)
+                {
+                    $("#ContactId").append('<option value="">Select Contact...</option>');
+
+                    var primaryContactId = 0;
+                        
+                    $.each(contacts, function (i, contact)
+                    {
+                        $("#ContactId").append('<option value="'
+                         + contact.ContactID + '">'
+                         + contact.ContactName + '</option>');
+                        if (contact.IsPrimaryContact)
+                        {
+                            primaryContactId = contact.ContactID;
+                        }
+                    });
+
+                    // which one is the primary one? Set it
+                    $("#ContactId").val(primaryContactId);
+                }
+                else
+                {
+                    $("#ContactId").append('<option value="">No Contacts</option>');
+                }
+            },
+            error: function (err)
+            {
+                $("#ContactId").empty();
+                $("#ContactId").append('<option value="">No Contacts</option>');
+            }
+        });
+    }
+    
+
+    $(document).ready(function() {
+
+        var datePicker = $("#ReceivedDate").kendoDatePicker({
+            format: "MM/dd/yyyy"
+        });
+
+        var datePicker = $("#RequiredDate").kendoDatePicker({
+            change: function() {
+                var value = this.value();
+                $("#ShipByDate").data("kendoDatePicker").value(value);
+            },
+            format: "MM/dd/yyyy"
+        });
+
+        var datePicker = $("#ShipByDate").kendoDatePicker({
+            format: "MM/dd/yyyy"
+        });
+
+        $("#jobpartsgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadPartsForJob", "Home", new {id = Model.JobID})",
+                    pageSize: 5
+                }
+            },
+            scrollable: false,
+            sortable: true,
+            columns: [{
+                field: "ItemCode",
+
+            },{
+                field: "WorkScope",
+            },{
+                field: "PartType",
+            },{
+                field: "IdentifyingInfo",
+            },{
+                field: "",
+                template: "<input type='button' class='btn btn-primary' style='width: 75px' value='Edit' onclick='EditJobPart(#=PartID#)' />",
+                width: 80
+            },{
+                field: "",
+                template: "<input type='button' class='btn btn-danger'  style='width: 75px' value='Delete' onclick='DeleteJobPart(#=PartID#)' />",
+                width: 80
+            },{
+                field: "",
+                template: "<input type='button' class='btn btn-primary process'  style='width: 75px' value='Process' onclick='loadProcessForPart(#=StepNumber#,#=PartID#)' />",
+                width: 80
+            }]
+        });
+
+        $("#CustomerId").change(function () {
+            var selectedItemId = $(this).val();
+        
+            // show/hide the edit customer button
+            if (parseInt(selectedItemId || '0') > 0)
+                $("#EditCustomerBtn").show();
+            else
+                $("#EditCustomerBtn").hide();
+
+            LoadContactsDropDown();
+        });
+
+        $("#printOutgoingFormsBtn").click(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '/Part/OutgoingFormForJob/',
+                data: {
+                    jobId: @Model.JobID,
+                },
+                success: function (data) {
+                                        
+                    // Print Logic
+                    $("#printAllOFdiv").append(data);
+
+                    var printContents = document.getElementById('printAllOFdiv').innerHTML;
+                    var origContents = document.body.innerHTML;
+                    document.body.innerHTML = printContents;
+
+                    // get original padding size for body element
+                    var origPaddingSize = $('body').css('padding');
+
+                    // set new padding on body to fit screen for print
+                    $('body').css('padding', '50px');
+                    window.print();
+
+                    // put things back the way they were
+                    document.body.innerHTML = origContents;
+                    $('body').css('padding', origPaddingSize);
+
+                    // empty div
+                    $("#printAllOFdiv").empty();
+                },
+                error: function (err) {
+                    bootbox.alert("Error in AJAX OutgoingFormForJob", function () {
+                    });
+                }
+            });
+        });
+
+        $("#NewPartBtn").click(function (e) {
+            e.preventDefault();
+            var reqPT = $('#AllPartsRequirePT').is(':checked');
+            var reqUT = $('#AllPartsRequireUT').is(':checked');           
+            
+            $.ajax({
+                url: '@Url.Action("PartDetails", "Part")',
+                type: 'POST',
+                data: {
+                    jobID: @Model.JobID,
+                    // TODO: WIRE
+                    partID: 0,
+                    requiresPT: reqPT,
+                    requiresUT: reqUT
+                },
+                success: function (data) {
+                    $('#partDetailsContentDiv').html(data);
+                    $('#partDetailsContentDiv').fadeIn('fast');
+                    $('#partDetailsModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Error AJAX PartDetails", function () {});
+                    $("#partDetailsModal").modal('hide');
+                }
+            });
+        });
+
+
+        $("#NewCustomerBtn").click(function(e) {
+            e.preventDefault();            
+            LoadCustomerDetails(0);
+        });
+
+        $("#EditCustomerBtn").click(function(e) {
+            e.preventDefault();
+            var custid = $('#CustomerId').val();
+            LoadCustomerDetails(custid);
+        });
+
+        $("#AddContactBtn").click(function(e) {
+            e.preventDefault();
+        });
+
+        $("#enableEditBtn").click(function() {
+            deletepartid = 0;   // prevent this sign off action...
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff")',
+                type: 'GET',
+                data: { skillName: "Start/Edit Jobs" },
+                success: function (data) {
+
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+
+                    editMode = true;
+                },
+                error: function (e) {
+                    bootbox.alert("Failed to communicate with the server", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        });
+    });
+
+    $("#deleteBtn").click(function(e) {
+        e.preventDefault();
+        var JobId = "@Model.JobID";        
+        deleteJob = true;
+
+        $.ajax({
+        url: '@Url.Action("SignOff", "SignOff")',
+        type: 'GET',
+        data: { skillName: "Management" },
+        success: function (data) {
+            $('#signOffContentDiv').html(data);
+            $('#signOffContentDiv').fadeIn('fast');
+            $('#signOffModal').modal('show');
+            },
+            error: function (e) {
+            bootbox.alert("Failed to communicate with the server", function () {});
+                $("#signOffModal").modal('hide');
+            }
+        });
+    });
+
+    $("#cancelBtn").click(function (e) {
+            e.preventDefault();
+        window.location.href = "/";
+    });
+
+    $("#bigBoardBtn").click(function (e) {
+        e.preventDefault();
+        window.location.href = "/";
+    });
+
+    $("#historyBtn").click(function () {
+        var jobId = "@Model.JobID";
+
+        window.location.href = "/JobHistory/Index/" + jobId;
+    });
+        
+    $("#customerdetailsmodal").on("hidden.bs.modal", function () {
+        LoadContactsDropDown();
+    })
+
+    function LoadCustomerDetails(customerid) {
+
+        $.ajax({
+            url: '@Url.Action("CustomerDetails", "Customer")',
+            data: {
+                id: customerid
+            },
+            success: function(data) {
+                $('#customercontactcontentdiv').html(data);
+                $('#customercontactcontentdiv').fadeIn('fast');
+                $('#customerdetailsmodal').modal('show');
+            },
+            error: function(e) {
+                $("#customerdetailsmodal").modal('hide');
+            }
+        });
+    }
+
+
+        function jobDetailsForm_OnSuccess() {
+            var jobId=@Model.JobID;
+        
+            addJobChangeLogEntry(jobId, 'Job saved');                
+            notification.show({ message: "SAVED SUCCESSFULLY", width: 450 }, "successful");       
+        }
+
+    function SignOffSenderAction(empname) {
+        var jobId=@Model.JobID;
+        addJobChangeLogEntry(jobId, 'Job editing enabled by ' + empname);
+
+        if (deleteJob === true) {
+            $("#signOffModal").modal('hide');
+            bootbox.confirm("Are you sure you want to delete this job", function (result) {
+                if(result === true){
+                    $.ajax({
+                        url: '@Url.Action("DeleteJob", "Home")',
+                        type: 'POST',
+                        data: { id: @Model.JobID },
+                        success: function (data,status,response) {
+                            if (response.statusText == "OK") {
+
+                                addJobChangeLogEntry(@Model.JobID, 'Job deleted');
+
+                                notification.setOptions({
+                                    hide:function () {
+                                        window.location.href = "/";
+                                    }
+                                });
+
+                                notification.show({
+                                    message: "DELETED SUCCESSFULLY"
+                                }, "successful");
+                            }
+                        },
+                        error: function (e) {
+                            bootbox.alert("Failed to communicate with server", function () {});
+                        }
+                    });
+                }
+            });
+        } 
+        else if (deletepartid == 0) 
+        {
+            enableForm();
+            $("#signOffModal").modal('hide');
+        }
+        else {
+            $.ajax({
+                type: 'POST',
+                url: '/DeleteJobPart/',
+                data: { id: deletepartid },
+                success: function (data,status,response) {
+                    $("#signOffModal").modal('hide');
+                    if (response.statusText == "OK") {
+                        $('#jobpartsgrid').data('kendoGrid').dataSource.read();
+                    } else {
+                        bootbox.alert("Error DeleteJobPart", function () {});
+                    }
+                },
+                error: function (data) {
+                    bootbox.alert("Error AJAX DeleteJobPart", function () {});
+                }
+            });
+        }
+    }
+
+    function onShow(e)
+    {
+        if (!$("." + e.sender._guid)[1]) {
+            var element = e.element.parent(),
+                eWidth = element.width(),
+                eHeight = element.height(),
+                wWidth = $(window).width(),
+                wHeight = $(window).height(),
+                newTop, newLeft;
+
+            newLeft = Math.floor(wWidth / 2 - eWidth / 2);
+            newTop = Math.floor(wHeight / 2 - eHeight / 2);
+
+            e.element.parent().css({left: newLeft});
+        }
+    }
+
+    function jobDetailsForm_OnFailure() {
+        bootbox.alert("Failed", function () {});
+    }
+
+    function EditJobPart(id) {
+        $.ajax({
+            url: '@Url.Action("PartDetails", "Part")',
+            type: 'GET',
+            data: {
+                jobID: @Model.JobID,
+                partID: id
+            },
+            success: function (data) {
+
+                $('#partDetailsContentDiv').html(data);
+                $('#partDetailsContentDiv').fadeIn('fast');
+                $('#partDetailsModal').modal('show');
+            },
+            error: function (e) {
+                bootbox.alert("Error AJAX PartDetails", function () {});
+                $("#partDetailsModal").modal('hide');
+            }
+        });
+    }
+
+    function DeleteJobPart(id)
+    {
+        deletepartid = id;
+
+        $.ajax({
+            url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+            type: 'GET',
+            data: { skillName: "Management" },
+            success: function (data) {
+                $('#signOffContentDiv').html(data);
+                $('#signOffContentDiv').fadeIn('fast');
+                $('#signOffModal').modal('show');
+            },
+            error: function (e) {
+                bootbox.alert("Failed to communicate with server", function () {});
+                $("#signOffModal").modal('hide');
+            }
+        });
+    }
+
+    // some stuff can only be done after the page has loaded--when all client-side dynamic HTML has been generated
+    window.onload = function()
+    {
+        if ("@addNewMode" == "True")
+        {
+            $("#enableEditBtn").hide();
+            $("#deleteBtn").hide();
+
+            enableForm();
+
+            // hopefully this means add new job, but to be sure:
+            var selectedItemId = $("#CustomerId").val();
+
+            // show/hide the edit customer button
+            if (parseInt(selectedItemId || '0') > 0)
+            {
+                // enable ST|OT toggle
+                $("#OvertimeRequiredGroup label").removeClass("disabled");
+                
+                // hide the edit customer button
+                $("#EditCustomerBtn").hide();
+            }
+        }
+        else
+        {
+            // we're in view or read-only mode until editing is signed off
+            disableForm();
+        }
+    }
+
+    function disableForm() {
+        $("#CustomerId").prop("disabled", true);
+        $("#ContactId").prop("disabled", true);
+
+        $(".bootstrap-select").prop("disabled", true);
+
+        $("#CustomerJobNumber").prop("disabled", true);
+        $("#PurchaseOrderNumber").prop("disabled", true);
+        $("#RequiredDate").prop("disabled", true);
+        $("#ReceivedDate").prop("disabled", true);
+        $("#ShipByDate").prop("disabled", true);
+        $("#RequiredDate").data("kendoDatePicker").enable(false);
+        $("#ReceivedDate").data("kendoDatePicker").enable(false);
+        $("#ShipByDate").data("kendoDatePicker").enable(false);
+
+        $("#OvertimeRequiredGroup label:not(.active)").addClass("disabled");
+
+        $('#HoldForCustomerApproval').prop('disabled', true);
+        $('#QuoteOnly').prop('disabled', true);
+        $('#AllPartsRequireUT').prop('disabled', true);
+        $('#AllPartsRequirePT').prop('disabled', true);
+        $("#JobNotes").prop('disabled', true);
+        $("#saveBtn").prop('disabled', true);
+        $("#deleteBtn").prop('disabled', true);
+        $("#NewCustomerBtn").prop('disabled', true);
+        $("#EditCustomerBtn").prop('disabled', true);
+        $("#AddContactBtn").prop('disabled', true);
+        $("#NewPartBtn").prop('disabled', true);
+
+        if ("@Model.JobID" != "0") {
+            // job parts grid--delay until data bound and use edit mode global
+            $("#jobpartsgrid").data("kendoGrid").bind("dataBound", function(e)
+            {
+                $(this.element).find("input:not('.process')").prop('disabled', !editMode);
+            });
+        }
+    }
+
+    function enableForm()
+    {
+        $("#formFieldSet").prop("disabled",false);
+
+        $("#CustomerId").prop("disabled",false);
+        $("#ContactId").prop("disabled",false);
+        $(".bootstrap-select").prop("disabled",false);
+
+        $("#CustomerJobNumber").prop("disabled",false);
+        $("#PurchaseOrderNumber").prop("disabled",false);
+        
+        $("#RequiredDate").data("kendoDatePicker").enable();
+        $("#ReceivedDate").data("kendoDatePicker").enable();
+        $("#ShipByDate").data("kendoDatePicker").enable();
+        $("#RequiredDate").prop({"disabled": false, "readOnly": true});
+        $("#ReceivedDate").prop({"disabled": false, "readOnly": true});
+        $("#ShipByDate").prop({"disabled": false, "readOnly": true});
+        
+        $("#OvertimeRequiredGroup label").removeClass("disabled");
+        
+        $('#HoldForCustomerApproval').prop('disabled', false);
+        $('#QuoteOnly').prop('disabled', false);
+        $('#AllPartsRequireUT').prop('disabled', false);
+        $('#AllPartsRequirePT').prop('disabled', false);
+        $("#JobNotes").prop('disabled', false);
+        $("#saveBtn").prop('disabled', false);
+        $("#deleteBtn").prop('disabled', false);
+        $("#NewCustomerBtn").prop('disabled', false);
+        $("#EditCustomerBtn").prop('disabled', false);
+        $("#AddContactBtn").prop('disabled', false);
+        $("#NewPartBtn").prop('disabled', false);
+
+        if("@Model.JobID" != "0") {
+            // job parts grid
+            $("#jobpartsgrid input").prop('disabled', false);
+        }
+    }
+
+    $('.datepicked-field').click(
+        function() {
+            $(this).data("kendoDatePicker").open();
+        });
+</script>

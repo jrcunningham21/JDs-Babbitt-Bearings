@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Employee Management";
+}
+<link href="~/Content/EmployeeMgmt.css" rel="stylesheet" />
+<script>
+    $('#employMgmtEntry').addClass('aside-entry-active');
+    $('#employMgmtEntry').css('font-size', 12);
+</script>
+@if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && HttpContext.Current.Request.Cookies["EmployeeRole"].Value == "Manager")
+{
+    <div id="Content" class="wrapper" style="width: 100%">
+        <div style="width: 305px">
+            <div>
+                <h3 style="margin-left: 0px">Employee Management</h3>
+            </div>
+            <div>
+                <input id="employeelist" onclick="clearText()" />                
+                <a class="btn btn-success" onclick="NewEmployee()" style="float: left; width: 75px; line-height:normal; margin-top:4px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New</a>
+            </div>
+        </div>
+        <div>
+            <div id="employeecontentdiv" style="display:block">
+        
+            </div>      
+            <div class="row" style="clear:both; float:right">
+                <label id="statuslabel" style="margin:10px" class="jd-label"></label>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}
+
+@section scripts
+{
+    <script>
+        function LoadEmployee(employeeId) {
+
+            $.get('/EmployeePortal/EmployeeManagement/EmployeeDetails/' + employeeId, function (data) {
+                $('#employeecontentdiv').html(data);
+                $('#employeecontentdiv').fadeIn('fast');
+            });
+        }
+
+        function LoadSelectedEmployee() {
+
+            var employeeId = $('#employeelist').val();
+
+            if (employeeId != 0) {
+                LoadEmployee(employeeId);
+            } else {
+                LoadEmployeeDropDownList();
+                $("#employeelist").data("kendoDropDownList").dataSource.one("change", LoadSelectedEmployee);
+            }
+
+        }
+
+        function LoadSelectedEmployeeClearStatus() {
+
+            $('#statuslabel').text("");
+            LoadSelectedEmployee();
+        }
+
+        function LoadSelected() {
+            if ($('#_employeepartialview').val() === 'employefiles') {
+                LoadSelectedEmployeeFiles();
+            } else {
+                LoadSelectedEmployee();
+            }
+        }
+
+        function NewEmployee() {
+
+            $('#statuslabel').text("");
+            var id = $("#employeelist").val();
+            if (id != 0) {
+                $("#employeelist").getKendoDropDownList().dataSource.insert({
+                    EmployeeId: "0",
+                    EmployeeName: "New Employee"
+                });
+
+                $("#employeelist").data("kendoDropDownList").select(0);
+                LoadEmployee(0);
+            }
+        }
+
+        function LoadEmployeeDropDownList() {
+            $("#employeelist").kendoDropDownList({
+                dataTextField: "EmployeeName",
+                dataValueField: "EmployeeId",
+                change: LoadSelectedEmployeeClearStatus,
+                //dataBound: LoadSelectedEmployee,
+                dataSource: {
+                    transport: {
+                        read: {
+                            dataType: "json",
+                            url: "/EmployeePortal/EmployeeManagement/GetEmployees"
+                        }
+                    }
+                },
+                index: 0
+            });
+        }
+
+        $(function () {
+            LoadEmployeeDropDownList();
+            $("#employeelist").data("kendoDropDownList").dataSource.one("change", LoadSelectedEmployee);
+        });
+    </script>
+}

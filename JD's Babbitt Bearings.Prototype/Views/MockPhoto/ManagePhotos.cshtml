@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "ManagePhotos";
+}
+<style>
+    .img-row{
+        
+        margin:5px;
+        padding:5px;
+    }
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+        width: 130px;
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+
+<div class="container-fluid form-container">
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDeleteModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Delete this photo - are you sure?</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>Customer:</label> Acme Parts, Inc.
+                        </div>
+                        <div class="form-group">
+                            <label>JD's Job #:</label> 3004
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Delete this photo </button>
+                        <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Don't delete this photo </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="editPhotoDialog" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Add / Edit Photo</h4>
+                </div>
+
+                <div class="container-fluid form-container">
+                    <div class="row">
+
+                        <div class="col-md-4" style="margin-top:20px">
+                            <img src="~/Images/MockPhotos/bearing1.jpg" style="max-width:100%;"/>
+                        </div>
+
+                        <div class="col-md-8">
+                            <h3>Notes</h3>
+                            <textarea type="text" class="form-control" id="psw" placeholder="Notes" style="height:100px"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom:20px; margin-top:20px">
+
+                        <div class="col-md-3 ">
+                            <button id="takePhotoBtn" type="submit" class="btn btn-success" style="width:100%"><span class="glyphicon glyphicon-camera"></span> Take photo</button>
+                        </div>
+
+                        <div class="col-md-3">
+                            @*<button type="submit" class="btn " data-dismiss="modal" style="width:100%"> Upload </button>*@
+                            @*<input type="file" name="pic" accept="image/*">*@
+                            <span class="btn btn-default btn-file" >
+                                Upload <input type="file">
+                            </span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <button type="submit" class="btn " data-dismiss="modal" style="width:100%"> Save</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-warning " data-dismiss="modal" style="width:100%"> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <h1 class="col-md-6">Slinger Ring Photos</h1>
+        <h1 class="col-md-6" style="text-align:right">Job# 5913</h1>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px; border-top-left-radius:10px; border-top-right-radius:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/bearing1.jpg">
+                <img src="~/Images/MockPhotos/bearing1.jpg" width="200" />
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Photo taken before substantial work begins. Consider the details of the surface before starting lathe work.  Note the oil streaks caused by faulty gaskets.
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editPhotoBtn1" class="btn  btn-block">Edit</button>
+            <button id="deletePhotoBtn1" class="btn btn-danger btn-block">Delete</button>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4" >
+            <a href="~/Images/MockPhotos/bearing2.jpg" >
+                <img src="~/Images/MockPhotos/bearing2.jpg" width="200" />
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Note the oil streaks caused by faulty gaskets.  Photo taken before substantial work begins. Consider the details of the surface before starting lathe work.  
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editPhotoBtn2" class="btn  btn-block">Edit</button>
+            <button id="deletePhotoBtn2" class="btn btn-danger btn-block">Delete</button>
+        </div>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/oilshield1.jpg">
+                <img src="~/Images/MockPhotos/oilshield1.jpg" width="200" />
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Consider the details of the surface before starting lathe work.  Note the oil streaks caused by faulty gaskets.  Photo taken before substantial work begins.
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editPhotoBtn3" class="btn  btn-block">Edit</button>
+            <button id="deletePhotoBtn3" class="btn btn-danger btn-block">Delete</button>
+        </div>
+    </div>
+
+    <div class="row img-row" style="margin-top:10px;">
+
+        <div class="col-md-4">
+            <a href="~/Images/MockPhotos/slinger1.jpg">
+                <img src="~/Images/MockPhotos/slinger1.jpg" width="200" />
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <div class="">
+                <h3>Notes:</h3>
+            </div>
+            <div>
+                Photo taken before substantial work begins.  Consider the details of the surface before starting lathe work.  Note the oil streaks caused by faulty gaskets.  
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin-top:50px">
+            <button id="editPhotoBtn4" class="btn  btn-block">Edit</button>
+            <button id="deletePhotoBtn4" class="btn btn-danger btn-block">Delete</button>
+        </div>
+    </div>
+
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-4 col-md-offset-4">
+            <button id="addPhotoBtn" type="submit" class="btn btn-success" style="width:100%"><span class="glyphicon glyphicon-camera"></span> Add new photo</button>
+        </div>
+        <div class="col-md-4">
+            <button id="backBtn" type="submit" class="btn " style="width:100%">Back</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#deletePhotoBtn1").click(function (e) {
+            e.preventDefault();
+            $("#confirmDeleteModal").modal();
+        });
+
+        $("#deletePhotoBtn2").click(function (e) {
+            e.preventDefault();
+            $("#confirmDeleteModal").modal();
+        });
+
+        $("#deletePhotoBtn3").click(function (e) {
+            e.preventDefault();
+            $("#confirmDeleteModal").modal();
+        });
+
+        $("#deletePhotoBtn4").click(function (e) {
+            e.preventDefault();
+            $("#confirmDeleteModal").modal();
+        });
+
+
+        $("#editPhotoBtn1").click(function (e) {
+            e.preventDefault();
+            $("#editPhotoDialog").modal();
+        });
+
+        $("#editPhotoBtn2").click(function (e) {
+            e.preventDefault();
+            $("#editPhotoDialog").modal();
+        });
+
+        $("#editPhotoBtn3").click(function (e) {
+            e.preventDefault();
+            $("#editPhotoDialog").modal();
+        });
+
+        $("#editPhotoBtn4").click(function (e) {
+            e.preventDefault();
+            $("#editPhotoDialog").modal();
+        }); 
+
+        $("#addPhotoBtn").click(function (e) {
+            e.preventDefault();
+            $("#editPhotoDialog").modal();
+        });
+
+        $("#backBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockSlingerRing/IncomingInspection';
+        });
+
+
+        $("#takePhotoBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockPhoto/TakePhoto';
+        });
+
+    });
+
+</script>

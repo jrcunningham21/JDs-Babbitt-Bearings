@@ -1,0 +1,256 @@
+﻿@using JDsDataModel.ViewModels;
+
+@{
+    ViewBag.Title = "AllJobs";
+}
+
+<section class="section">
+    <div class="row padd-bottom padd-top">
+        <h2 style="display:inline-block;">All Jobs</h2>
+        <div style="float:right; margin-top:20px;">
+            <button style="display:inline-block" id="newJobBtn" class="btn btn-primary">New Job</button>
+            <input id="search" type="search" placeholder="Search..." class="alljobs-search form-control" onkeyup="filter($(this).val())" />
+        </div>
+    </div>
+
+    <div id="grid" style="height:600px;"></div>
+
+    <div class="modal fade" id="signOffModal" role="dialog">
+        <div class="modal-dialog">
+                <h4 class="modal-header">Sign Off</h4>
+            <div id="signOffContentDiv"></div>
+        </div>
+    </div>
+
+    @{Html.RenderPartial("~/Views/Part/PartInfoPopUpModal.cshtml");}
+
+</section>
+
+<script id="template" type="text/kendo-tmpl">
+    <div class="partDetail">
+
+    </div>
+</script>
+
+@section scripts
+{
+    <script>
+        function dataBound() {
+            this.expandRow(this.tbody.find("tr.k-master-row").first());
+        }
+        
+        function initJobDetailsGrid(e) {
+            var jobID = $("#grid").data("kendoGrid").dataItem(e.masterRow).JobID;
+            $(e.detailRow.find(".partDetail")).kendoGrid({
+                dataSource:{
+                    transport: {
+                        type: "jsonp",
+                        read: "@Url.Action("Read_Parts", "Home")" + "?JobId=" + jobID
+                    },
+                    pageSize: 10
+                },
+                pageable: true,
+                sortable: true,
+                columns: [{
+                    field: "PartID",
+                    title: "Part ID",
+                    width: 50
+                }, {
+                    field: "PartTypeName",
+                    title: "Part Type Name",
+                    width: 110
+                }, {
+                    field: "CurrentStep",
+                    title: "Current Step",
+                    width: 110,
+                    template: "<label style='text-decoration:underline; cursor:pointer;' onclick='loadProcess(#=StepNumber #, #=PartID #)'>#=CurrentStep #</label>"
+                }, {
+                    field: "PTUTDesc",
+                    title: "PTUT Desc",
+                    width: 110    
+                }, {
+                    field: "PartStatus",
+                    title: "Part Status",
+                    width: 50
+                }, {
+                    field: "",
+                    width: 50,
+                    template: "<input type='button' class='btn btn-primary' onclick='showPartInfo(#=PartID #)' name=PartID value='Part Info' readonly='readonly'/>"
+                }]
+            });
+        }
+
+        $("#grid").kendoGrid({
+            dataSource: {
+                transport: {
+                    dataType: "jsonp",
+                    read: "@Url.Action("Read_AllJobs", "Home")"
+                },
+                pageSize: 20
+            },
+            sortable: true,
+            pageable: true,
+            scrollable: true,
+            filterable: true,
+            detailTemplate: kendo.template($('#template').html()),
+            detailInit: initJobDetailsGrid,
+            dataBound: dataBound,
+            columns: [{
+                field: "JobID",
+                title: "JD's Job #",
+                width: 50
+            }, {
+                field: "CustomerJobNumber",
+                title: "Customer Job #",
+                width: 110,
+                template: "<label style='text-decoration:underline; cursor:pointer;' onclick='loadJob(#=JobID#)'>#=CustomerJobNumber#</label>"
+            }, {
+                field: "CompanyName",
+                title: "Company Name",
+                width: 110
+            }, {
+                field: "RequiredDate",
+                title: "Required Date",
+                width: 60,
+                template: "#= RequiredDate ? kendo.toString(kendo.parseDate(RequiredDate, 'yyyy-MM-dd'), 'MM/dd/yyyy')  : '' #"
+            }, {
+                field: "JobStatus",
+                title: "Job Status",
+                width: 110
+            }, {
+                field: "FinalPrint",
+                title: "Final Print",
+                width: 50
+            }]
+        });
+
+        function filter(text) {
+
+            $('#grid').data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    {
+                        field: "CustomerJobNumber",
+                        operator: "contains",
+                        value: text
+                    },
+                    {
+                        field: "CompanyName",
+                        operator: "contains",
+                        value: text
+                    },
+                    {
+                        field: "JobStatus",
+                        operator: "contains",
+                        value: text
+                    },
+                    {
+                        field: "FinalPrint",
+                        operator: "contains",
+                        value: text
+                    }
+                ]
+            });
+        }
+
+        function loadJob(id) {
+            $.ajax({
+                url: '@Url.Action("JobDetails", "Home")',
+                data: { id: id },
+                success: function (data) {
+                    window.location = "JobDetails?id=" + id;
+                }
+            });
+        }
+
+        function loadProcess(stepNumber, id) {
+            var method = "";
+            switch (stepNumber) {
+                case 1:
+                    method = "BB1_IncomingInspection";
+                    break;
+                case 2:
+                    method = "BB2_PrecastRoughout";
+                    break;
+                case 3:
+                    method = "BB3_SpincastProcess";
+                    break;
+                case 4:
+                    method = "BB4_PostcastCleanup";
+                    break;
+                case 5:
+                    method = "BB5_PostcastRoughout";
+                    break;
+                case 6:
+                    method = "BB6_InsulationProcess";
+                    break;
+                case 7:
+                    method = "BB7_CleanupProcess";
+                    break;
+                case 8:
+                    method = "BB8_FinalMachineInspection";
+                    break;
+                case 9:
+                    method = "BB9_FinishBoreProcess";
+                    break;
+                case 10:
+                    method = "BB10_FinalAssembly";
+                    break;
+                case 11:
+                    method = "BB12_Delivery";
+                    break;
+                case 12:
+                    method = "BB12_Delivery";
+                    break;
+                case 13:
+                    method = "BB13_FinalSignOff";
+                    break;
+            }
+
+            $.ajax({
+                url: "/ProcessBabbitBearing/GetProcessIdFromPart/",
+                data: { PartId: id },
+                success: function (data) {
+                    window.location = "ProcessBabbitBearing/" + method + "?id=" + data;
+                }
+            });
+        }
+
+
+        function showPartInfo(partId) {
+            
+            showPartPopup(partId, 0);
+        }
+
+        /*SignOff Start*/
+        $("#newJobBtn").click(function () {
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff")',
+                type: 'GET',
+                data: { skillName: "Start/Edit Jobs" },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    newJobBtnClicked = true;
+                },
+                error: function (e) {
+                    bootbox.alert("Error", function () { });
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        });
+
+        function SignOffSenderAction(empname) {
+            if(newJobBtnClicked)
+            window.location.href = "/JobDetails";
+            else
+            {
+                $("#signOffModal").modal('hide');
+                showCustomerSizes();
+            }
+        }
+        /*SignOff End*/
+    
+    </script>
+}

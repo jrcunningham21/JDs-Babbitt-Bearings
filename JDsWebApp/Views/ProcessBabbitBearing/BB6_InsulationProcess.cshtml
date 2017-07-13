@@ -1,0 +1,361 @@
+﻿@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB6_InsulationProcessViewModel
+
+@{
+    ViewBag.Title = "BB6_InsulationProcess";
+}
+
+<div class="row">
+    <h4>Insulation Process</h4>
+</div>
+
+<form id="process_bb6_form">
+    <div class="jd-table">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Version)
+        @Html.HiddenFor(m => m.JobId)
+        @Html.HiddenFor(m => m.PartId)
+        @Html.HiddenFor(m => m.ProcessId)
+        @Html.HiddenFor(m => m.StepId)
+        @Html.HiddenFor(m => m.IsUTRequired)
+        @Html.HiddenFor(m => m.IsPTRequired)
+        @Html.HiddenFor(m => m.IsDisplayUT)
+        @Html.HiddenFor(m => m.IsDisplayPT)
+        @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+        @Html.HiddenFor(m => m.IsOnlySave, new { id = "IsOnlySave" })
+
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-6">
+                @Html.SignOffHelper(m => m.InsulationMadeBy, "BB6_InsulationMadeBy")
+            </div>
+        </div>
+
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-6">
+                @Html.SignOffHelper(m => m.GritBlastedBy, "BB6_GritBlastedBy")
+            </div>
+        </div>
+
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-6">
+                @Html.SignOffHelper(m => m.SlingerRingCutOutBy, "BB6_SlingerRingCutOutBy")
+            </div>
+        </div>
+
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-6">
+                @Html.SignOffHelper(m => m.InsulationInstalledBy, "BB6_InsulationInstalledBy")
+            </div>
+        </div>
+
+        @Html.Action("PartTestView", "ProcessBabbitBearing", new { id = @Model.PartId })
+
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB6_InsulationMadeByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.InsulationMadeBy, "BB6_InsulationMadeBy1")
+                    </div>
+                </div>
+                <div class="row padd-bottom" id="BB6_GritBlastedByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.GritBlastedBy, "BB6_GritBlastedBy1")
+                    </div>
+                </div>
+                <div class="row padd-bottom" id="BB6_SlingerRingCutOutByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.SlingerRingCutOutBy, "BB6_SlingerRingCutOutBy1")
+                    </div>
+                </div>
+                <div class="row padd-bottom" id="BB6_InsulationInstalledByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.InsulationInstalledBy, "BB6_InsulationInstalledBy1")
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function () {
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB6_InsulationMadeBy1").val()
+                    && $("#BB6_GritBlastedBy1").val()
+                    && $("#BB6_SlingerRingCutOutBy1").val()
+                    && $("#BB6_InsulationInstalledBy1").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB6_InsulationProcessEntry');
+            $('#process_BB6_InsulationProcessEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                Save();
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB6_InsulationMadeBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB6_InsulationMadeByGroup").show();
+                $('#BB6_InsulationMadeBy1SO').addClass("btn-danger");
+                $('#BB6_InsulationMadeBySO').addClass("btn-danger");
+            } else {
+                $("#BB6_InsulationMadeByGroup").hide();
+                $('#BB6_InsulationMadeBy1SO').removeClass("btn-danger");
+                $('#BB6_InsulationMadeBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB6_GritBlastedBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB6_GritBlastedByGroup").show();
+                $('#BB6_GritBlastedBy1SO').addClass("btn-danger");
+                $('#BB6_GritBlastedBySO').addClass("btn-danger");
+            } else {
+                $("#BB6_GritBlastedByGroup").hide();
+                $('#BB6_GritBlastedBy1SO').removeClass("btn-danger");
+                $('#BB6_GritBlastedBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB6_SlingerRingCutOutBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB6_SlingerRingCutOutByGroup").show();
+                $('#BB6_SlingerRingCutOutBy1SO').addClass("btn-danger");
+                $('#BB6_SlingerRingCutOutBySO').addClass("btn-danger");
+            } else {
+                $("#BB6_SlingerRingCutOutByGroup").hide();
+                $('#BB6_SlingerRingCutOutBy1SO').removeClass("btn-danger");
+                $('#BB6_SlingerRingCutOutBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB6_InsulationInstalledBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB6_InsulationInstalledByGroup").show();
+                $('#BB6_InsulationInstalledBy1SO').addClass("btn-danger");
+                $('#BB6_InsulationInstalledBySO').addClass("btn-danger");
+            } else {
+                $("#BB6_InsulationInstalledByGroup").hide();
+                $('#BB6_InsulationInstalledBy1SO').removeClass("btn-danger");
+                $('#BB6_InsulationInstalledBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save() {
+            if (!IsStepValid()) {
+                return false;
+            }
+
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+            
+            if (isOnlySave) {
+                $("#IsOnlySave").val(true);
+            }
+
+            // Apply grid data to model
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB6_InsulationProcess',
+                type: 'POST',
+                data: $("#process_bb6_form").serialize(),
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB7_CleanupProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB6_InsulationProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB6_InsulationMadeBy':
+                case 'BB6_InsulationMadeBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Insulation Made By");
+                    break;
+                case 'BB6_GritBlastedBy':
+                case 'BB6_GritBlastedBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Grit Blasted By");
+                    break;
+                case 'BB6_SlingerRingCutOutBy':
+                case 'BB6_SlingerRingCutOutBy1':
+                    skillname = "Slinger Ring Cutout";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Slinger Ring Cut Out By");
+                    break;
+                case 'BB6_InsulationInstalledBy':
+                case 'BB6_InsulationInstalledBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Insulation Installed By");
+                    break;
+
+                case 'PTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: PT Approved By");
+                    skillname = "Management";
+                    break;
+
+                case 'UTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: UT Approved By");
+                    skillname = "Management";
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for All Insulation Process");
+
+            if ($('#BB6_InsulationMadeBy').val().trim() == "") {
+                ids = ids + "BB6_InsulationMadeBy";
+                count = count + 1;
+            }
+
+            if ($('#BB6_GritBlastedBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB6_GritBlastedBy";
+                count = count + 1;
+            }
+
+            if ($('#BB6_SlingerRingCutOutBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB6_SlingerRingCutOutBy";
+                count = count + 1;
+            }
+
+            if ($('#BB6_InsulationInstalledBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB6_InsulationInstalledBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+    </script>
+}
+

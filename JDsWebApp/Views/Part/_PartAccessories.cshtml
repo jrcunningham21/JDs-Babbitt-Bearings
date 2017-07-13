@@ -1,0 +1,27 @@
+﻿@using JDsDataModel
+@model List<IncomingInspectionAccessory>
+
+<div class="jd-table">
+    <div class="row">
+        <div class="col-sm-6 jd-table-cell">
+            <label>Description:</label>
+        </div>
+        <div class="col-sm-2 jd-table-cell">
+            <label>Quantity:</label>
+        </div>
+    </div>
+    @foreach (IncomingInspectionAccessory iia in Model)
+    {
+        <div class="row">
+            <div class="col-sm-6 jd-table-cell">
+                @Html.TextBoxFor(m => iia.Name, new {@class = "jd-input", placeholder = "Description" })
+            </div>
+            <div class="col-sm-2 jd-table-cell">
+                @Html.TextBoxFor(m => iia.Quantity, new {@class = "jd-input", placeholder = "Quantity", style = "width:100px"})
+            </div>
+            <div class="col-sm-2 jd-table-cell pull-left">
+                <input type="button" class="btn btn-warning" value="Delete" style="width: 75px"/>
+            </div>
+        </div>
+    }
+</div>

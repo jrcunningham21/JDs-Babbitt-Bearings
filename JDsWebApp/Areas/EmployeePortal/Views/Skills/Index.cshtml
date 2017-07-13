@@ -1,0 +1,227 @@
+﻿@{
+    ViewBag.Title = "Skills";
+}
+
+@if (!HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole"))
+{
+    <div id="example" class="col-xs-10">
+        @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+    </div>
+}
+
+else if (HttpContext.Current.Request.Cookies.AllKeys.Contains("EmployeeRole") && HttpContext.Current.Request.Cookies["EmployeeRole"].Value == "Manager")
+{
+    <div>
+        <h2 style="float: left;" id="page-title">Skills</h2>
+        <div style="float: right;">
+            <label id="statuslabel" class="jd-label"></label>
+        </div>
+    </div>
+
+    <div class="row" style="clear:both; overflow:auto;">
+
+
+        <table id="empTable" class="col-xs-2">
+            <thead>
+                <tr>
+                    <th style="font-weight:normal;">Employee</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="example" class="col-xs-10">
+            <table id="grid" data-bind="source: gridRows"></table>
+        </div>
+    </div>
+
+    <div class="row" style="margin:20px;">
+        <h1> </h1>
+    </div>
+}
+
+else
+{
+    @Html.ActionLink("Please log in to continue", "Index", "EmployeePortalLogin")
+}
+
+<style>
+    tbody tr {
+        height: 35px;
+    }
+
+    thead tr {
+        height: 52px;
+        font-size: 10px;
+    }
+
+    #empTable thead tr th {
+        text-align: right;
+        padding: .5em .6em .4em .6em;
+        padding-right: 15px;
+        vertical-align: bottom;
+        border-bottom: 1px solid #C5C5C5;
+        background-color: #F2F1F1;
+        border-top: 1px solid #C5C5C5;
+        border-left: 1px solid #C5C5C5;
+    }
+
+    #empTable tr td {
+        padding-right: 15px;
+        padding-top: 10px;
+        float: right;
+        text-align: right;
+        height: 35px;
+        overflow: hidden;
+        font-size: 12px;
+    }
+
+    #empTable > tbody > tr:nth-child(odd) {
+        background-color: #DEEBF6;
+    }
+
+    #empTable > tbody > tr:nth-child(even) {
+        background-color: #BDD7EE;
+    }
+
+    #grid > tbody > tr:nth-child(even) {
+        background-color: #BDD7EE;
+    }
+
+    #grid > tbody > tr:nth-child(odd) {
+        background-color: #DEEBF6;
+    }
+
+    #example {
+        padding-left: 0;
+    }
+
+    input.checkbox {
+        margin-left: 50%;
+    }
+
+    .k-grid-header th.k-header, .k-filter-row th {
+        white-space: normal;
+        font-size: 10px;
+    }
+
+    .k-grid-header th.k-header {
+        vertical-align: central;
+        text-align: center;
+    }
+</style>
+
+@section scripts
+{
+    <script>
+        $('#skillsEntry').addClass('aside-entry-active');
+    </script>
+    <script>
+        // Array to store Skill Names for column headers
+        var skillArray = [];
+
+        // Used to get list of Skills from db and generate columns for each
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/Skills/GetSkillList/',
+            dataType: "json",
+            success: function (data) {
+                skillArray = data;
+            },
+            error: function (data) {
+                bootbox.alert("Error in AJAX GetSkillList", function () { });
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/EmployeePortal/Skills/GetEmployeeSkills/',
+            dataType: "json",
+            success: function (empSkillData) {
+
+                var rows = [];
+                for (var i = 0; i < empSkillData.length; i++) {
+                    var entryArray = [];
+                    for (var j = 0; j < skillArray.SkillNames.length; j++) {
+                        var checkId = 'chk_' + j + '__' + empSkillData[i].EmployeeId;
+                        var checkIdStr = 'id="' + checkId + '"';
+                        if (empSkillData[i].EmpHasSkillBoolArray[j])
+                            entryArray.push('<input type="checkbox" ' + checkIdStr + ' class="checkbox squaredTwo" checked />');
+                        else
+                            entryArray.push('<input type="checkbox" ' + checkIdStr + ' class="checkbox squaredTwo"/>');
+                    }
+                    rows.push(kendo.observable({
+                        entries: entryArray
+                    }));
+                }
+
+
+                var viewModel = kendo.observable({
+                    gridRows: rows
+                });
+
+                var columns = [];
+                for (var i = 0; i < skillArray.SkillNames.length; i++) {
+                    var entryIndex = "entries[" + i + "]";
+                    columns.push({
+                        field: entryIndex,
+                        title: skillArray.SkillNames[i],
+                        encoded: false,
+                        width: 75
+                    });
+                }
+
+                var config = {
+                    scrollable: true,
+                    resizable: true,
+                    columns: columns
+                }
+
+                var grid = $("#grid").kendoGrid(config).data("kendoGrid");
+
+                kendo.bind($("#example"), viewModel);
+
+                for (var i = 0; i < empSkillData.length; i++) {
+                    $("#empTable > tbody:last").append("<tr><td>" + empSkillData[i].EmployeeName + "</td></tr>")
+                }
+
+                //bind click event to the checkbox
+                grid.table.on("click", ".checkbox", checkBoxClicked);
+
+            },
+            error: function (data) {
+                bootbox.alert("Error in AJAX GetEmployeeList", function () { });
+            }
+        });
+
+        // Event Handler: on click of the checkbox:
+        function checkBoxClicked() {
+            var checked = this.checked,
+            row = $(this).closest("tr").index() + 1,
+            col = $(this).parent().index() + 1;
+
+            var thisId = $(this).attr('id');
+            var eid = thisId.split("_").slice(-1)[0];
+
+            var obj =
+                {
+                    empID: eid,
+                    skillID: col,
+                    hasSkill: checked
+                };
+
+            $.ajax({
+                type: 'POST',
+                url: '/EmployeePortal/Skills/SkillCheckBoxClicked/',
+                data: obj,
+                success: function (data) {
+                    //alert("Success");
+                    notification.show({ message: "SAVED SUCCESSFULLY" }, "successful");
+                },
+                error: function (data) {
+                    alert("Error in AJAX checkbox clicked");
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,0 +1,473 @@
+﻿@using JDsDataModel
+@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB10_FinalAssemblyViewModel
+
+@{
+    ViewBag.Title = "BB10_FinalAssembly";
+}
+
+<div class="row">
+    <h4>Final Assembly</h4>
+</div>
+
+<div class="row">
+<form id="process_bb10_form">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-6">
+            @Html.SignOffHelper(m => m.MillWorkBy, "BB10_MillWorkBy")
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-6">
+            @Html.SignOffHelper(m => m.DeburredBy, "BB10_DeburredBy")
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 text-left">
+            <Label>Outgoing Pictures:</Label>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3 ">
+            <a id="managepictures" class="btn btn-primary pull-left" onclick="OnClickManagePictures()">Manage</a>
+        </div>
+    </div>
+
+
+    @if (Model.PartsAccessories.Any())
+    {
+        <div class="row no-gutter padd-top">
+            <div class="col-sm-8">
+                <label>Parts List</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <div id="PartsAccessories">
+                    
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-6">
+            @Html.SignOffHelper(m => m.PartsInstalledBy, "BB10_PartsInstalledBy")
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-6">
+            @Html.SignOffHelper(m => m.VerifiedBy, "BB10_VerifiedBy")
+        </div>
+    </div>
+
+    @Html.Action("PartTestView", "ProcessBabbitBearing", new { id = @Model.PartId })
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+</form>
+</div>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB10_MillWorkByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.MillWorkBy, "BB10_MillWorkBy1")
+                    </div>
+                </div>
+
+                <div class="row padd-bottom" id="BB10_DeburredByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.DeburredBy, "BB10_DeburredBy1")
+                    </div>
+                </div>
+
+                <div class="row padd-bottom" id="BB10_PartsInstalledByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.PartsInstalledBy, "BB10_PartsInstalledBy1")
+                    </div>
+                </div>
+
+                <div class="row padd-bottom" id="BB10_VerifiedByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.VerifiedBy, "BB10_VerifiedBy1")
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            var formData = {
+                MillWorkBy: $("#BB10_MillWorkBy").val(),
+                DeburredBy: $("#BB10_DeburredBy").val(),
+                PartsInstalledBy: $("#BB10_PartsInstalledBy").val(),
+                VerifiedBy: $("#BB10_VerifiedBy").val(),
+                Version: $("#Version").val(),
+                JobId: $("#JobId").val(),
+                PartId: $("#PartId").val(),
+                ProcessId: $("#ProcessId").val(),
+                StepId: $("#StepId").val(),
+                IsUTRequired: $("#IsUTRequired").val(),
+                IsPTRequired: $("#IsPTRequired").val(),
+                IsDisplayUT: $("#IsDisplayUT").val(),
+                IsDisplayPT: $("#IsDisplayPT").val(),
+                IsCompleted: $("#IsCompleted").val(),
+                IsOnlySave: isOnlySave
+            };
+
+            formData.PartsAccessories = [];
+
+            $(".partsAccessoryValue").each(function(e) {
+                var context = $(this);
+                var accessory = {
+                    IncomingInspectionAccessoryId: context.data('id'),
+                    IsInstalled: context.is(':checked'),
+                    PartId: context.data('partId'),
+                    Name: context.data("name"),
+                    Quantity: context.data('quantity')
+                }
+
+                formData.PartsAccessories.push(accessory);
+            });
+
+
+
+            // Apply grid data to model
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB10_FinalAssembly',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB11_FinalInspection?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function IsStepValid() {
+            if(IsAllCheckBoxesChecked() != true){
+                bootbox.alert("All parts checkboxes need to be checked before continuing", function () {});
+                return false;
+            }
+
+            var isvalid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB10_MillWorkBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB10_MillWorkByGroup").show();
+                $('#BB10_MillWorkBy1SO').addClass("btn-danger");
+                $('#BB10_MillWorkBySO').addClass("btn-danger");
+            } else {
+                $("#BB10_MillWorkByGroup").hide();
+                $('#BB10_MillWorkBy1SO').removeClass("btn-danger");
+                $('#BB10_MillWorkBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB10_DeburredBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB10_DeburredByGroup").show();
+                $('#BB10_DeburredBy1SO').addClass("btn-danger");
+                $('#BB10_DeburredBySO').addClass("btn-danger");
+            } else {
+                $("#BB10_DeburredByGroup").hide();
+                $('#BB10_DeburredBy1SO').removeClass("btn-danger");
+                $('#BB10_DeburredBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB10_PartsInstalledBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB10_PartsInstalledByGroup").show();
+                $('#BB10_PartsInstalledBy1SO').addClass("btn-danger");
+                $('#BB10_PartsInstalledBySO').addClass("btn-danger");
+            } else {
+                $("#BB10_PartsInstalledByGroup").hide();
+                $('#BB10_PartsInstalledBy1SO').removeClass("btn-danger");
+                $('#BB10_PartsInstalledBySO').removeClass("btn-danger");
+            }
+
+            if ($('#BB10_VerifiedBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB10_VerifiedByGroup").show();
+                $('#BB10_VerifiedBy1SO').addClass("btn-danger");
+                $('#BB10_VerifiedBySO').addClass("btn-danger");
+            } else {
+                $("#BB10_VerifiedByGroup").hide();
+                $('#BB10_VerifiedBy1SO').removeClass("btn-danger");
+                $('#BB10_VerifiedBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        $(function () {
+            $("#PartsAccessories").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.PartsAccessories)),
+                },
+                scrollable: false,
+                columns: [{
+                    field: "Name",
+                    width: 500
+
+                },{
+                    field: "Quantity",
+                    width: 90
+                },
+                {
+                    field: "Is Installed",
+                    template: "<input type='checkbox' class='checkbox-required partsAccessoryValue' value='#= IsInstalled #' data-id='#= IncomingInspectionAccessoryId #' data-partId = '#= PartId #' data-name='#= Name #' data-quantity='#= Quantity #' # if(IsInstalled) {# checked #} #/>"
+                }]
+            });
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB10_MillWorkBy").val()
+                    && $("#BB10_DeburredBy").val()
+                    && $("#BB10_PartsInstalledBy").val()
+                    && $("#BB10_VerifiedBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB10_FinalAssemblyEntry');
+            $('#process_BB10_FinalAssemblyEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                Save();
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+
+        });
+        function OnClickManagePictures(){
+            var partId = '@Html.Raw(Json.Encode(Model.PartId))';
+            showPartPopup(partId, 1);
+        }
+
+        
+
+        function Save() {
+            if (!IsStepValid()) {
+                return false;
+            }
+
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB10_FinalAssembly?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB10_MillWorkBy':
+                case 'BB10_MillWorkBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Mill Work By");
+                    break;
+                case 'BB10_DeburredBy':
+                case 'BB10_DeburredBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Deburred By");
+                    break;
+                case 'BB10_PartsInstalledBy':
+                case 'BB10_PartsInstalledBy1':
+                    skillname = "Start/Edit Jobs";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Parts Installed By");
+                    break;
+                case 'BB10_VerifiedBy':
+                case 'BB10_VerifiedBy1':
+                    skillname = "Inspection for Final Machining";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Verified By");
+                    break;
+
+                case 'PTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: PT Approved By");
+                    skillname = "Management";
+                    break;
+
+                case 'UTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: UT Approved By");
+                    skillname = "Management";
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized",  function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for all Final Assembly");
+
+            if ($('#BB10_MillWorkBy').val().trim() == "") {
+                ids = ids + "BB10_MillWorkBy";
+                count = count + 1;
+            }
+
+            if ($('#BB10_DeburredBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB10_DeburredBy";
+                count = count + 1;
+            }
+
+            if ($('#BB10_PartsInstalledBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB10_PartsInstalledBy";
+                count = count + 1;
+            }
+
+
+            if ($('#BB10_VerifiedBy').val().trim() == "") {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB10_VerifiedBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+        function IsAllCheckBoxesChecked() {
+            var checkboxes = $(".checkbox-required");
+
+            if(checkboxes.length > 0){
+                for(var i = 0; i < checkboxes.length; i++) {
+                    if(!checkboxes[i].checked){
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+
+    </script>
+}

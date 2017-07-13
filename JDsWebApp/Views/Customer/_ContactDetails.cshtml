@@ -1,0 +1,80 @@
+﻿@model JDsDataModel.ViewModels.ContactViewModel
+
+<div id="contactdetailsdiv" class="col-sm-12">
+    @using (Ajax.BeginForm("SaveContact", "Customer", null,
+        new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "contactdetailsdiv",
+            InsertionMode = InsertionMode.Replace,
+            OnBegin = "OnSaveContactBegin",
+            OnComplete = "OnSaveContactComplete"
+        },
+        new {id = "editContactForm"}))
+    {
+        <div class="row padd-top">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.ContactId)
+            @Html.HiddenFor(m => m.CustomerId)
+            <div class="col-sm-6" id="col-left">
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control ", id = "contactfirstname", placeholder = Html.DisplayNameFor(x => x.FirstName)})
+                        @Html.ValidationMessage("model.FirstName")
+                        @*For some stupid reason I can't bind the validation message to the property name aka FirstName. In the modelstate validation list it's under model.FirstName which doesn't make any sense but 
+                            I'm putting it in so it actually works -Donald*@
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.LastName, new {@class = "form-control ", id = "contactlastname", placeholder = Html.DisplayNameFor(x => x.LastName)})
+                        @Html.ValidationMessage("model.LastName")
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.Email, new {@class = "form-control ", id = "contactemail", placeholder = Html.DisplayNameFor(x => x.Email)})
+                        @Html.ValidationMessage("model.Email")
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.WorkPhone, new {@class = "form-control ", id = "contactworkphone", type = "tel",  placeholder = Html.DisplayNameFor(x => x.WorkPhone)})
+                        @Html.ValidationMessage("model.WorkPhone")
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.Fax, new {@class = "form-control ", id = "contactfax", type = "tel", placeholder = Html.DisplayNameFor(x => x.Fax)})
+                        @Html.ValidationMessage("model.Fax")
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @Html.TextBoxFor(m => m.CellPhone, new {@class = "form-control ", id = "contactcellphone", type = "tel", placeholder = Html.DisplayNameFor(x => x.CellPhone)})
+                        @Html.ValidationMessage("model.CellPhone")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-12">
+                        @Html.TextAreaFor(m => m.Notes, new {@class = "form-control ", @style = "height: 254px;", id = "contactnotes", placeholder = Html.DisplayNameFor(x => x.Notes)})
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+
+    $(function () {
+        mask("#contactcellphone");
+        mask("#contactworkphone");
+        mask("#contactfax");
+        turnOffAutofill("#editContactForm");
+    });
+
+</script>

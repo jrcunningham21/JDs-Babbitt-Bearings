@@ -1,0 +1,1050 @@
+﻿@using JDsDataModel
+@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB11_FinalInspectionViewModel
+
+@{
+    ViewBag.Title = "BB11_FinalInspection";
+}
+
+<div class="row">
+    <h4>Final Inspection</h4>
+</div>
+
+<form id="process_bb11_form">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+
+    <!-- measurements -->
+    <div class="row padd-top">
+        <div class="col-sm-5 panel panel-primary">
+            <div class="panel-body">
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureL.svg" class="center-block">Your browser does not support SVG</object>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.ID1Measurements)
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <div class="input-group">
+                            <input id="BB11_ID1MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                            <input id="BB11_ID1MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                            <input id="BB11_ID1MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                            <span class="input-group-btn multi">
+                                <a class='btn btn-primary' onclick="AddMeasurement('BB11_ID1Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10 @(!@Model.ID1Measurements.Any() ? "collapse" : "")">
+                        <div id="grid_ID1Measurements">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <span class="field-validation-valid" id="BB11_ID1MeasurementsMessage"></span>
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.OD1Measurements, new { @class = "pull-left" })
+                    </div>
+                </div>
+
+                @if (Model.IsInsulated)
+                {
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <div class="input-group">
+                                <input id="BB11_OD1MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                                <input id="BB11_OD1MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                                <input id="BB11_OD1MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                                <span class="input-group-btn multi">
+                                    <a class='btn btn-primary' onclick="AddMeasurement('BB11_OD1Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10 @(!@Model.OD1Measurements.Any()? "collapse" : "")">
+                            <div id="grid_OD1Measurements">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <span class="field-validation-valid" id="BB11_OD1MeasurementsMessage"></span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10 @(!@Model.OD1Measurements.Any()? "collapse" : "")">
+                            <div id="grid_OD1Measurements">
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-sm-offset-1 col-sm-5 panel panel-primary">
+            <div class="panel-body">
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-12">
+                        <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureR.svg" class="center-block">Your browser does not support SVG</object>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.ID2Measurements)
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <div class="input-group">
+                            <input id="BB11_ID2MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                            <input id="BB11_ID2MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                            <input id="BB11_ID2MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                            <span class="input-group-btn multi">
+                                <a class='btn btn-primary' onclick="AddMeasurement('BB11_ID2Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10 @(!Model.ID2Measurements.Any() ? "collapse" : "")">
+                        <div id="grid_ID2Measurements">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <span class="field-validation-valid" id="BB11_ID2MeasurementsMessage"></span>
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.OD2Measurements, new { @class = "pull-left" })
+                    </div>
+                </div>
+
+
+                @if (Model.IsInsulated)
+                {
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <div class="input-group">
+                                <input id="BB11_OD2MeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                                <input id="BB11_OD2MeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                                <input id="BB11_OD2MeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                                <span class="input-group-btn multi">
+                                    <a class='btn btn-primary' onclick="AddMeasurement('BB11_OD2Measurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10 @(!Model.OD2Measurements.Any() ? "collapse" : "")">
+                            <div id="grid_OD2Measurements">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <span class="field-validation-valid" id="BB11_OD2MeasurementsMessage"></span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row padd-bottom">
+                        <div class="col-sm-offset-1 col-sm-10 @(!Model.OD2Measurements.Any()? "collapse" : "")">
+                            <div id="grid_OD2Measurements">
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- seal -->
+        <div class="col-sm-5 panel panel-primary">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.SealMeasurements)
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <div class="input-group">
+                            <input id="BB11_SealMeasurementsA" type="number" step="any" class="form-control multi m1" placeholder="A" />
+                            <input id="BB11_SealMeasurementsB" type="number" step="any" class="form-control multi m2" placeholder="B" />
+                            <input id="BB11_SealMeasurementsC" type="number" step="any" class="form-control multi m3" placeholder="C" />
+                            <span class="input-group-btn multi">
+                                <a class='btn btn-primary' onclick="AddMeasurement('BB11_SealMeasurements')"><span class='glyphicon glyphicon-plus' aria-hidden='true'></span></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10 @(!Model.SealMeasurements.Any() ? "collapse" : "")">
+                        <div id="grid_SealMeasurements">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <span class="field-validation-valid" id="BB11_SealMeasurementsMessage"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-offset-1 col-sm-5">
+            <div class="row">
+                <div class="col-sm-6">
+                    @Html.LabelFor(m => m.OverallLength)
+                </div>
+                <div class="col-sm-6">
+                    <Label for="managepictures">Pictures:</Label>
+                </div>
+            </div>
+            <!-- overall length  and manage pictures -->
+            <div class="row">
+                <div class="col-sm-6">
+                    @Html.TextBoxFor(m => m.OverallLength, new { @class = "form-control", id = "BB11_OverallLength"})
+                </div>
+                <div class="col-sm-6">
+                    <a id="managepictures" class="btn btn-primary" onclick="OnClickManagePictures()">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Pin -->
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.LabelFor(m => m.HasARPin)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.CheckBoxFor(m => m.HasARPin, new { id = "aryes", @data_toggle = "toggle", @data_on = "Yes", @data_off = "No", @disabled="disabled" })
+                </div>
+            </div>
+
+            <div class="row padd-top ARPin">
+                <div class="col-sm-12 panel panel-primary">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @Html.LabelFor(m => m.ARPinDiameter, new { @id = "arDiameterLabel" })
+                            </div>
+                            <div class="col-sm-4">
+                                @Html.LabelFor(m => m.ARPinDepth, new { @id = "arDepthLabel" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <span id="arDiameterGroup">
+                                    @Html.TextBoxFor(m => m.ARPinDiameter, new { @class = "form-control", id = "BB11_ARPinDiameter" })
+                                </span>
+                            </div>
+                            <div class="col-sm-4">
+                                <span id="arDepthGroup">
+                                    @Html.TextBoxFor(m => m.ARPinDepth, new { @class = "form-control", id = "BB11_ARPinDepth"})
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@if (Model.HasTC)
+{
+    <div class="row padd-bottom">
+        <div class="col-sm-3">
+            @Html.LabelFor(x => x.TCInstalledQuantity)
+            @Html.TextBoxFor(x => x.TCInstalledQuantity, new { @class = "form-control" })
+        </div>
+    </div>
+}
+
+<div class="row">
+        <!-- is accceptable and call customer -->
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-6">
+                    @Html.LabelFor(m => m.IsAcceptable)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    @Html.CheckBoxFor(m => m.IsAcceptable, new { @data_toggle = "toggle", @data_on = "Yes", @data_off = "No" })
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.ValidationMessageFor(m => m.IsAcceptable)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <a class="btn btn-danger fixedWidthActionButton" onclick="OnNeedApprovalClick()">Need Appoval</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-offset-1 col-sm-3">
+            <div class="row padd-bottom">
+                <div class="col-sm-12">
+                    @Html.SignOffHelper(m => m.FinalInspectionBy, "BB11_FinalInspectionBy")
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row padd-top">
+        <div class="col-sm-5">
+            @Html.LabelFor(m => m.ReturnStepId)
+        </div>
+    </div>
+
+    <div class="row padd-bottom">
+        <div class="col-sm-5">
+            @{
+                List<SelectListItem> returnStepListItems = new List<SelectListItem>();
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "1 Incoming Inspection",
+                    Value = "1",
+                    Selected = true
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "2 Pre-cast Roughout",
+                    Value = "2"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "3 Spincast Process",
+                    Value = "3",
+                   
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "4 Post-cast Clean Up",
+                    Value = "4"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "5 Post-cast Roughout",
+                    Value = "5"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "6 Insulation Process",
+                    Value = "6"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "7 Clean Up Process",
+                    Value = "7"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "8 Final Machine Inspection",
+                    Value = "8"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "9 Finish Bore Process",
+                    Value = "9"
+                });
+                returnStepListItems.Add(new SelectListItem
+                {
+                    Text = "10 Final Assembly",
+                    Value = "10"
+                });
+            }
+            @Html.DropDownListFor(m => m.ReturnStepId, returnStepListItems, new { @class = "form-control", ID = "returnStepsDropDown" })
+        </div>
+
+        <div class="col-sm-offset-1 col-sm-2">
+            <a class="btn btn-block btn-danger" id="failJobBtn">@Html.DisplayNameFor(m => m.IsJobFailed)</a>
+        </div>
+    </div>
+
+
+    @Html.Action("PartTestView", "ProcessBabbitBearing", new { id = @Model.PartId, @class="padd-bottom"})
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+    <div class="extraSpaceAtBtmDiv"></div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB11_FinalInspectionByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.FinalInspectionBy, "BB11_FinalInspectionBy1")
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="failJobModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header">  Reason for Rework </h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="table">
+                <div class="row">
+                    <div class="col-sm-12">
+                        @Html.LabelFor(m => m.Notes)
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control",style="height:150px" })
+                      </div>
+                </div>
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-12 text-center">
+                        
+                        <div class="col-sm-2">
+                            <a class="btn btn-block btn-primary" id="saveFailJobBtn">Save</a>
+                        </div>
+                        <div class="col-sm-2">
+                            <a class="btn btn-block btn-danger" id="failCancelBtn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        $(function () {
+            $("#grid_ID1Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.ID1Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_ID1Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>"
+                }]
+            });
+
+            $("#grid_OD1Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.OD1Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_OD1Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>",
+                    hidden: "@Model.IsInsulated" != "True"
+                }]
+            });
+
+            $("#grid_ID2Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.ID2Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_ID2Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>"
+                }]
+            });
+
+            $("#grid_OD2Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.OD2Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_OD2Measurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>",
+                    hidden: "@Model.IsInsulated" != "True"
+                }]
+            });
+
+            $("#grid_SealMeasurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.SealMeasurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    width: "79px",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "",
+                    template: "<a class='glyphlink' onclick='DeleteMeasurement(\"grid_SealMeasurements\", #=Index#, \"Incoming Inspection\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> </a>"
+                }]
+            });
+
+            var signOffAllRequested = false;
+            var stepNumbe;
+            var returnStepText;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB11_FinalInspectionBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+
+
+            //$('#process_BB11_FinalInspectionEntry').addClass('aside-entry-active');
+            setCurrentStep(stepData,'process_BB11_FinalInspectionEntry');
+            $('#process_BB11_FinalInspectionEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                var isValid = 1;
+
+                // If the user clicks Save and there are ID/OD/Seal values that have been
+                // entered, but not saved... Save them
+                if ($("#BB11_ID1MeasurementsA").val() != ""
+                    || $("#BB11_ID1MeasurementsB").val() != ""
+                    || $("#BB11_ID1MeasurementsC").val() != "")
+                {
+                    if(!AddMeasurement('BB11_ID1Measurements'))
+                    {
+                        isValid = 0;
+                    }
+                }
+                if ($("#BB11_ID2MeasurementsA").val() != ""
+                    || $("#BB11_ID2MeasurementsB").val() != ""
+                    || $("#BB11_ID2MeasurementsC").val() != "")
+                {
+                    if(!AddMeasurement('BB11_ID2Measurements'))
+                    {
+                        isValid = 0;
+                    }
+                }
+                if ($("#BB11_SealMeasurementsA").val() != ""
+                    || $("#BB11_SealMeasurementsB").val() != ""
+                    || $("#BB11_SealMeasurementsC").val() != "")
+                {
+                    if(!AddMeasurement('BB11_SealMeasurements'))
+                    {
+                        isValid = 0;
+                    }
+                }
+
+                // Make sure user has checked Acceptable=Yes
+                if(!$("#IsAcceptable").is(":checked")){
+                    $(".toggle-off").addClass("btn-danger");
+                    var valMessage = $("span[data-valmsg-for='IsAcceptable']");
+                    valMessage.removeClass("field-validation-valid");
+                    valMessage.addClass("field-validation-error");
+                    valMessage.html("Acceptable must be yes before saving");
+                    return false;
+                } else {
+                    var valMessage = $("span[data-valmsg-for='IsAcceptable']");
+                    valMessage.addClass("field-validation-valid");
+                    valMessage.removeClass("field-validation-error");
+                    valMessage.html("");
+                }
+
+                if(isValid == 1)
+                {
+                    Save();
+                }
+                else{
+                    bootbox.alert("Error: Measurements are not completely filled out", function () {});
+                }
+
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+
+            $("#failCancelBtn").click(function () {
+                Cancel();
+            });
+
+            $("#failJobBtn").click(function () {
+                failJob();
+            });
+            $("#saveFailJobBtn").click(function () {
+                saveFailJob();
+            });
+
+            if ('@Model.HasARPin' == "True")
+                $("#arDepthLabel").text("Length:");
+
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB11_FinalInspectionBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB11_FinalInspectionByGroup").show();
+                $('#BB11_FinalInspectionBy1SO').addClass("btn-danger");
+                $('#BB11_FinalInspectionBySO').addClass("btn-danger");
+            } else {
+                $("#BB11_FinalInspectionByGroup").hide();
+                $('#BB11_FinalInspectionBy1SO').removeClass("btn-danger");
+                $('#BB11_FinalInspectionBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save() {
+            if(!IsStepValid()) {
+                return false;
+            }
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            var hasarpin = 0;
+            if (document.getElementById('aryes').checked) {
+                hasarpin = 1;
+            }
+
+            var gridDataID1 =  $("#grid_ID1Measurements").data("kendoGrid").dataSource.data();
+            var gridDataID2 =  $("#grid_ID2Measurements").data("kendoGrid").dataSource.data();
+            var gridDataOD1 =  $("#grid_OD1Measurements").data("kendoGrid").dataSource.data();
+            var gridDataOD2 =  $("#grid_OD2Measurements").data("kendoGrid").dataSource.data();
+            var gridDataSeal =  $("#grid_SealMeasurements").data("kendoGrid").dataSource.data();
+
+            var version = @Model.Version;
+            var jobId = @Model.JobId;
+            var partId = @Model.PartId;
+            var processId = @Model.ProcessId;
+            var stepId = @Model.StepId;
+
+            var jsondata =
+            {
+                "Version": version,
+                "JobId": jobId,
+                "PartId": partId,
+                "ProcessId": processId,
+                "StepId": stepId,
+                "ID1Measurements": gridDataID1,
+                "OD1Measurements": gridDataOD1,
+                "ID2Measurements": gridDataID2,
+                "OD2Measurements": gridDataOD2,
+                "SealMeasurements": gridDataSeal,
+                "HasARPin": hasarpin,
+                "ARPinDiameter": $("#ARPinDiameter").val(),
+                "ARPinDepth": $("#ARPinDepth").val(),
+                "OverallLength": $("#OverallLength").val(),
+                "FinalInspectionBy": $("#BB11_FinalInspectionBy").val(),
+                "IsCompleted" : $("#IsCompleted").val(),
+                "IsOnlySave": isOnlySave
+            }
+
+            var postData =  JSON.stringify(jsondata);
+
+            // Apply grid data to model
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB11_FinalInspection',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: postData,
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB12_Delivery?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(response.statusText);
+                }
+            });
+        }
+
+        function OnNeedApprovalClick()
+        {
+            flagForCustomerApproval("JD#" + @Model.JobId + " needs customer approval", @Model.PartId);
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB11_FinalInspection?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB11_FinalInspectionBy':
+                case 'BB11_FinalInspectionBy1':
+                    skillname = "Final Inspection";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Final Inspection By");
+                    break;
+
+                case 'PTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: PT Approved By");
+                    skillname = "Management";
+                    break;
+
+                case 'UTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: UT Approved By");
+                    skillname = "Management";
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for all Final Inspection");
+
+
+            if ($('#BB11_FinalInspectionBy').val().trim() == "") {
+                ids = ids + "BB11_FinalInspectionBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+        function OnClickManagePictures(){
+            var partId = '@Html.Raw(Json.Encode(Model.PartId))';
+            showPartPopup(partId, 1);
+        }
+
+        function toggleARPin() {
+            if($("#aryes").is(":checked")){
+                $(".ARPin").slideDown();
+            }else{
+                $(".ARPin").slideUp();
+            }
+        }
+
+        function failJob()
+        {
+            $('#failJobModal').modal('show');
+        }
+        function saveFailJob()
+        {
+            var notes =   $('#notes').val();
+
+            var returnSteps = document.getElementById('returnStepsDropDown');
+            stepNumber =  returnSteps.options[returnSteps.selectedIndex].value;
+            returnStepText = returnSteps.options[returnSteps.selectedIndex].text.slice(1).replace(/[^A-Z0-9]/ig, "");
+
+            $.ajax({
+                url: '@Url.Action("SaveFailJob", "ProcessBabbitBearing", new { area = "" })',
+                type: 'POST',
+                data: { partId: @Html.Raw(Json.Encode(Model.PartId)), notes:notes },
+                success: function (data) {
+                    $('#failJobModal').modal('hide');
+                    workflowSignoffCallback = handleRollBackToPrevStep;
+                    //Enter user pin before Rollback
+                    var skillname = "Management";
+                    $.ajax({
+                        url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                        type: 'GET',
+                        data: { skillName: skillname },
+                        success: function(data) {
+                            $('#signOffContentDiv').html(data);
+                            $('#signOffContentDiv').fadeIn('fast');
+                            $('#signOffModal').modal('show');
+
+                        },
+                        error: function(e) {
+                            bootbox.alert("Not Authorized", function () {});
+                            $("#signOffModal").modal('hide');
+                        }
+                    });
+                  },
+                error: function (e) {
+                }
+            });
+        }
+
+
+        function handleRollBackToPrevStep() {
+
+            //Rollback to step selected
+            $.ajax({
+                url: '@Url.Action("RollPartBackToStep", "ProcessBabbitBearing", new { area = "" })',
+                type: 'POST',
+                data: { partId: @Html.Raw(Json.Encode(Model.PartId)), newStepNumber:stepNumber  },
+                success: function (data) {
+                            window.location.href = "/ProcessBabbitBearing/BB"+stepNumber+"_"+returnStepText+"?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+
+                },
+                error: function (e) {
+                }
+            });
+        }
+    </script>
+}

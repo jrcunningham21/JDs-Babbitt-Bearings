@@ -1,0 +1,443 @@
+﻿
+@{
+    ViewBag.Title = "Add/Edit Customer";
+}
+
+<div class="container-fluid form-container">
+
+<style>
+    .key-style{
+        margin-top:-6px;
+    }
+</style>
+
+    <div class="row">
+
+        <h3 class="col-md-5">
+            Add / Edit Customer
+        </h3>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addContactModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <span class="glyphicon glyphicon-cog"></span>
+                        <h4> Add / Edit Contact</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+
+                    <div class="container-fluid form-container">
+                        <form role="form">
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Company:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <label class="center-vert-align">ONCOR ENERGY</label>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">First Name:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="First Name" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Last Name:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="Last Name" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Work Phone:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="Work Phone" style="width:100%" />
+                                </div>
+
+                                <div class="value-style col-md-2">
+                                    <input type="text" class="form-control" placeholder="Ext" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Cell Phone:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="Cell Phone" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Fax:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="Fax" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="key-style col-md-5">
+                                    <label class="center-vert-align">Email:</label>
+                                </div>
+
+                                <div class="value-style col-md-5">
+                                    <input type="text" class="form-control" placeholder="Email" style="width:100%" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="value-style col-md-4">
+                                    <h3>
+                                        Contact notes:
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <textarea type="text" class="form-control col-md-3" id="scope" placeholder="Customer notes" style="height:100px; margin-left:10px"></textarea>
+                            </div>
+
+                            <div class="row" style="margin-top:30px">
+                                <button type="submit" class="btn btn-success col-md-offset-4 col-md-3" style="margin-right:20px"><span class="glyphicon glyphicon-off"></span> Save</button>
+                                <button type="submit" class="btn btn-danger col-md-3" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <form role="form">
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Company Name:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Company Name" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Company Code:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="3 digit company code" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3" style="margin-top:2px">
+                <label>Primary contact:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        JENKINS, WILLIAM
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href=" #">FERGUSON, EDDIE</a></li>
+                        <li><a href="#">STILLER, MATT</a></li>
+                        <li><a href="#">HERNANDEZ, JOSE</a></li>
+                    </ul>
+                </div>
+            </div>
+            <button class="col-md-2 btn" id="addContactBtn" style="margin-right:10px">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add New
+            </button>
+
+            <button class="col-md-2 btn" id="editContactBtn">
+                    Edit
+            </button>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Contact work phone:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div style="margin-top:5px">(341) 555-4143 ext 551321</div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Contact cell phone:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div style="margin-top:5px">(341) 551-4143</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Contact fax:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div style="margin-top:5px">(341) 245-4143</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Contact email:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <div style="margin-top:5px">customer@email.com</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="value-style col-md-4">
+                <h3>
+                    Billing Address:
+                </h3>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Line 1:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Address line 1" style="width:100%" />
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Line 2:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Address Line 2" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">City, State:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="City" style="width:100%" />
+            </div>
+
+            <div class="value-style col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        TX
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href=" #">OK</a></li>
+                        <li><a href="#">KS</a></li>
+                        <li><a href="#">NM</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">ZIP, Country</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Postal code" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        USA
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href=" #">USA</a></li>
+                        <li><a href="#">Mexico</a></li>
+                        <li><a href="#">Canada</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="value-style col-md-4">
+                <h3>
+                    Shipping Address:
+                </h3>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Line 1:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Address line 1" style="width:100%" />
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">Line 2:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Address Line 2" style="width:100%" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">City, State:</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="City" style="width:100%" />
+            </div>
+
+            <div class="value-style col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        TX
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href="#">OK</a></li>
+                        <li><a href="#">KS</a></li>
+                        <li><a href="#">NM</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="key-style col-md-3">
+                <label class="center-vert-align">ZIP, Country</label>
+            </div>
+
+            <div class="value-style col-md-4">
+                <input type="text" class="form-control" placeholder="Postal code" style="width:100%" />
+            </div>
+            <div class="value-style col-md-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                        USA
+                        <span class="caret" style="float:right; margin-top:7px;"></span>
+                    </button>
+                    <ul class="dropdown-menu" style="width:100%;">
+                        <li><a href="#">USA</a></li>
+                        <li><a href="#">Mexico</a></li>
+                        <li><a href="#">Canada</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="value-style col-md-4">
+                <h3>
+                    Customer notes:
+                </h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <textarea type="text" class="form-control col-md-3" id="scope" placeholder="Customer notes" style="height:100px; margin-left:10px"></textarea>
+        </div>
+
+
+        <div class="row" style="margin-top:20px">
+            <div class="col-md-2 col-lg-offset-7">
+                <button id="saveBtn" type="submit" class="btn btn-success" style="width:100%">Save</button>
+            </div>
+            <div class="col-md-2">
+                <button id="cancelBtn" type="submit" class="btn btn-danger" style="width:100%">Cancel</button>
+            </div>
+        </div>
+
+    </form>
+    
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#addContactBtn").click(function (e) {
+            e.preventDefault()
+            $("#addContactModal").modal();
+        });
+
+        $("#editContactBtn").click(function (e) {
+            e.preventDefault()
+            $("#addContactModal").modal();
+        });
+
+        $("#saveBtn").click(function (e) {
+            // back to job details
+            e.preventDefault();
+            window.location.href = '/JobDetail';
+        });
+
+        $("#cancelBtn").click(function (e) {
+            // back to job details
+            e.preventDefault();
+            window.location.href = '/JobDetail';
+        });
+
+    });
+
+
+
+</script>

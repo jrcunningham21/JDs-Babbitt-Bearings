@@ -1,0 +1,749 @@
+﻿@using JDsDataModel.ViewModels;
+@model JDsDataModel.ViewModels.PartInfoPopupViewModel
+
+
+<style>
+    .k-window-titlebar {
+        background-color: #215fa8;
+        height: 80px !important;
+        text-align: center;
+        vertical-align: middle;
+        color: white;
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+    .k-i-close {
+        display:none;
+    }
+
+    div.k-window-content {
+        padding: 0;
+        border-radius: 0;
+        background-color: #F6F6FF;
+    }
+
+    /*.k-grid {
+        background-color: #DEEBF6;
+    }*/
+
+    /*.k-grid .k-alt {
+        background-color: #BDD7EE; 
+    }*/
+
+    #photosgrid .k-icon {
+        display: none;
+    }
+    
+    .partPhotoThumb {
+        float: left;
+        width: 176px;
+        height: 88px;
+        margin: 0;
+        padding: 5px;
+        cursor: pointer;
+    }
+    
+</style>
+
+
+@if (Model != null)
+{
+    <div id="partPhotoZoomWin" style="height:0;">
+        <div style="text-align: center; overflow-x:hidden">
+            <img id="partPhotoZoomImg" src=""  style="max-width:100%; max-height:100%;"/>
+            <div class="row  row-bottom-smaller">
+                <div class="col-md-12">
+                    <button id="closepartphotobtn" class="btn btn-default" style="visibility:hidden;display:none;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signOffModal" role="dialog">
+        <div class="modal-dialog">
+            <h4 class="modal-header"> Sign Off</h4>
+            <div id="signOffContentDiv"></div>
+        </div>
+    </div>
+    
+    <div style="border:none;"id="tabstrip">
+        <ul>
+            <li id="infoTab">Info</li>
+            <li id="photosTab">Photos</li>
+            <li id="filesTab">Files/Prints</li>
+        </ul>        
+    
+        @* Info tab *@
+        <div>
+
+            <div id="sizesContentDiv"></div>
+
+            <div id="InfoTab">
+
+                @*Row for required / ship dates*@
+                <div class="row  row-bottom-smaller">
+                   
+                        <div class="col-md-12">
+                            <div class="jd-table">
+                                <div class="jd-table-row">
+
+                                    <div class="jd-table-cell jd-width-50">
+                                        <label>Date Required:</label>
+                                        @Model.RequiredDateStr
+                                    </div>
+
+                                    <div class="jd-table-cell jd-width-50">
+                                        <label>Estimated ship date:</label>
+                                        @Model.EstimatedShipDateStr
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                @*Row for work scope *@
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+                                <label>Work scope:</label>
+                                @Model.WorkScope
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*Row for job notes *@
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+                                <label>Job notes:</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+                                <textarea class="form-control" disabled rows="4" cols="70" readonly="readonly">@Model.JobNotes</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*Row for part notes *@
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+                                <label>Part notes:</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+                                <textarea id="PartInfoPopUp_PartNotes" class="form-control" disabled rows="4" cols="70" readonly="readonly">@Model.PartNotes</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Unblock button *@
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row" style="">
+                                <button id="unblockPartBtn" class="btn btn-warning">Unblock Part</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Save / Cancel button rows*@
+                <div class="row  padd-bottom padd-top">
+                    <div class="col-md-4">
+                        <button id="outgoingFormBtn" class="btn btn-primary" style="width:150px;">Print Form</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="customerSizesBtn" class="btn btn-primary" style="width:150px;">Customer Sizes</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button id="closePartInfoPopupBtn" class="btn btn-danger">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Photos tab *@
+        <div>
+            <div id="addEditPhotoDetails"></div>
+
+            <div id="PhotosTab">
+
+                @* Row for photos grid*@
+                <div class="row  row padd-bottom">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+
+                                <div id="partPhotosDiv" style="width:530px;">
+                                    <div id="partPhotosgrid">
+                                        
+                                </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Row for add photo button*@
+                <div class="row padd-top padd-top">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary" id="addPhotoBtn">Add Photo</button>
+                        <button id="closePartInfoPhotosPopupBtn" class="btn btn-danger ">Close</button>
+                    </div>
+                </div>
+             
+           
+
+            </div>
+        </div>
+
+
+        @* Files/Print tab *@
+        <div>
+            <div id="addEditFileDetails"></div>
+
+            <div id="FilesTab">
+
+                @* Row for set final print *@
+                <div>
+                    <label>Final print:</label>
+                    <div id="fileList" style="margin-left:8px;"></div>
+                    <label id="finalPrintSavedNotification"></label>
+                </div>
+
+                @* Row for files grid*@
+                <div class="row  row-bottom-smaller">
+                    <div class="col-md-12">
+                        <div class="jd-table">
+                            <div class="jd-table-row">
+
+                                <div id="partFilesDiv" style="width:530px; margin-top:8px;">
+                                    <div id="partFilesgrid">
+                                        
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Row for add file button *@
+                <div class="row padd-top padd-bottom">
+                    <div class="col-md-4">
+                        <button class="btn btn-primary" id="addFileBtn">Add File</button>
+                        <button id="closePartInfoFilesPopupBtn" class="btn btn-danger">Close</button>
+                    </div>               
+
+                </div>
+           
+            </div>
+        </div>
+
+    </div>
+    <div id="printOFdiv"></div>
+
+}
+else
+{
+    <h2>
+        No part selected
+    </h2>
+}
+
+<style> 
+    .k-header, .k-grid-header, .k-toolbar, .k-dropdown-wrap, .k-picker-wrap, .k-numeric-wrap, .k-grouping-header, .k-pager-wrap, .k-textbox, .k-button, 
+    .k-progressbar, .k-draghandle, .k-autocomplete, .k-state-highlight, .k-tabstrip-items .k-item, .k-panelbar .k-tabstrip-items .k-item, .km-pane-wrapper>.km-pane>.km-view>.km-content {
+        background-image:none;
+    }
+
+    .k-i-close {
+
+    }
+
+    .k-window-titlebar {
+        background-color: #215fa8;
+        height: 80px !important;
+        text-align: center;
+        vertical-align: middle;
+        color: white;
+        font-weight: 500;
+        font-size: 20px;
+    }
+</style>
+
+
+<script>
+    // Init the tab strip
+    var tabstrip = $("#tabstrip").kendoTabStrip().data("kendoTabStrip");
+    $("#tabstrip").kendoTabStrip().data("kendoTabStrip").select(@Model.PopupTabIndex);
+    $(function () {
+        $("#partFilesgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadPartInfoFiles", "Part", new {id = Model.PartId})"
+                },
+                pageSize: 5
+            },
+            pageable: true,
+            scrollable: false,
+            columns: [{
+                field: "FileName",
+                title: "File",
+                template: "<div><span>#=FileName#</span></div>",
+                width: 175
+
+            },{
+                field: "URL",
+                title: "Notes",
+                template: "<div><span>#=FileNotes#</span></div>",
+                width: 250
+            },
+            {
+                field: "",
+                template : "<div class='tableEditCol'><input type='button' class='btn btn-primary' style='display:block;width:90px;' name=DLPartFileId value='Download' onclick='DownloadPartFile(#=PartFileId#)' readonly='readonly'/>    <input type='button' class='btn btn-primary' style='margin-top:5px;width:90px;' name=EditPartFileId value='Edit' onclick='EditFile(#=PartFileId#)' readonly='readonly'/>   <input type='button' class='btn btn-danger' style='margin-top:5px;width:90px;' name=DelPartFileId value='Delete' onclick='DeletePartFile(#=PartFileId#)' readonly='readonly'/> </div>",
+                width: 0
+            }]
+        });
+
+        $("#partPhotosgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadPartInfoPhotos", "Part", new { id = Model.PartId })"
+                },
+                pageSize: 3
+            },
+            pageable: true,
+            scrollable: false,
+            columns: [{
+                field: "URL",
+                title: "Thumbnail",
+                template: "<div class='partPhotoThumb'><img src='#=URL#' style='max-width:100%; max-height:100%;'/></div>",
+                width: 176
+
+            },{
+                field: "URL",
+                title: "Notes",
+                template: "<div><span>#=PhotoNotes#</span></div>",
+                width: 250
+            },
+            {
+                field: "",
+                template : "<div class='tableEditCol'><input type='button' class='btn btn-primary' style='display:block;width:90px;' name=DLPartPhotoId value='Download' onclick='DownloadFile(#=PartPhotoId#)' readonly='readonly'/>  <input type='button' class='btn btn-primary' style='margin-top:5px;width:90px;' name=EditPartPhotoId value='Edit' onclick='EditPhoto(#=PartPhotoId#)' readonly='readonly'/> <input type='button' class='btn btn-danger' style='margin-top:5px;width:90px;' name=DelPartPhotoId value='Delete' onclick='DeletePhoto(#=PartPhotoId#)' readonly='readonly'/> </div>",
+                width: 0
+            }]
+        });
+
+        $("#manageFilesBtn").click(function () {
+
+            $.ajax({
+                type: 'POST',
+                url: '/Part/AddEditPartFilePopUpModal?partId='+partId+'&partPhotoId='+id,
+                success: function (data) {
+                    // Change the contents of the tab
+                    $('#addEditFileDetails').html(data);
+                    $('#PhotosTab').hide();
+                    $('#addEditFileDetails').show();
+                },
+                error: function (data) {
+                    bootbox.alert("Error AJAX AddEditPartPhotoPopUpModal", function () {});
+                }
+            });
+        });
+
+        $("#outgoingFormBtn").click(function () {
+
+            $.ajax({
+                type: 'POST',
+                url: '/Part/OutgoingFormWPartId/',
+                data: {
+                    partId: @Model.PartId,
+                },
+                success: function (data) {
+                    
+                    // Print Logic
+                    $("#printOFdiv").append(data);
+
+                    var printContents = document.getElementById('printOFdiv').innerHTML;
+                    var origContents = document.body.innerHTML;
+                    document.body.innerHTML = printContents;
+
+                    // get original padding size for body element
+                    var origPaddingSize = $('body').css('padding');
+
+                    // set new padding on body to fit screen for print
+                    $('body').css('padding', '50px');
+                    window.print();
+
+                    // put things back the way they were
+                    document.body.innerHTML = origContents;
+                    $('body').css('padding', origPaddingSize);
+
+                    // empty div
+                    $("#printOFdiv").empty();
+                    location.reload();
+                    
+                },
+                error: function (data) {
+                    bootbox.alert("Error AJAX outgoingform", function () {});
+                }
+            });
+
+            //alert("outgoing form button clicked");
+        });
+
+        $("#customerSizesBtn").click(function () {
+
+            // Protect the customer sizes button with a signoff PIN
+            deletepartid = 0;   // prevent this sign off action...
+            workflowSignoffCallback = showCustomerSizes;
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff")',
+                type: 'GET',
+                data: { skillName: "Start/Edit Jobs" },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Error", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+
+
+        });
+        $('#closepartphotobtn').click(function() {
+            $("#partPhotoZoomWin").css("height", "0");
+            $("#partPhotoZoomWin").data("kendoWindow").close();
+        })
+
+        $("#closePartInfoPopupBtn").click(function () {
+            $("#partInfoPopupModal").modal('hide');
+        });
+
+        $("#closePartInfoFilesPopupBtn").click(function () {
+            $("#partInfoPopupModal").modal('hide');
+        });
+
+        $("#closePartInfoPhotosPopupBtn").click(function () {
+            $("#partInfoPopupModal").modal('hide');
+        });
+
+        $("#addPhotoBtn").click(function () {
+            addPhoto();
+        });
+
+        $("#addFileBtn").click(function () {
+            addFile();
+        });
+        
+
+        $("#unblockPartBtn").click(function () {
+            var values = {
+                "partId" : @Model.PartId,
+            };
+            $.ajax({
+                url: "/Part/UnblockPart",
+                type: "POST",
+                data: values,
+                success: function (data) {
+                    $("#partInfoPopupModal").modal('hide');
+                }
+            });
+        });
+        
+        // turn on the unblock button if this part is blocked
+        if('@Model.IsPartBlocked' == 'True') {
+            $('#unblockPartBtn').show();
+        } else {
+            $('#unblockPartBtn').hide();
+        }
+        
+
+
+
+        // When the user clicks on an image, pop it up in a window
+        $('body').on('click', 'img', function (e)
+        {
+            // e.currentTarget.src gives ths url to the image we clicked on
+            zoomToPartPhoto(e.currentTarget.src);
+        })
+
+        initFinalPrint();
+
+        $('#partPhotosgrid').data('kendoGrid').dataSource.read();
+        $('#partFilesgrid').data('kendoGrid').dataSource.read();
+
+    });
+
+    function showCustomerSizes(){
+
+        workflowSignoffCallback = null;     // clear out the signoff callback
+        addJobChangeLogEntry(@Model.JobId, "Customer sizes unlocked for edit.");
+
+        $.ajax({
+            url: '@Url.Action("Sizes", "Part")',
+            data: {
+                partID: @Model.PartId,
+            },
+            success: function (data) {
+                $('#sizesContentDiv').html(data);
+                $('#InfoTab').hide();
+                $('#sizesContentDiv').show();
+
+                    
+                // Just created this button, need to bind its click event
+                $('#sizesCancelBtn').bind("click", function () {
+                    $('#sizesContentDiv').hide();
+                    $('#InfoTab').show();
+                });
+
+                $('#saveSizesBtn').bind("click", function () {
+                    $('#sizesContentDiv').hide();
+                    $('#InfoTab').show();
+                });
+
+            },
+            error: function (e) {
+                bootbox.alert("AJAX ERROR: AddSizesBtn click", function () {});
+                //$("#sizesModal").modal('hide');
+            }
+        });
+
+    }
+
+
+
+    function initFinalPrint() {
+
+        // Populate the dropdown list
+        $("#fileList").kendoDropDownList({
+            dataTextField: "Name",
+            dataValueField: "PartFileId",
+            change: SetFinalPrint,
+            dataSource: {
+                transport: {
+                    read: {
+                        dataType: "json",
+                        data: { id: @Model.PartId },
+                        url: "/Part/GetFilesForDropdown"
+                    }
+                }
+            }
+        });
+
+        // Find the currently stored final print
+        var values = {
+            "partId" : @Model.PartId,
+        };
+        $.ajax({
+            url: "/Part/GetFinalPrintId",
+            data: values,
+            success: function (data) {
+                    // Select the correct part
+                    $("#fileList").data('kendoDropDownList').value(data.PartFileId);
+                }
+            });
+    }
+
+    function SetFinalPrint(){
+        var finalPrintFileId = $('#fileList').val();
+        // so here, go make an ajax call to save that
+
+        var values = {
+            "partFileId" : finalPrintFileId,
+            "partId" : @Model.PartId,
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/SetFinalPrintId',
+            data: values,
+            success: function (data) {
+                // Show it worked
+                $("#finalPrintSavedNotification").text("Saved");
+                $("#finalPrintSavedNotification").show();
+                $("#finalPrintSavedNotification").fadeOut(3000);
+            }
+        });
+
+    }
+
+    function DeletePartFile(id) {
+        fileId = id;
+
+        bootbox.confirm("Are you sure you want to delete this?", function(result) {
+            if(result === true){
+                $.ajax({
+                    type: 'POST',
+                    url: '/Part/DeletePartFile/'+id,
+                    success: function (data) {
+
+                        $('#partFilesgrid').data('kendoGrid').dataSource.read();
+                        $('#partFilesgrid').data('kendoGrid').refresh();
+                    },
+                    error: function (data) {
+                        
+                        alert("Error AJAX DeletePartFile");
+                    }
+                });
+            }
+        });
+    }
+
+    function DeletePhoto(id) {
+        fileId = id;
+        
+        bootbox.confirm("Are you sure you want to delete this?", function(result) {
+            if(result == true)
+            {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Part/DeletePartPhoto/'+id,
+                    success: function (data) {
+
+                        $('#partPhotosgrid').data('kendoGrid').dataSource.read();
+                        $('#partPhotosgrid').data('kendoGrid').refresh();
+                    },
+                    error: function (data) {
+                        bootbox.alert("Error AJAX DeletePhoto", function () {});
+                    }
+                });
+            }
+        });
+    }
+
+    function addPhoto() {        openAddEditPhotoPopup(0);
+    }
+
+    function EditPhoto(id) {
+        fileId = id;
+        openAddEditPhotoPopup(id);
+    }
+
+
+    function openAddEditPhotoPopup(id) {
+        var partId = @Model.PartId;
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/AddEditPartPhotoPopUpModal?partId='+partId+'&partPhotoId='+id,
+            success: function (data) {
+                // Change the contents of the tab
+                $('#addEditPhotoDetails').html(data);
+                $('#PhotosTab').hide();
+                $('#addEditPhotoDetails').show();
+            },
+            error: function (data) {
+                bootbox.alert("Error AJAX openAddEditPhotoPopup", function () {});
+            }
+        });
+    }
+
+
+    function addFile() {
+        openAddEditFilePopup(0);
+    }
+
+    function EditFile(id) {
+        fileId = id;
+        openAddEditFilePopup(id);
+    }
+
+    function openAddEditFilePopup(id) {
+        var partId = @Model.PartId;
+
+        $.ajax({
+            type: 'POST',
+            url: '/Part/AddEditPartFilePopUpModal?partId='+partId+'&partFileId='+id,
+            success: function (data) {
+                // Change the contents of the tab
+                $('#addEditFileDetails').html(data);
+                $('#FilesTab').hide();
+                $('#addEditFileDetails').show();
+            },
+            error: function (data) {
+                bootbox.alert("Error AJAX openAddEditFilePopup", function () {});
+            }
+        });
+    }
+
+    function ProgressHandler(e) {
+        if (e.lengthComputable) {
+            $("#divAddInforamtionDialog").show();
+            $("#txtuploadedMsgAdd").text("  " + fileName + " uploaded successfully");
+        }
+    }
+
+    function RefreshPhotosGrid() {
+        $('#partPhotosgrid').data('kendoGrid').dataSource.read();
+    }
+
+    function DownloadFile(id) {
+        // Download the part info file
+        window.location.href = '/Part/DownloadPartPhoto/' + id
+    }
+
+    function DownloadPartFile(id) {
+        // Download the part info file
+        window.location.href = '/Part/DownloadPartFile/' + id
+    }
+
+    // Initializes the modeless, maximized window that shows the part
+    function initWindow() {
+        var windowOptions = {
+            width: "700px",
+            height: "700px",
+            title: "Part Photo",
+            visible: false,
+        };
+
+        $("#partPhotoZoomWin").kendoWindow(windowOptions);
+        $("#partPhotoZoomWin").css("height", "100%");
+        $('#closepartphotobtn').css("display", "inline-block");
+        $('#closepartphotobtn').css("visibility", "visible");
+        $('#partPhotoZoomWin').data("kendoWindow").center();
+        $("#partPhotoZoomWin").data("kendoWindow").open();
+       // $("#partPhotoZoomWin").data("kendoWindow").maximize();
+    }
+
+    function zoomToPartPhoto(url) {
+        $("#partPhotoZoomImg").attr("src", url);
+        initWindow();        
+    }
+
+    
+    /**to tell if a file is a photo from the data url**/
+    function isPicture(url) {
+        if (url.indexOf(".png") >= 0 && url.indexOf(".jpg") >= 0)
+            return false;
+        else
+            return true;
+    }
+
+</script>

@@ -1,0 +1,553 @@
+﻿
+@{
+    ViewBag.Title = "IncomingInspection";
+}
+
+<script>
+    function showSignOff() {
+        $("#confirmDeleteModal").modal();
+    }
+
+</script>
+
+<head>
+    <title></title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+
+<div class="container-fluid form-container">
+    <div class="row">
+
+        @Html.Partial("SignOff")
+        @Html.Partial("PartHeader")
+
+        <!-- This is the floaty bit on the left --->
+        <div class="container-fluid form-container col-md-3" id="partStepBar">
+            <div class="partStep activePartStep row">
+                <div class="col-md-7 currentStep partStepText">Incoming Inspection</div>
+                <span class="glyphicon glyphicon-arrow-right col-md-2 partStepGlyph activeStepGlyph"></span>
+            </div>
+
+            <div class="partStep row">
+                <div class="col-md-7 incompleteStep partStepText">Material Preparation</div>
+            </div>
+
+            <div class="partStep row">
+                <div class="col-md-7 incompleteStep partStepText">Manufacturing Process</div>
+            </div>
+
+            <div class="partStep row">
+                <div class="col-md-7 incompleteStep partStepText">Finish Bore Process</div>
+            </div>
+
+            <div class="partStep row">
+                <div class="col-md-7 incompleteStep partStepText">Final Inspection</div>
+            </div>
+
+            <div class="partStep incompleteStep row">
+                <div class="col-md-7 partStepText">Delivery</div>
+            </div>
+
+            <div class="partStep row">
+                <div class="col-md-7 incompleteStep partStepText">Sign off</div>
+            </div>
+        </div>
+
+
+        <!-- This is the main report part-->
+        <div class="container-fluid form-container col-md-9" style="">
+            <link rel="stylesheet" href="site.css">
+            <form>
+                <div class="row">
+                    <h1 class="col-md-6">Job# 5913 - Slinger Ring</h1>
+                    <h3 class="col-md-1" style="text-align:right">
+                        <button class="btn" type="button" onclick="showPartDetails()" style="width:55px; margin-top:-10px; background-color:transparent">
+                            <span class="glyphicon glyphicon-info-sign  activeStepGlyph"></span>
+                            <span class="glyphicon glyphicon-chevron-down  activeStepGlyph"></span>
+                        </button>
+                    </h3>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Required Date:</label>
+                    </div>
+                    <div class="value-style col-md-4">
+                        <input type="text" class="form-control" placeholder="mm/dd/yyyy" style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Quantity:</label>
+                    </div>
+                    <div class="value-style col-md-4">
+                        <input type="text" class="form-control" placeholder="Qty" style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>MFG New?</label>
+                    </div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">Yes</div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">No</div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Repair?</label>
+                    </div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">Yes</div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">No</div>
+                </div>
+                
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Requires UT?</label>
+                    </div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">Yes</div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">No</div>
+                </div>
+                
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Inspection Only?</label>
+                    </div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">Yes</div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">No</div>
+                </div>
+                
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Roughout Only?</label>
+                    </div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">Yes</div>
+                    <div class="col-md-1 form-radio"><input type="radio" name="timeradio" style="text-align:right;margin-left:50px" /></div>
+                    <div class="col-md-1 form-label" style="text-align:left">No</div>
+                </div>
+
+                <!--Photos -->
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Pictures:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <button class="btn" id="managePhotosBtn" style="margin:2px">Manage</button>
+                    </div>
+
+                    <div class="key-style col-md-3 ">
+                        <label>Approved by:</label>
+                    </div>
+
+                    <div class="dropdown col-md-3">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            FLORES, ALEX
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">FLORES, ALEX </a></li>
+                            <li><a href="#">SHOWDY, SLIM</a></li>
+                            <li><a href="#">GIGGS, RYAN</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-1">
+                        <button class="btn" type="button" onclick="showSignOff()">
+                            <img src="~/Images/green_check.png" style="margin-left:-5px" height="15" width="15" />
+                            Sign Off
+                        </button>
+                    </div>
+                </div>
+
+                <!--Drawings -->
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Incoming DWG:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <button class="btn" type="button" id="manageDrawingsBtn" style="margin:2px">Manage</button>
+                    </div>
+
+                    <div class="key-style col-md-3 ">
+                        <label>Approved by:</label>
+                    </div>
+
+                    <div class="dropdown col-md-3">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            FLORES, ALEX
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">FLORES, ALEX </a></li>
+                            <li><a href="#">SHOWDY, SLIM</a></li>
+                            <li><a href="#">GIGGS, RYAN</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-1">
+                        <button class="btn" type="button" onclick="showSignOff()">
+                            <img src="~/Images/green_check.png" style="margin-left:-5px" height="15" width="15" />
+                            Sign Off
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:30px">
+                    <div class="key-style col-md-5 " style="text-align:left;">
+                        <label>Measured incoming Sizes:</label>
+                    </div>
+                </div>
+
+                <!-- Incoming sizes-->
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>ID:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <button class="btn" style="margin-top:5px">Add</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>OD:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <button class="btn" style="margin-top:5px">Add</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>Width:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <button class="btn" style="margin-top:5px">Add</button>
+                    </div>
+                </div>
+
+
+                <!-- inc measurements approved by + instrument -->
+                <div class="row">
+                    <div class="key-style col-md-3 ">
+                        <label>Approved by:</label>
+                    </div>
+
+                    <div class="dropdown col-md-3">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">FLORES, ALEX </a></li>
+                            <li><a href="#">SHOWDY, SLIM</a></li>
+                            <li><a href="#">GIGGS, RYAN</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-1">
+                        <button class="btn" type="button" onclick="showSignOff()">Sign Off</button>
+                    </div>
+                    <div class="key-style col-md-3 ">
+                        <label>Instrument:</label>
+                    </div>
+
+                    <div class="dropdown col-md-2">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">MIC 1 </a></li>
+                            <li><a href="#">MIC 2</a></li>
+                            <li><a href="#">MIC 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+                <div class="row" style="margin-top:30px">
+                    <div class="key-style col-md-5 " style="text-align:left;">
+                        <label>Customer-specified sizes:</label>
+                    </div>
+                </div>
+
+                <!-- Customer-specified-->
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>ID:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>OD:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-2 ">
+                        <label>Width:</label>
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="A" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="B" style="width:100%" />
+                    </div>
+                    <div class="value-style col-md-2">
+                        <input type="text" class="form-control" placeholder="C" style="width:100%" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="key-style col-md-6">
+                        <label>Customer sizes approved by:</label>
+                    </div>
+
+                    <div class="dropdown col-md-3">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">FLORES, ALEX </a></li>
+                            <li><a href="#">SHOWDY, SLIM</a></li>
+                            <li><a href="#">GIGGS, RYAN</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-1">
+                        <button class="btn" type="button" onclick="showSignOff()">Sign Off</button>
+                    </div>
+                </div>
+
+
+                <!-- Included parts -->
+                <div class="row" style="margin-top:20px">
+
+                    <label class="col-md-4">Parts / Accessories:</label>
+
+                    <button class="btn col-md-offset-5 col-md-2" style="">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add new part
+                    </button>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table id="grid-basic" class="table table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="name" style="width:75%">Description</th>
+                                    <th data-column-id="scope" data-type="numeric">Quantity</th>
+                                    <th data-column-id="del" style="width:5%"> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class="form-control" placeholder="25mm washers. Flat." style="width:100%" /></td>
+                                    <td><input type="text" class="form-control" placeholder="3" style="width:100%" /></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning center-vert-align">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td><input type="text" class="form-control" placeholder="36in green wire, 18 gauge" style="width:100%" /></td>
+                                    <td><input type="text" class="form-control" placeholder="2" style="width:100%" /></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning center-vert-align">Delete</button>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+                <!-- Style / Shape / Material -->
+                <div class="row" style="">
+                    <div class="key-style col-md-2 " style="text-align:left">
+                        <label>Style:</label>
+                    </div>
+
+                    <div class="dropdown col-md-2">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            Solid
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">Solid </a></li>
+                            <li><a href="#">Split</a></li>
+                            <li><a href="#">Hook</a></li>
+                            <li><a href="#">Other</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div class="key-style col-md-2 ">
+                        <label>Shape:</label>
+                    </div>
+
+                    <div class="dropdown col-md-2">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            Square
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">T </a></li>
+                            <li><a href="#">A</a></li>
+                            <li><a href="#">Square</a></li>
+                            <li><a href="#">Other</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="key-style col-md-2 ">
+                        <label>Material:</label>
+                    </div>
+
+                    <div class="dropdown col-md-2">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            Steel
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">Steel </a></li>
+                            <li><a href="#">Aluminum</a></li>
+                            <li><a href="#">Bronze</a></li>
+                            <li><a href="#">Other</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="row" style="">
+                    <div class="key-style col-md-4 " style="text-align:left">
+                        <label>Work Scope:</label>
+                    </div>
+
+                    <textarea type="text" class="form-control col-md-3" id="scope" placeholder="Work scope" style="height:100px; margin-left:10px"></textarea>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="key-style col-md-8 ">
+                        <label>Final Incoming Inspection Approved by:</label>
+                    </div>
+
+                    <div class="dropdown col-md-3">
+                        <button class="btn btn-primary dropdown-toggle jd-combox-btn" type="button" data-toggle="dropdown">
+                            <span class="caret" style="float:right; margin-top:7px;"></span>
+                        </button>
+                        <ul class="dropdown-menu" style="width:100%;">
+                            <li><a href="#">FLORES, ALEX </a></li>
+                            <li><a href="#">SHOWDY, SLIM</a></li>
+                            <li><a href="#">GIGGS, RYAN</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-1">
+                        <button class="btn" type="button" onclick="showSignOff()">Sign Off</button>
+                    </div>
+
+                </div>
+
+                <!-- save / cancel buttons-->
+                <div class="row" style="margin-top:20px">
+                    <div class="col-md-2 col-md-offset-8">
+                        <button type="submit" class="btn btn-success" style="width:100%" id="saveBtn">Save</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="cancelBtn" type="submit" class="btn btn-danger" style="width:100%">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $("#managePhotosBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockPhoto/ManagePhotos';
+        }); 
+
+        $("#manageDrawingsBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockDWG/ManageDWGs';
+        });
+
+        $("#cancelBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+
+        $("#saveBtn").click(function (e) {
+            e.preventDefault();
+            window.location.href = '/MockSlingerRing/MaterialPreparation';
+        });
+    });
+
+</script>

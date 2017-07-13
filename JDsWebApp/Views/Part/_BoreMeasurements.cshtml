@@ -1,0 +1,39 @@
+﻿@using JDsDataModel.ViewModels
+@model List<BoreMeasurementViewModel>
+
+<div class="jd-table">
+    <div class="row">
+        <div class="col-sm-3 jd-table-cell">
+            <input type="text" class="jd-input" placeholder="A" style="width: 100px" />
+        </div>
+        <div class="col-sm-3 jd-table-cell">
+            <input type="text" class="jd-input" placeholder="B" style="width: 100px"/>
+        </div>
+        <div class="col-sm-3 jd-table-cell">
+            <input type="text" class="jd-input" placeholder="C" style="width: 100px"/>
+        </div>
+        <div class="col-sm-3 jd-table-cell">
+            <input type="button" class="btn btn-primary" value="Add" style="width: 75px" />
+        </div>
+    </div>
+
+    <div class="row">&nbsp;</div>
+
+    @foreach (BoreMeasurementViewModel measure in Model)
+    {
+        <div class="row">
+            <div class="col-sm-3 jd-table-cell">
+                @Html.TextBoxFor(m => measure.A, new {@class = "jd-input", placeholder = "A", style = "width: 100px"})
+            </div>
+            <div class="col-sm-3 jd-table-cell">
+                @Html.TextBoxFor(m => measure.B, new {@class = "jd-input", placeholder = "B", style = "width: 100px"})
+            </div>
+            <div class="col-sm-3 jd-table-cell">
+                @Html.TextBoxFor(m => measure.C, new {@class = "jd-input", placeholder = "C", style = "width: 100px"})
+            </div>
+            <div class="col-sm-3 jd-table-cell">
+                <input type="button" class="btn btn-warning" value="Delete" style="width: 75px" />
+            </div>
+        </div>
+    }
+</div>

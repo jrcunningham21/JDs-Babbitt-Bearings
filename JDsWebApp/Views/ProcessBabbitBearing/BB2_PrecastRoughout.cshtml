@@ -1,0 +1,317 @@
+﻿@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB2_PrecastRoughoutViewModel
+
+@{
+    ViewBag.Title = "BB2_PrecastRoughout";
+}
+
+<div class="row">
+    <h4>Pre-cast Roughout</h4>
+</div>
+
+<form id="process_bb2_form">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+    @Html.HiddenFor(m => m.IsOnlySave, new {id = "IsOnlySave"})
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-5">
+            @Html.SignOffHelper(m => m.RoughOutBy, "BB2_RoughOutBy")
+        </div>
+    </div>
+    @if (Model.BaseMaterial == "Cast Iron")
+    {
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-5">
+                @Html.SignOffHelper(m => m.TinnedBy, "BB2_TinnedBy")
+            </div>
+        </div>
+    }
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.LabelFor(m => m.BaseMaterial)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.TextBoxFor(m => m.BaseMaterial, new { @class = "form-control", ID = "BB2_BaseMaterial", @readonly="readonly" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-bottom padd-top" id="BB2_RoughOutByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.RoughOutBy, "BB2_RoughOutBy1")
+                    </div>
+                </div>
+            @if (Model.BaseMaterial == "Cast Iron")
+            {
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.TinnedBy, "BB2_TinnedBy1")
+                    </div>
+                </div>
+            }
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function()
+        {
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function()
+            {
+                if (signOffAllRequested == true)
+                {
+                    if('@Model.BaseMaterial' == 'Cast Iron' && $("#BB2_TinnedBy1").val() && $("#BB2_RoughOutBy1").val())
+                    {
+                        // All sign offs have been signed
+                        Save();
+                    }
+                    if('@Model.BaseMaterial' != 'Cast Iron' && $("#BB2_RoughOutBy1").val())
+                    {
+                        // All sign offs have been signed
+                        Save();
+                    }
+                }
+
+                signOffAllRequested = false;
+            });
+
+            $("#signoffallbtn").click(function()
+            {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB2_PrecastRoughoutEntry');
+
+            $('#process_BB2_PrecastRoughoutEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function()   { Save(); });
+
+            $("#cancelBtn").click(function() { Cancel(); });
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+
+            // signoff validation and dialog...
+            if ($('#BB2_RoughOutBy').val().trim() == "")
+            {
+                isvalid = 0;
+                $("#BB2_RoughOutByGroup").show();
+                $('#BB2_RoughOutBy1SO').addClass("btn-danger");
+                $('#BB2_RoughOutBySO').addClass("btn-danger");
+            }
+            else
+            {
+                $("#BB2_RoughOutByGroup").hide();
+                $('#BB2_RoughOutBy1SO').removeClass("btn-danger");
+                $('#BB2_RoughOutBySO').removeClass("btn-danger");
+            }
+
+            if ('@Model.BaseMaterial' == "Cast Iron" && $("#BB2_TinnedBy1").val().trim() == "")
+            {
+                isvalid = 0;
+                $("#BB2_TinnedByGroup").show();
+                $('#BB2_TinnedBy1SO').addClass("btn-danger");
+                $('#BB2_TinnedBySO').addClass("btn-danger");
+            }
+            else
+            {
+                $("#BB2_TinnedByGroup").hide();
+                $('#BB2_TinnedBy1SO').removeClass("btn-danger");
+                $('#BB2_TinnedBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0)
+            {
+                $('#signOffGroupModal').modal('show');
+
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save()
+        {
+            if (!IsStepValid()) {
+                return false;
+            }
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            if (isOnlySave) {
+                $("#IsOnlySave").val(true);
+            }
+
+            // Apply grid data to model
+            $.ajax(
+            {
+                url: '/ProcessBabbitBearing/Save_BB2_PrecastRoughout',
+                type: 'POST',
+                data: $("#process_bb2_form").serialize(),
+                success: function (data)
+                {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB3_SpincastProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error)
+                {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function Cancel()
+        {
+            window.location.href = "/ProcessBabbitBearing/BB2_PrecastRoughout?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data)
+        {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data)
+            {
+                case 'BB2_RoughOutBy':
+                case 'BB2_RoughOutBy1':
+                    skillname = "Roughout Bearing";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: Roughout Bearing");
+                    break;
+                case 'BB2_TinnedBy':
+                case 'BB2_TinnedBy1':
+                    skillname = "Tinning";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: Roughout Bearing");
+                    break;
+
+            }
+
+            $.ajax(
+            {
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data)
+                {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e)
+                {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: All Precast Roughout");
+
+            if ($('#BB2_RoughOutBy').val().trim() == "") {
+                ids = ids + "BB2_RoughOutBy";
+                count = count + 1;
+            }
+
+            if('@Model.BaseMaterial' == 'Cast Iron' && $("#BB2_TinnedBy").val().trim() == "")
+            {
+                if (count > 0) {
+                    ids = ids + ",";
+                }
+
+                ids = ids + "BB2_TinnedBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Roughout Bearing";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+    </script>
+}

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="8a4fd0fc-3819-4a7a-8f6d-627dcccb8ddf" ChangeDateTime="12/12/2015 04:20:57">
+    <Property Name="ElementName" Value="[dbo].[PartTest].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PartTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PartTestId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="292de9ed-86b9-4c5d-8561-28dcc6061f34" ChangeDateTime="12/12/2015 04:23:32">
+    <Property Name="ElementName" Value="[dbo].[PartTest].[UTComplet]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PartTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UTComplete" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e0d90b3b-de69-4fbe-b063-57516e1a04a0" ChangeDateTime="12/12/2015 04:24:27">
+    <Property Name="ElementName" Value="[dbo].[PartTest].[UTCertPartFile]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PartTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UTCertPartFileId" />
+  </Operation>
+</Operations>

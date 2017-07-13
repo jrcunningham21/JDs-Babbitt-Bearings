@@ -1,0 +1,551 @@
+﻿@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB5_PostcastRoughoutViewModel
+
+@{
+    ViewBag.Title = "BB5_PostcastRoughout";
+}
+
+<div class="row">
+    <h4>Post-cast Roughout</h4>
+</div>
+
+<div class="modal fade" id="viewCustomerSizesModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Customer Sizes </h4>
+        <div id="viewCustomerSizeContentDiv">
+
+        </div>
+    </div>
+</div>
+
+<form id="process_bb5_form">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Version)
+    @Html.HiddenFor(m => m.JobId)
+    @Html.HiddenFor(m => m.PartId)
+    @Html.HiddenFor(m => m.ProcessId)
+    @Html.HiddenFor(m => m.StepId)
+    @Html.HiddenFor(m => m.IsUTRequired)
+    @Html.HiddenFor(m => m.IsPTRequired)
+    @Html.HiddenFor(m => m.IsDisplayUT)
+    @Html.HiddenFor(m => m.IsDisplayPT)
+    @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+
+    <div class="row padd-top">
+        <div class="col-sm-5 panel panel-primary" id="leftDiagram">
+            <div class="panel-body">
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureL.svg" class="center-block">Your browser does not support SVG</object>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.IID1Measurements)
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10 @(!@Model.IID1Measurements.Any() ? "collapse" : "")">
+                        <div id="grid_IID1Measurements">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.IOD1Measurements)
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10 @(!@Model.IOD1Measurements.Any()? "collapse" : "")">
+                        <div id="grid_IOD1Measurements">
+                            
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+
+        <div class="col-sm-offset-1 col-sm-5 panel panel-primary" id="rightDiagram">
+            <div class="panel-body">
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-12">
+                        <object type="image/svg+xml" data="/Content/SVGs/bore_x_measureR.svg" class="center-block">Your browser does not support SVG</object>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.IID2Measurements)
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10 @(!@Model.IID2Measurements.Any() ? "collapse" : "")">
+                        <div id="grid_IID2Measurements">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        @Html.LabelFor(m => m.IOD2Measurements)
+                    </div>
+                </div>
+
+                <div class="row padd-bottom">
+                    <div class="col-sm-offset-1 col-sm-10 @(!@Model.IOD2Measurements.Any() ? "collapse" : "")">
+                        <div id="grid_IOD2Measurements">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="viewCustSizesBtn" style="width:150px;">View Customer Sizes</a>
+    </div>
+        </div>
+
+    <div class="row padd-bottom">
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.LabelFor(m => m.ODInfo)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.ODInfo, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        
+        <div class="row padd-bottom padd-top" id="BB1_DisassembledStenciledByGroup">
+            <div class="col-sm-6">
+                @Html.SignOffHelper(m => m.RoughedOutBy, "BB5_RoughedOutBy")
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row padd-bottom">
+    @Html.Action("PartTestView", "ProcessBabbitBearing", new { id = @Model.PartId })
+
+    <div class="row padd-top padd-bottom">
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+        </div>
+    </div>
+    </div>
+</form>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB5_RoughedOutByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.RoughedOutBy, "BB5_RoughedOutBy1")
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $("#grid_IID1Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.IID1Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    format: "{0:0.000#}"
+                }]
+            });
+
+            $("#grid_IOD1Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.IOD1Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    format: "{0:0.000#}"
+                }]
+            });
+
+            $("#grid_IID2Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.IID2Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    format: "{0:0.000#}"
+                }]
+            });
+
+
+            $("#grid_IOD2Measurements").kendoGrid({
+                dataSource: {
+                    data: @Html.Raw(Json.Encode(Model.IOD2Measurements)),
+                },
+                scrollable: false,
+                columns: [{
+                    hidden: true,
+                    field: "Index",
+
+                },{
+                    field: "MeasurementId",
+                    hidden: true
+                },
+                {
+                    field: "MeasurementGroupId",
+                    hidden: true
+                },
+                {
+                    field: "A",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "B",
+                    format: "{0:0.000#}"
+                },
+                {
+                    field: "C",
+                    format: "{0:0.000#}"
+                }]
+            });
+
+
+
+            if($("#leftDiagram").height() > $("#rightDiagram").height()){
+                $("#rightFill").height($("#leftDiagram").height() - $("#rightDiagram").height());
+            } else if ($("#rightDiagram").height() > $("#leftDiagram").height()) {
+                $("#leftFill").height($("#rightDiagram").height() - $("#leftDiagram").height());
+            }
+
+            // show/hide customer sizes verified checkbox
+            var hasData =  $("#grid_IID1Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IOD1Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IID2Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IOD2Measurements").data("kendoGrid").dataSource.total();
+
+            if (hasData)
+            {
+                $("#IsCustomerSizesVerified").closest(".row").parent().show();
+            }
+            else
+            {
+                $("#IsCustomerSizesVerified").closest(".row").parent().hide();
+            }
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB5_RoughedOutBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB5_PostcastRoughoutEntry');
+            $('#process_BB5_PostcastRoughoutEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                Save();
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+
+            $("#viewCustSizesBtn").click(function(e) {
+                var values = {
+                    "PartID" : '@Model.PartId'
+                };
+
+                $.ajax({
+                    url: '/ProcessBabbitBearing/ViewCustomerSizes/',
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(values),
+                    success: function (data) {
+                        // BUT: If we've entered OD data on THIS page, we need to replace the OD Data in the modal with
+                        // the OD data entered on this page
+                        $("#viewCustomerSizeContentDiv").html(data);
+                        $("#viewCustomerSizesModal").modal('show');
+                    },
+                    error: function (response, error) {
+                        bootbox.alert(error, function () {});
+                    }
+                });
+            });
+        });
+
+        function IsStepValid() {
+            // customer sizes verified validation
+            var hasData =  $("#grid_IID1Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IOD1Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IID2Measurements").data("kendoGrid").dataSource.total() ||
+                           $("#grid_IOD2Measurements").data("kendoGrid").dataSource.total();
+
+            var isValid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB5_RoughedOutBy').val().trim() == "")
+            {
+                isValid = 0;
+                $("#BB5_RoughedOutByGroup").show();
+
+                $('#BB5_RoughedOutBy1SO').addClass("btn-danger");
+                $('#BB5_RoughedOutBySO').addClass("btn-danger");
+            }
+            else
+            {
+                $("#BB5_RoughedOutByGroup").hide();
+
+                $('#BB5_RoughedOutBy1SO').removeClass("btn-danger");
+                $('#BB5_RoughedOutBySO').removeClass("btn-danger");
+            }
+
+            if (isValid == 0)
+            {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+        function Save()
+        {
+            if (!IsStepValid()) {
+                return;
+            }
+            markStepAsCompleted();
+            SaveToServer();
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            // Apply grid data to model
+            var jsondata =
+            {
+                "Version": '@Html.Raw(Json.Encode(Model.Version))',
+                "JobId": '@Html.Raw(Json.Encode(Model.JobId))',
+                "PartId": '@Html.Raw(Json.Encode(Model.PartId))',
+                "ProcessId": '@Html.Raw(Json.Encode(Model.ProcessId))',
+                "StepId": '@Html.Raw(Json.Encode(Model.StepId))',
+                "IsUTRequired": '@Html.Raw(Json.Encode(Model.IsUTRequired))',
+                "IsPTRequired": '@Html.Raw(Json.Encode(Model.IsPTRequired))',
+                "IsDisplayUT": '@Html.Raw(Json.Encode(Model.IsDisplayUT))',
+                "IsDisplayPT": '@Html.Raw(Json.Encode(Model.IsDisplayPT))',
+                "IsCompleted": $("#IsCompleted").val(),
+                "ODInfo": $("#ODInfo").val(),
+                "RoughedOutBy": $("#BB5_RoughedOutBy").val(),
+                "IsOnlySave": isOnlySave
+            }
+
+            var postdata = JSON.stringify(jsondata);
+
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB5_PostcastRoughout',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: postdata,
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        if (data.isPartInsulated)
+                            window.location.href = "/ProcessBabbitBearing/BB6_InsulationProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                        else
+                            window.location.href = "/ProcessBabbitBearing/BB7_CleanupProcess?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB5_PostcastRoughout?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB5_RoughedOutBy':
+                case 'BB5_RoughedOutBy1':
+                    skillname = "Roughout Bearing";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: Roughout Bearing By");
+                    break;
+
+                case 'PTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: PT Approved By");
+                    skillname = "Management";
+                    break;
+
+                case 'UTApprovedBy':
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for: UT Approved By");
+                    skillname = "Management";
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for All Postcast Roughout");
+
+            if ($('#BB5_RoughedOutBy').val().trim() == "") {
+                ids = ids + "BB5_RoughedOutBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+    </script>
+}

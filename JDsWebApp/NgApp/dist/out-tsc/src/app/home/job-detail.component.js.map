@@ -1,0 +1,1 @@
+{"version":3,"file":"job-detail.component.js","sourceRoot":"","sources":["../../../../../src/app/home/job-detail.component.ts"],"names":[],"mappings":";;;;;;;;AAAA,sCAA0C;AAc1C,IAAa,kBAAkB;IAA/B;IAEA,CAAC;IAAD,yBAAC;AAAD,CAAC,AAFD,IAEC;AAFY,kBAAkB;IAX9B,gBAAS,CAAC;QACP,QAAQ,EAAE,MAAM,CAAC,EAAE;QACnB,QAAQ,EAAE,YAAY;QACtB,QAAQ,EAAE,+JAKT;KACJ,CAAC;GAEW,kBAAkB,CAE9B;AAFY,gDAAkB"}

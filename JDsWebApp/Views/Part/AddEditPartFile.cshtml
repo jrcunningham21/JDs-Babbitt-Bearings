@@ -1,0 +1,233 @@
+﻿@model JDsDataModel.ViewModels.PartInfoFileViewModel
+
+
+
+
+<div style="height:550px;">
+
+    @*TakePhotoWindow*@
+    <div id="takeFilePhotoWin" style="display:none;">
+        <div style="text-align: center;">
+
+            <div class="camera" id="camera-area">
+                <video id="video">Video stream not available.</video>
+                
+            </div>
+            <canvas id="canvas" style="display:none;"></canvas>
+
+            <div id="takePhotoBtnWrapper">
+                <button class="btn btn-primary" id="photoShutterBtn" style="width:150px; margin-top:8px; margin-right: 5px;">Take Photo</button>
+                <button class="btn btn-danger" id="cancelPhotoShutterBtn" style="width:150px; margin-top:8px; margin-right:5px;">Cancel</button>
+               
+            </div>
+
+            <select id="videoSource" hidden ></select>
+        </div>
+
+    </div>
+
+    @*File*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    @if (string.IsNullOrEmpty(Model.FileName))
+                    {
+                        <label id="fileName">No file selected</label>
+                    }
+                    else
+                    {
+                        <label id="fileName">@Model.FileName</label>
+                    }
+
+                    <input type="hidden" id="fileUrl" value="@Model.URL"/>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @*Photo*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+
+                    <div class="jd-table-cell ">
+                        <img id="filePhotoImg" src='@Model.URL' style='max-width:100%; max-height:150px; min-height:150px;' />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Notes*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <textarea id="partFileNotes" rows="4" cols="70" placeholder="File notes" maxlength="4000">@Model.FileNotes</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Upload button*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+
+                    <div class="jd-table-cell jd-width-75">
+
+                        <div id="divUploadPartFileAdd" style="margin-top: 8px; margin-bottom: 25px; margin-left: 15px">
+                            <form enctype="multipart/form-data" id="frmUploadPartFileAdd">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <input id="btnuploadPartFile" class="btn btn-primary" type="button" value="Upload" style="float: left; width: 100px; margin-top: 20px;" />
+                                    <label id="txtuploadedPartFileMsgAdd" style="margin-top:25px; margin-left:10px;"></label>
+                                </div>
+                                <div class="row">
+                                    <input id="thepartfile" name="file" type="file" style="float: left; margin-top: 10px; visibility:hidden;" />
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Save, TakePhoto, and Cancel buttons*@
+    <div class="row  row-bottom-smaller">
+        <div class="col-md-12">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <button id="saveFileBtn" class="btn btn-primary" style="width:150px;">Save</button>
+                    <!-- <button id="takeFilePhotoBtn" class="btn btn-default" style="width:150px; margin-left:5px;">Take Photo</button> -->
+                    <button id="cancelFileBtn" class="btn btn-danger" style="width:150px; margin-left:5px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+    function displayFileGrid() {
+        $('#addEditFileDetails').hide();
+        $('#FilesTab').show();
+    }
+
+    function getFileNameFromURL(url){
+        urlString = url;
+        //just use the guid string name for files
+        var newFileName = urlString.replace(/\/Uploads\/PartPhotos\/[0-9]*\//ig, "");
+        return newFileName;
+    }
+
+    $(function () {
+
+        $("#takeFilePhotoBtn").click(function(){
+            initTakePhotoWindow("#takeFilePhotoWin", "#filePhotoImg", @Model.PartId);
+        });
+
+        $("#cancelPhotoShutterBtn").click(function () {
+            $("#takeFilePhotoWin").data("kendoWindow").close();
+        });
+
+        $("#cancelFileBtn").click(function () {
+            displayFileGrid();
+        });
+
+        $("#saveFileBtn").click(function () {
+            $("#saveFileBtn").attr("disabled","disabled");
+            
+            var filename;
+            //if we're saving a webcam pic, get the file name from the URL instead
+            if($("#fileName").text() === "No file selected" && $("#fileUrl").val()){   
+                filename = getFileNameFromURL($("#fileUrl").val());
+            }
+            else{
+                filename = $("#fileName").text();
+            }
+            var values =
+            {
+                "PartFileId": @Model.PartFileId,
+                "PartId": @Model.PartId,
+                "FileNotes": $('#partFileNotes').val(),
+                "IsFinalPrint": false,
+                "FileName" : filename,
+                "URL" : $("#fileUrl").val()
+            }
+
+            $.post("@Url.Action("SavePartFile", "Part")", values, function(data) {
+                if (data === false)
+                    bootbox.alert("Error file upload", function () {});
+
+                $('#partFilesgrid').data('kendoGrid').dataSource.read();
+                $('#partFilesgrid').data('kendoGrid').refresh();
+                displayFileGrid();
+                $("#saveFileBtn").removeAttr("disabled");
+            });
+
+        });
+
+        $("#thepartfile").change(function () {
+            var file = this.files[0];
+            fileName = file.name;
+            size = file.size;
+            type = file.type;
+            $("#txtuploadedPartFileMsgAdd").text("");
+            $("#btnuploadPartFile").removeAttr('disabled');
+
+            $("#saveFileBtn").prop("disabled", true);
+
+            var formData = new FormData($('#frmUploadPartFileAdd')[0]);
+            formData.append('id', @Model.PartId);
+            $.ajax({
+                url: '/Part/PartInfoFileUpload',
+                type: 'POST',
+                xhr: function () {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress',
+                        ProgressHandler, false);
+                    }
+                    return myXhr;
+                },
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.success == true) {
+                        $("#txtuploadedPartFileMsgAdd").text("  " + fileName + " uploaded succeeded.");
+                        $("#fileName").text(fileName);
+                        $("#fileUrl").val(data.URL);
+                    } else {
+                        $("#txtuploadedPartFileMsgAdd").text("  " + fileName + " uploaded failed.");
+                    }
+
+                    $("#saveFileBtn").prop("disabled", false);
+                },
+                error: function (data) {
+                    bootbox.alert("Error file upload", function () {});
+                    $("#saveFileBtn").prop("disabled", false);
+                }
+            });
+        });
+
+        $("#btnuploadPartFile").click(function () {
+            $('#thepartfile').click();
+        });
+
+    }); // end load func
+
+
+</script>

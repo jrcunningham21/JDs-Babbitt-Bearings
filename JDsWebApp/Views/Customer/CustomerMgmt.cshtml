@@ -1,0 +1,161 @@
+﻿@using JDsDataModel.ViewModels
+
+@{
+    ViewBag.Title = "Customers and Contacts Management";
+}
+
+<div id="customerscontactsmgmtcontent" class="wrapper" style="width: 100%">
+    <div>
+        <h3>Customer Management</h3>
+    </div>
+
+    <div class="row" style="margin-left: 0">
+        <a class="btn btn-primary" onclick="LoadCustomerDetail(0)" style="float: left; width: 75px"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New</a>
+    </div>
+
+    <div id="customerscontactsmgmtdiv" class="row" style="margin-left: 0; margin-top: 10px">
+        <div id="customersgrid"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerdetailsmodal" role="dialog">
+    <div class="modal-dialog" style="width: 710px; background-color: white">
+        <div class="modal-header" style="background-color: #215fa8; height: 60px; padding-bottom: 35px">
+            <h4 style="color: white; width: 130px; float: left; margin-left: 280px">Add New Customer</h4>
+            <button type="button" class="close" style="float: right" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" style="width: 680px; height: 605px; padding: 20px 30px">
+            <div id="customercontactcontentdiv">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .k-window-titlebar {
+        background-color: #215fa8;
+        height: 80px !important;
+        text-align: center;
+        vertical-align: middle;
+        color: white;
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+    div.k-window-content {
+        padding: 0;
+        border-radius: 0;
+        background-color: #F6F6FF;
+    }
+
+    /*.k-grid {
+        background-color: #DEEBF6;
+    }
+
+        .k-grid .k-alt {
+            background-color: #BDD7EE; /* specify the alternate background-color 
+        }*/
+
+    #customersgrid .k-icon {
+        display: none;
+    }
+</style>
+
+@section scripts
+{
+    <script>
+        $('#customerMgmtEntry').addClass('aside-entry-active');
+        
+        // When user clicks/touches an input... select all text
+        $("input[type='text']").on("click", function () {
+            $(this).select();
+        });
+        
+        $("#customersgrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    type: "jsonp",
+                    read: "@Url.Action("ReadCustomers", "Customer")"
+                },
+                pageSize:10,
+            },
+            pageable: true,
+            columns: [{
+                field: "CustomerId",
+                hidden: true
+            }, {
+                field: "CompanyName",
+                width: 160
+            }, {
+                field: "CompanyCode",
+                hidden: true
+            }, {
+                field: "BillingAddressId",
+                hidden: true
+            }, {
+                field: "",
+                attributes: {
+                    "class": "templateCell"
+                },
+                title: "Billing Address",
+                template: "#= BillingAddressLine1 # <br> #= BillingCity ##= (BillingCity == '') ? ' ' : ',' # #= BillingState # #= BillingZip #",
+                width:185
+            }, {
+                field: "ContactId",
+                hidden: true
+            }, {
+                field: "",
+                title: "Primany Contact",
+                attributes: {
+                    "class": "templateCell"
+                },
+                template: "#= ContactFirstName # #= ContactLastName # #= (ContactEmail == null) ? '' : '<br>' # #= (ContactEmail == null) ? '' : ContactEmail # <br> #= (ContactWorkPhone == '') ? '' : 'Work:' # #= ContactWorkPhone #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#= (ContactWorkPhone == '') ? '' : 'Fax:' # #= ContactFax #",
+                width: 250
+            }, {
+                field: "",
+                template: "<input type='button' class='btn btn-primary' style='width: 75px' name=CustomerId value='Edit' onclick='LoadCustomerDetail(#=CustomerId#)' readonly='readonly'/>",
+                width: 75
+            }, {
+                field: "",
+                template: "<input type='button' class='btn btn-danger' style='width: 75px' name=Delete value='Delete' onclick='DeleteCustomer(#=CustomerId#)' readonly='readonly'/>"
+            }]
+        });
+
+        function LoadCustomerDetail(id) {
+            $.ajax({
+                url: "/Customer/CustomerDetails/",
+                data: { id: id },
+                success: function (data) {
+                    $('#customercontactcontentdiv').html(data);
+                    $('#customercontactcontentdiv').fadeIn('fast');
+                    $("#customerdetailsmodal").modal('show');
+                    LoadContactDropDownList();
+                    $("#contactlist").data("kendoDropDownList").dataSource.one("change", LoadSelectedPrimaryContact);
+                },
+                error: function () {
+                    bootbox.alert("Error AJAX CustomerDetails", function () {});
+                    $("#customerdetailsmodal").modal('hide');
+                }
+            });
+        }
+
+        // TODO: Confirmation Dialog
+        function DeleteCustomer(id) {
+            $.ajax({
+                type: 'POST',
+                url: '/Customer/DeleteCustomer/',
+                data: { id: id },
+                success: function (data) {
+                    RefreshCustomersGrid();
+                },
+                error: function (data) {
+                    bootbox.alert("Error AJAX DeleteCustomer", function () {});
+                }
+            });
+        }
+
+        function RefreshCustomersGrid() {
+            $('#customersgrid').data('kendoGrid').dataSource.read();
+        }
+    </script>
+}

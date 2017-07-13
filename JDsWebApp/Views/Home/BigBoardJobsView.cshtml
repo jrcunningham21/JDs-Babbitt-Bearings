@@ -1,0 +1,77 @@
+﻿@model JDsDataModel.ViewModels.BigBoardJobViewModelTest
+
+@foreach (var group in Model.JobDateGrouping)
+{
+    bool isToday = DateTime.Today == group.First().ShipByDate;
+
+    <div class="groups @(isToday ? "group-today" : "")" id="group-@(group.Key)">
+        @if (isToday && (Model.SortMethod == 0 || Model.SortMethod == 3))
+        {
+            <div class="date" style="font-weight: 600; margin-bottom:5px; font-size: 20px;">Today's Job</div>
+        }
+        else if (Model.SortMethod == 0 || Model.SortMethod == 3) 
+        {
+            <div class="date" style="font-weight: 600; margin-bottom:5px; font-size:20px;">@group.First().ShipByDate.ToShortDateString() Jobs Due:</div>
+        }
+        else if (Model.SortMethod == 1)
+        {
+            <div class="date" style="font-weight: 600; margin-bottom:5px; font-size: 20px;">@group.Key</div>
+        }
+        else if (Model.SortMethod == 2)
+        {
+            <div class="date" style="font-weight: 600; margin-bottom:5px; font-size:20px;">Received Date: @group.First().ReceivedDate.ToShortDateString()</div>
+        }
+
+        @foreach (var job in group)
+        {
+            var jobClass = "";
+            if (job.JobStatus == "Finished")
+            {
+                jobClass = "bigboard-job-complete";
+            }
+            else if (job.RequiredDate < DateTime.Now)
+            {
+                jobClass = "bigboard-job-late";
+            }
+            else if (job.JobStatus == "On Hold")
+            {
+                jobClass = "bigboard-job-hold";
+            }
+            else if (job.JobStatus == "Blocked")
+            {
+                jobClass = "bigboard-job-blocked";
+            }
+            else if (job.QuoteOnly)
+            {
+                jobClass = "bigboard-job-quote";
+            }
+            else if (job.JobStatus == "In Progress")
+            {
+                jobClass = "bigboard-job-inprogress";
+            }
+            else
+            {
+                jobClass = "bigboard-job";
+            }
+
+            <div id="job-@job.JobID" class="@jobClass job" onclick="loadParts($(this), @job.JobID, @Model.SortMethod)">
+                <div style="font-weight: 600;" class="searchable job-company-info">
+                    <a class="clean" href="@Url.Action("JobDetails", "Home", new {id = job.JobID})">
+                        <span>
+                            <u>JD#:@job.JobID @job.CompanyName</u>
+                        </span> 
+                    </a>
+                    <label class="searchable pull-right">@job.JobStatus</label>
+                </div>
+                <div class="job-parts">
+                    @foreach (var item in job.PartNames)
+                    {
+                        <div class="job-part-info">@item</div>
+                    }    
+                </div>
+                <div class="shipByDate">Ships: @job.ShipByDate.ToShortDateString()</div>
+                <div class="@group.First().RequiredDate.ToShortDateString()"></div>
+            </div>
+        }
+    </div>
+}

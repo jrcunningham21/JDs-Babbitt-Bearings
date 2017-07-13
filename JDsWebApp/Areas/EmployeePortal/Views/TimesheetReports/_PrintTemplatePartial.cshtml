@@ -1,0 +1,100 @@
+﻿
+@using JDsWebApp.Areas.EmployeePortal.Models.TimesheetReports
+@model PrintAllTimesheetsViewModel
+
+<script>
+    function intiateTimesheeGrid(selector, dataSource) {
+        $("#" + selector).kendoGrid({
+            dataSource: {
+                data: dataSource,
+                pageSize: 50
+            },
+            scrollable: false,
+            columns: [{
+                field: "Day",
+                attributes: {
+                    "class": "templateCell",
+                    style: "text-align: right",
+                    Day: "Day#=Index#",
+                    id: "Day#=Index#",
+                    value: "#=Day#"
+                },
+                template: "#= kendo.toString(kendo.parseDate(Day, 'dddd'), 'dddd') # #= kendo.toString(kendo.parseDate(Day, 'MM/dd/yyyy'), 'MM/dd/yyyy') #",
+                width: 175,
+                title: "Day:"
+            }, {
+                field: "StartTime",
+                template: "#if (StartTime == null) {# #=' '# #} else {# #= kendo.toString(StartTime, 'HH:mm')# # }#",
+                width: 75,
+                title: "Start:"
+            }, {
+                field: "EndTime",
+                template: "#if (EndTime == null) {# #=' '# #} else {# #= kendo.toString(EndTime, 'HH:mm')# # }#",
+                width: 75,
+                title: "End:",
+                attributes: {
+                    value: "#=EndTime#"
+                }
+            }, {
+                field: "IsSkipMeal",
+                template: "<input type='checkbox' id='IsSkipMeal#=Index#' name='IsSkipMeal#=Index#' # if(IsSkipMeal == true) {#checked#}# style='margin-left:30px'/>",
+                width: 100,
+                title: "Skip Meal:"
+            }, {
+                field: "WorkedHours",
+                title: "Worked: ",
+                template: "#= kendo.toString(WorkedHours, 'HH:mm')#",
+                attributes: {
+                    name: "WorkedHours#=Index#"
+                },
+                width: 50
+            }, {
+                field: "VacationHours",
+                title: "Vacation:",
+                attributes: {
+                    name: "VacationHours#=Index#"
+                }
+            }]
+        })
+    }
+</script>
+
+@foreach (var Emp in Model.EmployeeTimesheets)
+{
+    <div id="timesheetentriesdiv" class="row" style="margin-top: 15px; margin-bottom: 353px; page-break-after: always;">
+        <div>
+            @Html.DisplayFor(m => Emp.EmployeeName)
+            <br/>
+            @Html.DisplayFor(m => m.PayPeriod)
+            <br/>
+            @Html.DisplayFor(m => Emp.Year)
+        </div>
+        <br/><br/>
+        <div>
+            <div id="timesheetentriesgrid@(Emp.EmployeeId)"></div>
+            <script>
+                intiateTimesheeGrid("timesheetentriesgrid@(Emp.EmployeeId)",
+                    @Html.Raw(Json.Encode(Emp.TimesheetEntries)))
+            </script>
+        </div>
+
+        <div class="row">
+            <div style="float: left; margin-top: 20px">
+                @Html.LabelFor(m => Emp.TotalHours, new {@style = "width: 100px"})
+                @Html.DisplayFor(m => Emp.TotalHours, new {@style = "width: 40px"})
+                @Html.LabelFor(m => Emp.TotalStraight, new {@style = "width: 100px"})
+                @Html.DisplayFor(m => Emp.TotalStraight, new {@style = "width: 40px"})
+                @Html.LabelFor(m => Emp.TotalOvertime, new {@style = "width: 100px"})
+                @Html.DisplayFor(m => Emp.TotalOvertime, new {@style = "width: 40px"})
+                @Html.LabelFor(m => Emp.TotalDoubleTime, new {@style = "width: 100px"})
+                @Html.DisplayFor(m => Emp.TotalDoubleTime, new {@style = "width: 40px"})
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $("table > thead > tr > th").css("color", "white");
+    });
+</script>

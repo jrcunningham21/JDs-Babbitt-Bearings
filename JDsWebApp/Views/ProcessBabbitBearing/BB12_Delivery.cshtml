@@ -1,0 +1,358 @@
+﻿@using JDsDataModel
+@using JDsDataModel.ViewModels
+@model JDsDataModel.ViewModels.Processes.ProcessBabbittBearing.BB12_DeliveryViewModel
+
+@{
+    ViewBag.Title = "BB12_DeliveryViewModel";
+}
+
+<div class="row">
+    <h4>Delivery</h4>
+</div>
+
+<div class="row">
+    <form id="process_bb12_form">
+        <div class="row padd-top">
+            <div class="col-sm-11">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Version)
+                @Html.HiddenFor(m => m.JobId)
+                @Html.HiddenFor(m => m.PartId)
+                @Html.HiddenFor(m => m.ProcessId)
+                @Html.HiddenFor(m => m.StepId)
+                @Html.HiddenFor(m => m.IsUTRequired)
+                @Html.HiddenFor(m => m.IsPTRequired)
+                @Html.HiddenFor(m => m.IsDisplayUT)
+                @Html.HiddenFor(m => m.IsDisplayPT)
+                @Html.HiddenFor(m => m.IsCompleted, new { id = "IsCompleted" })
+                @Html.HiddenFor(m => m.IsOnlySave, new { id = "IsOnlySave" })
+
+                <div class="row padd-top" id="BB12_PackedByGroup">
+                    <div class="col-sm-5">
+                        @Html.SignOffHelper(m => m.PackedBy, "BB12_PackedBy")
+                    </div>
+                </div>
+
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.LabelFor(m => m.ShippedVia)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @{
+                                    List<SelectListItem> viaItems = new List<SelectListItem>();
+                                    viaItems.Add(new SelectListItem
+                                    {
+                                        Text = "FedEx",
+                                        Value = "FedEx",
+                                        Selected = true
+                                    });
+                                    viaItems.Add(new SelectListItem
+                                    {
+                                        Text = "UPS",
+                                        Value = "UPS"
+                                    });
+                                    viaItems.Add(new SelectListItem
+                                    {
+                                        Text = "USPS",
+                                        Value = "USPS"
+                                    });
+                                    viaItems.Add(new SelectListItem
+                                    {
+                                        Text = "DHL",
+                                        Value = "DHL"
+                                    });
+                                    viaItems.Add(new SelectListItem
+                                    {
+                                        Text = "Other",
+                                        Value = "Other"
+                                    });
+                                }
+
+                                @Html.DropDownListFor(m => m.ShippedVia, viaItems, new { @class = "form-control", id = "ShippingViaList" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.LabelFor(m => m.ShipDate)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(x => x.ShipDate, new { @class = "form-control datepicked-field", @readonly = "true", id = "ShipDate" })
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row padd-top">
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.LabelFor(m => m.RequiredDate)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(x => x.RequiredDate, "{0:d}", new { @readonly = "true", @class = "form-control", id = "RequiredDate" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.ValidationMessageFor(x => x.RequiredDate)
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row padd-top padd-bottom">
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.LabelFor(m => m.TrackingNumber, new { @class = "pull-left" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(m => m.TrackingNumber, new { @class = "form-control", id = "BB12Delivery_TrackingNumber"})
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row padd-top padd-bottom">
+            <div class="col-sm-2">
+                <a class="btn btn-block btn-primary" id="saveBtn">Save</a>
+            </div>
+            <div class="col-sm-2">
+                <a class="btn btn-block btn-danger" id="cancelBtn">Cancel</a>
+            </div>
+        </div>
+        <div class="extraSpaceAtBtmDiv"></div>
+    </form>
+</div>
+
+<div class="modal fade" id="signOffGroupModal" role="dialog">
+    <div class="modal-dialog">
+        <h4 class="modal-header"> Sign Off Error</h4>
+        <div class="modal-body" style="margin-left: 40px">
+            <div class="jd-table">
+                <div class="jd-table-row">
+                    <h4>The following sign offs have not been completed.</h4>
+                </div>
+            </div>
+            <div class="jd-table">
+                <div class="row padd-top padd-bottom" id="BB12_PackedByGroup">
+                    <div class="col-sm-7">
+                        @Html.SignOffHelper(m => m.PackedBy, "BB12_PackedBy1")
+                    </div>
+                </div>
+                <div class="row padd-top">
+                    <div class="col-sm-offset-7 col-sm-3">
+                        <a id="signoffallbtn" class="btn btn-primary signOffBtn" onclick="OnClickSignOffAll()"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> SignOff All</a>
+                    </div>
+                    <div class="col-sm-2">
+                        <a id="cancelsignoffallbtn" class="btn btn-danger" onclick="OnClickCancelSignOffAll()">Cancel</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+
+        $(function () {
+
+            var signOffAllRequested = false;
+            $("#signOffModal").on('hidden.bs.modal', function () {
+                if( signOffAllRequested == true
+                    && $("#BB12_PackedBy").val())
+                {
+                    // All sign offs have been signed
+                    Save();
+                }
+                signOffAllRequested = false;
+            });
+            $("#signoffallbtn").click(function () {
+                signOffAllRequested = true;
+            });
+
+            setCurrentStep(stepData,'process_BB12_DeliveryEntry');
+            $('#process_BB12_DeliveryEntry').css('font-size', 12);
+
+            $("#saveBtn").click(function () {
+                Save();
+            });
+
+            $("#cancelBtn").click(function () {
+                Cancel();
+            });
+
+            var shipDatePicker = $("#ShipDate").kendoDatePicker({
+                format: "MM/dd/yyyy"
+            });
+
+        });
+
+        function IsStepValid() {
+            var isvalid = 1;
+
+            // Perform signoff validation and dialog...
+            if ($('#BB12_PackedBy').val().trim() == "") {
+                isvalid = 0;
+                $("#BB12_PackedByGroup").show();
+                $('#BB12_PackedBy1SO').addClass("btn-danger");
+                $('#BB12_PackedBySO').addClass("btn-danger");
+            } else {
+                $("#BB12_PackedByGroup").hide();
+                $('#BB12_PackedBy1SO').removeClass("btn-danger");
+                $('#BB12_PackedBySO').removeClass("btn-danger");
+            }
+
+            if (isvalid == 0) {
+                $('#signOffGroupModal').modal('show');
+                return false;
+            }
+
+            return true;
+        }
+
+
+        function Save() {
+            if (!IsStepValid()) {
+                return false;
+            }
+
+            markStepAsCompleted();
+            SaveToServer();
+
+            return true;
+        }
+
+        function SaveToServer(isOnlySave) {
+            isOnlySave = isOnlySave || false;
+
+            if (isOnlySave) {
+                $("#IsOnlySave").val(true);
+            }
+
+            // Apply grid data to model
+            $.ajax({
+                url: '/ProcessBabbitBearing/Save_BB12_Delivery',
+                type: 'POST',
+                data: $("#process_bb12_form").serialize(),
+                success: function (data) {
+                    notification.show({message: "SAVED SUCCESSFULLY"}, "successful");
+                    if (!isOnlySave) {
+                        window.location.href = "/ProcessBabbitBearing/BB13_FinalSignOff?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+                    }
+                },
+                error: function (response, error) {
+                    bootbox.alert(error, function () {});
+                }
+            });
+        }
+
+        function Cancel() {
+            window.location.href = "/ProcessBabbitBearing/BB12_Delivery?id=" + '@Html.Raw(Json.Encode(Model.ProcessId))';
+        }
+
+
+        function OnClickSignOff(data) {
+            navId = 0;
+            signOffId = data;
+
+            var skillname = "";
+
+            switch (data) {
+                case 'BB12_PackedBy':
+                case 'BB12_PackedBy1':
+                    skillname = "Packaging";
+                    addJobChangeLogEntry(@Model.JobId, "Attempting signoff for Packaging By");
+                    break;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new { area = "" })',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function (data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                },
+                error: function (e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickSignOffAll() {
+            navId = 0;
+            var ids = "";
+            var count = 0;
+
+            addJobChangeLogEntry(@Model.JobId, "Attempting signoff for all Delivery");
+
+            if ($('#BB12_PackedBy').val().trim() == "") {
+                ids = ids + "BB12_PackedBy";
+                count = count + 1;
+            }
+
+            signOffId = ids;
+            var skillname = "Management";
+
+            $.ajax({
+                url: '@Url.Action("SignOff", "SignOff", new {area = ""})',
+                type: 'GET',
+                data: { skillName: skillname },
+                success: function(data) {
+                    $('#signOffContentDiv').html(data);
+                    $('#signOffContentDiv').fadeIn('fast');
+                    $('#signOffModal').modal('show');
+                    $('#signOffGroupModal').modal('hide');
+                },
+                error: function(e) {
+                    bootbox.alert("Not Authorized", function () {});
+                    $("#signOffModal").modal('hide');
+                }
+            });
+        }
+
+        function OnClickCancelSignOffAll()
+        {
+            // capture any completed signoffs--definition on site.js
+            captureCompletedSignoffs();
+
+            $('#signOffGroupModal').modal('hide');
+        }
+
+        $('.datepicked-field').click(
+            function() {
+                $(this).data("kendoDatePicker").open();
+            });
+
+
+    </script>
+}

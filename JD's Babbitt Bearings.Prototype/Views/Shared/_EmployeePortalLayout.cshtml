@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+@*<script type="text/javascript" src="~/Scripts/jquery.bootgrid.min.js"></script>*@
+@*<script type="text/javascript" src="~/Scripts/bootstrap.js"></script>*@
+@*<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>*@
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - JD's Babbitt Bearings Mocks</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        <header id="header">
+            @*<div class="container top-nav">
+                <div class="row">
+                    <div class="col-md-3" height="60px">
+                        <img src="~/Images/JD-Logo.png" class="center-block" style="height:60px;"/>
+                    </div>
+                    <div class="col-md-2 col-md-offset-3 pull-down">
+                        <button type="button" class="btn btn-default top-nav-button"onclick="location.href='@Url.Action("Index", "CurrentJobs", new { area = "" })'">Current Jobs</button>
+                    </div>
+                    <div class="col-md-2 pull-down">
+                        <button type="button" class="btn btn-default top-nav-button" onclick="location.href='@Url.Action("Index", "AllJobs", new { area = "" })'">All Jobs</button>
+                    </div>
+                    <div class="col-md-2 pull-down">
+                        <button type="button" class="btn btn-default top-nav-button" onclick="location.href='@Url.Action("Login", "EmployeePortal", new { area = "" })'">Employee Portal</button>
+                    </div>
+                </div>
+            </div>*@
+        </header>
+
+        <div id="body">
+            <section class="content-wrapper clear-fix">
+                @*<div class="row">
+                    <h1>@ViewBag.Title</h1>
+                </div>*@
+                @RenderBody()
+            </section>
+        </div>
+
+        <footer class="footer" id="footer"; style="background: url('../Images/dot-screen.png') repeat #000096;">
+            <div class="content-wrapper">
+                <div >
+                    <p style="color:white; margin-top:-6px;">&copy; @DateTime.Now.Year - JD's Babbitt Bearings</p>
+                </div>
+            </div>
+        </footer>
+
+        @Scripts.Render("~/bundles/jquery")
+        @RenderSection("scripts", required: false)
+
+        <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.bootgrid.min.js"></script>
+    </body>
+
+</html>
+
+
+<script>
+$(".pull-down").each(function () {
+    $(this).css('margin-top', $(this).parent().height() - $(this).height())
+});
+</script>
